@@ -46,22 +46,34 @@ public class CityView : MonoBehaviour, ICityView
         }
     }
 
-    
-    public void UpdateSeatOccupancy(List<Party> occupiedBy)
+
+    public void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy)
     {
-        for (int i = 0; i < seats.Count; i++)
+        int seatIndex = 0;
+        foreach (var entry in occupiedBy)
         {
-            SeatView seat = seats[i];
-            if (i < occupiedBy.Count)
+            Party party = entry.Key;
+            int count = entry.Value;
+
+            for (int i = 0; i < count; i++)
             {
-                // 좌석이 점유된 경우, 색상을 변경하거나 아이콘 표시 등
-                // 예: seat.SetOccupied(occupiedBy[i]);
+                if (seatIndex < seats.Count)
+                {
+                    seats[seatIndex].SetColor(party.partyColor);
+                    seatIndex++;
+                }
+                else
+                {
+                    Debug.LogWarning("Not enough seats to display all parties.");
+                    return;
+                }
             }
-            else
-            {
-                // 좌석이 비어있는 경우, 기본 상태로 설정
-                // 예: seat.SetOccupied(null);
-            }
+        }
+
+        // Clear remaining seats
+        for (int i = seatIndex; i < seats.Count; i++)
+        {
+            seats[i].SetColor(Color.gray); // Default color for unoccupied seats
         }
     }
 }
@@ -72,5 +84,5 @@ public interface ICityView
     void SetPosition(Vector2 position);
     void SetSeatCount(int seatCount);
 
-    void UpdateSeatOccupancy(List<Party> occupiedBy);
+    void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy);
 }

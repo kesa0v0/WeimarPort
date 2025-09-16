@@ -19,13 +19,18 @@ public class CityPresenter
         view.SetCityName(model.cityName);
         view.SetPosition(model.position);
         view.SetSeatCount(model.seatCount);
+        view.UpdateSeatOccupancy(model.seats);
     }
 
-
-    public void OnCityClicked()
+    public void AddSeatToParty(Party party)
     {
-        // Handle city click event
-        Debug.Log($"City {model.cityName} clicked!");
-        // Possibly open city details UI or perform other actions
+        model.AddSeat(party);
+        view.UpdateSeatOccupancy(model.seats);
+    }
+    
+    public void RemoveSeatFromParty(Party party)
+    {
+        model.RemoveSeat(party);
+        view.UpdateSeatOccupancy(model.seats);
     }
 }
