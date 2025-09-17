@@ -10,6 +10,7 @@ public class CityFactory
 
         // CityView 생성
         var viewObj = Object.Instantiate(paramenters.cityPrefab, paramenters.position, Quaternion.identity, paramenters.parent);
+        viewObj.transform.localRotation = Quaternion.identity; // 로컬 회전값 초기화
         var view = viewObj.GetComponent<CityView>();
 
         // Presenter 연결
