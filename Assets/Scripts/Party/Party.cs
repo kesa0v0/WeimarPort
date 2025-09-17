@@ -9,6 +9,21 @@ public static class PartyRegistry
     public static readonly DNVP DNVP = DNVP.Instance;
 
     public static readonly List<Party> AllMainParties = new() { SPD, Zentrum, KPD, DNVP };
+    public static readonly List<Party> AllSubParties = new() { USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
+
+    public static Party GetPartyByName(string name)
+    {
+        foreach (var party in AllMainParties)
+        {
+            if (party.partyName == name) return party;
+        }
+        foreach (var party in AllSubParties)
+        {
+            if (party.partyName == name) return party;
+        }
+        Debug.LogWarning($"Party '{name}' not found.");
+        return null;
+    }
 }
 
 public class Party

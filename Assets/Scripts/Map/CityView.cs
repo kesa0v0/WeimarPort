@@ -11,12 +11,32 @@ public class CityView : MonoBehaviour, ICityView
 
     private CityPresenter presenter;
 
-    private void Awake()
+    public void Initialize(CityModel model)
     {
-        // Example initialization, in real case, model and presenter should be set from outside
-        CityModel model = new CityModel("Sample City", new Vector2(0, 0), 5);
         presenter = new CityPresenter(model, this);
+        AddEventSubscriptions();
     }
+    
+    private void AddEventSubscriptions()
+    {
+        // 이 오브젝트가 활성화될 때 Presenter의 핸들러를 이벤트 버스에 구독
+        if (presenter != null)
+        {
+            EventBus.Instance.OnAddCitySeatRequested += presenter.HandleAddCitySeatRequested;
+            EventBus.Instance.OnRemoveCitySeatRequested += presenter.HandleRemoveCitySeatRequested;
+        }
+    }
+
+    private void RemoveEventSubscriptions()
+    {
+        // 이 오브젝트가 비활성화될 때 이벤트 버스에서 구독 해제
+        if (presenter != null)
+        {
+            EventBus.Instance.OnAddCitySeatRequested -= presenter.HandleAddCitySeatRequested;
+            EventBus.Instance.OnRemoveCitySeatRequested -= presenter.HandleRemoveCitySeatRequested;
+        }
+    }
+
 
     public void SetCityName(string cityName)
     {

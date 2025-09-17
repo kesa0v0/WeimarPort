@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public Transform cityParent;  // 도시들이 생성될 부모 Transform
 
     // 생성된 모든 도시를 관리하는 딕셔너리
-    private Dictionary<string, CityPresenter> cities = new Dictionary<string, CityPresenter>();
+    private readonly Dictionary<string, CityView> cities = new();
 
     private void Awake()
     {
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     public void RemoveCity(string cityName)
     {
-        if (cities.TryGetValue(cityName, out CityPresenter city))
+        if (cities.TryGetValue(cityName, out _))
         {
             // 실제 게임 오브젝트 파괴 등...
             // city.Destroy(); 

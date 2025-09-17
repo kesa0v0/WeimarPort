@@ -3,6 +3,7 @@ using UnityEngine;
 public class CityPresenter
 {
     private CityModel model;
+    public CityModel Model => model;
     private ICityView view;
 
 
@@ -70,4 +71,30 @@ public class CityPresenter
         view.UpdateSeatOccupancy(model.seats);
     }
 
+
+    public void HandleAddCitySeatRequested(string targetCityName, Party party, int count)
+    {
+        // 이 이벤트가 나(이 도시)에게 온 것이 맞는지 확인
+        if (targetCityName != model.cityName)
+        {
+            return; // 내 도시가 아니면 무시
+        }
+
+        Debug.Log($"Handling AddCitySeatRequested for {targetCityName}, Party: {party.partyName}, Count: {count}");
+        // 이제 내 도시가 맞으니, 실제 의석 추가 로직 실행
+        AddSeatToParty(party, count);
+    }
+    
+    public void HandleRemoveCitySeatRequested(string targetCityName, Party party, int count)
+    {
+        // 이 이벤트가 나(이 도시)에게 온 것이 맞는지 확인
+        if (targetCityName != model.cityName)
+        {
+            return; // 내 도시가 아니면 무시
+        }
+
+        Debug.Log($"Handling RemoveCitySeatRequested for {targetCityName}, Party: {party.partyName}, Count: {count}");
+        // 이제 내 도시가 맞으니, 실제 의석 제거 로직 실행
+        RemoveSeatFromParty(party, count);
+    }
 }
