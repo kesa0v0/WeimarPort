@@ -2,12 +2,18 @@ using UnityEngine;
 
 public class CityFactory
 {
-    public static CityView CreateCity(string name, Vector3 position)
+    public static CityPresenter SpawnCity(string cityName, Vector2 position, int seatCount, GameObject cityPrefab, Transform parent = null)
     {
-        GameObject cityObject = new GameObject(name);
-        cityObject.transform.position = position;
+        // CityModel 생성
+        var model = new CityModel(cityName, position, seatCount);
 
-        CityView city = cityObject.AddComponent<CityView>();
-        return city;
+        // CityView 생성
+        var viewObj = Object.Instantiate(cityPrefab, position, Quaternion.identity, parent);
+        var view = viewObj.GetComponent<CityView>();
+
+        // Presenter 연결
+        var presenter = new CityPresenter(model, view);
+
+        return presenter;
     }
 }
