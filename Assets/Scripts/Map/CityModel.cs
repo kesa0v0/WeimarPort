@@ -59,3 +59,21 @@ public class CityModel
     #endregion
 
 }
+
+public struct CityParameters
+{
+    public string cityName;
+    public Vector2 position;
+    public int seatCount;
+    public GameObject cityPrefab;
+    public Transform parent;
+
+    public CityParameters(string cityName, Vector2 position, int seatCount, GameObject cityPrefab, Transform parent = null)
+    {
+        this.cityName = cityName;
+        this.position = position;
+        this.seatCount = seatCount;
+        this.cityPrefab = cityPrefab;
+        this.parent = parent;
+    }
+}
