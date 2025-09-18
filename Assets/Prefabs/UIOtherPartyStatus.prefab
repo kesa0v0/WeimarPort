@@ -285,7 +285,7 @@ GameObject:
   - component: {fileID: 2663203208901965336}
   - component: {fileID: 4264545867931352696}
   m_Layer: 5
-  m_Name: PartyUnitsListView
+  m_Name: PartyPresevedUnitsScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -651,7 +651,7 @@ GameObject:
   - component: {fileID: 1871908800673509719}
   - component: {fileID: 4894430427157464186}
   - component: {fileID: 7493419690012357856}
-  - component: {fileID: 8325222614881284581}
+  - component: {fileID: -9050348585810155556}
   m_Layer: 5
   m_Name: UIOtherPartyStatus
   m_TagString: Untagged
@@ -677,11 +677,11 @@ RectTransform:
   - {fileID: 2664935028776770910}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -835, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 15, y: 0}
   m_SizeDelta: {x: 200, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4894430427157464186
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -720,7 +720,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8325222614881284581
+--- !u!114 &-9050348585810155556
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -732,3 +732,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937caefafc641784bb392835a59c2c1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  partyNameText: {fileID: 4141305387086332303}
+  partyStatusText: {fileID: 5320445738046136542}
+  partyAgendaText: {fileID: 3592192610502928676}
+  partyPreservedUnitsScrollView: {fileID: 4264545867931352696}
+  partyPreservedUnitsContent: {fileID: 6927930046328070845}
+  preservedUnitItemPrefab: {fileID: 1103965201852120305, guid: 92ddb2ee5efcff64196fb21b31740727, type: 3}

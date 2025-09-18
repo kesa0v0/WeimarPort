@@ -85,7 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5677652534154282044}
   m_Layer: 5
-  m_Name: PartyUnitIndicator
+  m_Name: PartyPreservedUnitIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 4701305768045698453}
   - component: {fileID: 2486818594384721624}
   m_Layer: 5
-  m_Name: ArmyInfoText
+  m_Name: PreservedArmyInfoText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
