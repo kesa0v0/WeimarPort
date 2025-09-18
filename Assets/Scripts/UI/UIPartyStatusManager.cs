@@ -3,28 +3,45 @@ using UnityEngine;
 
 public class UIPartyStatusManager : MonoBehaviour
 {
+    public static UIPartyStatusManager instance;
     [SerializeField] private GameObject partyStatusPrefab;
     [SerializeField] private Transform partyStatusParent; // UI에서 배치할 부모 오브젝트
 
-    private Dictionary<Party, UIPartyStatusPresenter> presenters = new();
+    private Dictionary<Party, UIPartyStatusView> partyViews = new();
+    private Dictionary<Party, MainParty> partyModels = new();
 
-    public void Initialize(List<Party> parties)
+    private void Awake()
+    {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+    }
+
+    public void Initialize(List<MainParty> parties)
     {
         foreach (var party in parties)
         {
             var viewObj = Instantiate(partyStatusPrefab, partyStatusParent);
             var view = viewObj.GetComponent<UIPartyStatusView>();
-            var model = new UIPartyStatusModel(party.partyName);
-            var presenter = new UIPartyStatusPresenter(model, view);
+            partyViews.Add(party, view);
+            partyModels.Add(party, party);
 
-            presenters.Add(party, presenter);
+            UpdatePartyStatusView(party);
 
-            // 클릭 이벤트 연결
-            var button = viewObj.GetComponent<UnityEngine.UI.Button>();
-            if (button != null)
+            var capturedParty = party;
+            view.OnClicked = () => OnPartyStatusClicked(capturedParty);
+        }
+    }
+
+    public void UpdatePartyStatusView(Party party)
+    {
+        if (partyViews.TryGetValue(party, out var view) && partyModels.TryGetValue(party, out var model))
+        {
+            view.SetPartyName(model.partyName);
+            if (model is MainParty mainModel)
             {
-                var capturedParty = party;
-                button.onClick.AddListener(() => OnPartyStatusClicked(capturedParty));
+                view.SetPartyStatus(mainModel.partyGovernmentStatus);
+                view.SetPartyAgenda(mainModel.currentPartyAgenda);
+                view.SetPreservedUnits(mainModel.preservedPartyUnits);
             }
         }
     }
@@ -38,9 +55,8 @@ public class UIPartyStatusManager : MonoBehaviour
     // 필요시 위치 이동 등도 여기서 제어
     public void SetPartyStatusPosition(Party party, Vector2 anchoredPos)
     {
-        if (presenters.TryGetValue(party, out var presenter))
+        if (partyViews.TryGetValue(party, out var view))
         {
-            var view = presenter.view;
             (view.transform as RectTransform).anchoredPosition = anchoredPos;
         }
     }

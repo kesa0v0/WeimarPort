@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        UIPartyStatusManager.instance.Initialize(PartyRegistry.GetAllMainParties());
         AddEventSubscriptions();
 
         TestScript();

@@ -49,6 +49,12 @@ public class Party
 public class MainParty : Party
 {
     // Playable faction
+    public string partyGovernmentStatus;
+    public string currentPartyAgenda;
+    public List<SubParty> heldSubParties { get; set; } = new List<SubParty>();
+    public Dictionary<string, int> preservedPartyUnits { get; set; } = new Dictionary<string, int>();
+    public Dictionary<string, int> inSupplyPartyUnits { get; set; } = new Dictionary<string, int>();
+    
     public MainParty(string name, Color color) : base(name, color) { }
 }
 

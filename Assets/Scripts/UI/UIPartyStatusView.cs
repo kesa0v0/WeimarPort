@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
@@ -8,13 +9,17 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
     [SerializeField] private TextMeshProUGUI partyNameText;
     [SerializeField] private TextMeshProUGUI partyStatusText;
     [SerializeField] private TextMeshProUGUI partyAgendaText;
+    [SerializeField] private TextMeshProUGUI partySubPartiesText;
     [SerializeField] private ScrollRect partyPreservedUnitsScrollView;
     [SerializeField] private Transform partyPreservedUnitsContent;
     [SerializeField] private GameObject preservedUnitItemPrefab;
 
-    public void SetPartyAgenda(string agenda)
+    
+    public System.Action OnClicked;
+
+    public void OnPointerClick(PointerEventData eventData)
     {
-        partyAgendaText.text = agenda;
+        OnClicked?.Invoke();
     }
 
     public void SetPartyName(string name)
@@ -22,11 +27,21 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
         partyNameText.text = name;
     }
 
+    public void SetPartyAgenda(string agenda)
+    {
+        partyAgendaText.text = agenda;
+    }
+
+    public void SetPartySubParties(string subParties)
+    {
+        partySubPartiesText.text = subParties;
+    }
+
     public void SetPartyStatus(string status)
     {
         partyStatusText.text = status;
     }
-    
+
     public void SetPreservedUnits(Dictionary<string, int> units)
     {
         // Clear existing items
