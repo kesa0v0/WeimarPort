@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class UIOtherPartyStatusPresenter
+public class UIPartyStatusPresenter
 {
-    private UIOtherPartyStatusModel model;
-    private UIOtherPartyStatusView view;
+    private UIPartyStatusModel model;
+    private UIPartyStatusView view;
 
-    public UIOtherPartyStatusPresenter(UIOtherPartyStatusModel model, UIOtherPartyStatusView view)
+    public UIPartyStatusPresenter(UIPartyStatusModel model, UIPartyStatusView view)
     {
         this.model = model;
         this.view = view;

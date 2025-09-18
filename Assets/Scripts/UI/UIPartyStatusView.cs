@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIOtherPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
+public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
 {
     [SerializeField] private TextMeshProUGUI partyNameText;
     [SerializeField] private TextMeshProUGUI partyStatusText;

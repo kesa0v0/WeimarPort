@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIOtherPartyStatusModel
+public class UIPartyStatusModel
 {
     public string PartyName { get; set; }
     public string PartyStatus { get; set; }
     public string PartyAgenda { get; set; }
     public Dictionary<string, int> PartyUnits { get; set; } = new Dictionary<string, int>();
 
-    public UIOtherPartyStatusModel(string partyName)
+    public UIPartyStatusModel(string partyName)
     {
         PartyName = partyName;
     }

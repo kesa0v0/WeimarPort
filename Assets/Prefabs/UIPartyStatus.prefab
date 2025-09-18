@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 7493419690012357856}
   - component: {fileID: -9050348585810155556}
   m_Layer: 5
-  m_Name: UIOtherPartyStatus
+  m_Name: UIPartyStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
