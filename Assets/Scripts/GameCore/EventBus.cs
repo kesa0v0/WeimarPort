@@ -38,26 +38,68 @@ public class EventBus : MonoBehaviour
     public event Action<string, Party, int> OnCitySeatRemoved;
 
 
-    public void AddCityRequested(string cityName, float x, float y, int seatCount) => OnAddCityRequested?.Invoke(cityName, new Vector2(x, y), seatCount);
-    public void CityAdded(string cityName, float x, float y, int seatCount) => OnCityAdded?.Invoke(cityName, new Vector2(x, y), seatCount);
-
-    public void RemoveCityRequested(string cityName) => OnRemoveCityRequested?.Invoke(cityName);
-    public void CityRemoved(string cityName) => OnCityRemoved?.Invoke(cityName);
-
-    public void AddCitySeatRequested(string cityName, string party, int count)
+    public void AddCityRequested(string cityName, float x, float y, int seatCount)
     {
-        Debug.Log($"EventBus: AddCitySeatRequested for {cityName}, Party: {party}, Count: {count}");
-        // Debug.Log(PartyRegistry.GetPartyByName(party) != null ? $"Found party: {PartyRegistry.GetPartyByName(party).partyName}" : "Party not found");
-        OnAddCitySeatRequested?.Invoke(cityName, PartyRegistry.GetPartyByName(party), count);
+        Debug.Log($"AddCityRequested: {cityName} at ({x}, {y}) with {seatCount} seats.");
+        OnAddCityRequested?.Invoke(cityName, new Vector2(x, y), seatCount);
     }
-    public void CitySeatAdded(string cityName, string party, int count)
-        => OnCitySeatAdded?.Invoke(cityName, PartyRegistry.GetPartyByName(party), count);
+    public void CityAdded(string cityName, float x, float y, int seatCount)
+    {
+        Debug.Log($"CityAdded: {cityName} at ({x}, {y}) with {seatCount} seats.");
+        OnCityAdded?.Invoke(cityName, new Vector2(x, y), seatCount);
+    }
 
-    public void RemoveCitySeatRequested(string cityName, string party, int count)
-        => OnRemoveCitySeatRequested?.Invoke(cityName, PartyRegistry.GetPartyByName(party), count);
-    public void CitySeatRemoved(string cityName, string party, int count)
-        => OnCitySeatRemoved?.Invoke(cityName, PartyRegistry.GetPartyByName(party), count);
+    public void RemoveCityRequested(string cityName)
+    {
+        Debug.Log($"RemoveCityRequested: {cityName}");
+        OnRemoveCityRequested?.Invoke(cityName);
+    }
+    public void CityRemoved(string cityName) {
+        Debug.Log($"CityRemoved: {cityName}");
+        OnCityRemoved?.Invoke(cityName);
+    }
+    
+    public void AddCitySeatRequested(string cityName, string partyName, int count)
+    {
+        var party = PartyRegistry.GetPartyByName(partyName);
+        if (party == null)
+        {
+            Debug.LogError($"Party '{partyName}' not found.");
+            return;
+        }
+        OnAddCitySeatRequested?.Invoke(cityName, party, count);
+    }
+    public void CitySeatAdded(string cityName, string partyName, int count) {
+        var party  = PartyRegistry.GetPartyByName(partyName);
+        if (party == null)
+        {
+            Debug.LogError($"Party '{partyName}' not found.");
+            return;
+        }
+        OnCitySeatAdded?.Invoke(cityName, party, count);
+    }
 
+    public void RemoveCitySeatRequested(string cityName, string partyName, int count)
+    {
+        var party = PartyRegistry.GetPartyByName(partyName);
+        if (party == null)
+        {
+            Debug.LogError($"Party '{partyName}' not found.");
+            return;
+        }
+        OnRemoveCitySeatRequested?.Invoke(cityName, party, count);
+    }
+
+    public void CitySeatRemoved(string cityName, string partyName, int count)
+    {
+        var party = PartyRegistry.GetPartyByName(partyName);
+        if (party == null)
+        {
+            Debug.LogError($"Party '{partyName}' not found.");
+            return;
+        }
+        OnCitySeatRemoved?.Invoke(cityName, party, count);
+    }
 
     private void RegisterDebugCommands()
     {

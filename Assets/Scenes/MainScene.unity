@@ -128,8 +128,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 117777338}
-  - component: {fileID: 117777337}
   - component: {fileID: 117777339}
+  - component: {fileID: 117777337}
   m_Layer: 0
   m_Name: SystemHelpers
   m_TagString: Untagged

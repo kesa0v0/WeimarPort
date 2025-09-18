@@ -17,8 +17,10 @@ public class GameManager : MonoBehaviour
         // 간단한 싱글톤 설정
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
 
-        // 게임이 시작될 때 이벤트 구독 설정
+    private void Start()
+    {
         AddEventSubscriptions();
     }
 
@@ -66,23 +68,13 @@ public class GameManager : MonoBehaviour
     // 이벤트 구독 설정
     void AddEventSubscriptions()
     {
-        EventBus.Instance.OnAddCityRequested += HandleCityAdded;
-        EventBus.Instance.OnRemoveCityRequested += HandleCityRemoved;
+        EventBus.Instance.OnAddCityRequested += CreateCity;
+        EventBus.Instance.OnRemoveCityRequested += RemoveCity;
     }
 
     void RemoveEventSubscriptions()
     {
-        EventBus.Instance.OnAddCityRequested -= HandleCityAdded;
-        EventBus.Instance.OnRemoveCityRequested -= HandleCityRemoved;
-    }
-
-    // 이벤트 핸들러
-    private void HandleCityAdded(string name, Vector2 pos, int seats)
-    {
-        CreateCity(name, pos, seats);
-    }
-    private void HandleCityRemoved(string name)
-    {
-        RemoveCity(name);
+        EventBus.Instance.OnAddCityRequested -= CreateCity;
+        EventBus.Instance.OnRemoveCityRequested -= RemoveCity;
     }
 }
