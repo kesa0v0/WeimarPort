@@ -8,22 +8,30 @@ public static class PartyRegistry
     public static readonly KPD KPD = KPD.Instance;
     public static readonly DNVP DNVP = DNVP.Instance;
 
-    public static readonly List<Party> AllMainParties = new() { SPD, Zentrum, KPD, DNVP };
-    public static readonly List<Party> AllSubParties = new() { USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
+    public static readonly List<Party> GetAllParties = new() { KPD, SPD, Zentrum, DNVP, USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
+    public static readonly List<Party> GetAllMainParties = new() { KPD, SPD, Zentrum, DNVP };
+    public static readonly List<Party> GetAllSubParties = new() { USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
 
     public static Party GetPartyByName(string name)
     {
-        foreach (var party in AllMainParties)
+        switch (name)
         {
-            if (party.partyName == name) return party;
+            case "SPD": return SPD;
+            case "Zentrum": return Zentrum;
+            case "Z": return Zentrum;
+            case "KPD": return KPD;
+            case "DNVP": return DNVP;
+            case "USPD": return USPD.Instance;
+            case "DDP": return DDP.Instance;
+            case "DVP": return DVP.Instance;
+            case "NSDAP": return NSDAP.Instance;
+            default:
+                Debug.LogWarning($"Party '{name}' not found. Returning null.");
+                return null;
         }
-        foreach (var party in AllSubParties)
-        {
-            if (party.partyName == name) return party;
-        }
-        Debug.LogWarning($"Party '{name}' not found.");
-        return null;
     }
+
+    
 }
 
 public class Party
@@ -68,7 +76,7 @@ public class Zentrum : MainParty
 public class KPD : MainParty
 {
     public static readonly KPD Instance = new();
-    public KPD() : base("KPD", Color.pink) { }
+    public KPD() : base("KPD", Color.hotPink) { }
 }
 
 public class DNVP : MainParty

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CityPresenter
@@ -20,7 +21,7 @@ public class CityPresenter
     {
         view.SetCityName(model.cityName);
         view.SetPosition(model.position);
-        view.SetSeatCount(model.seatCount);
+        view.SetSeatsByCount(model.seatCount);
         view.UpdateSeatOccupancy(model.seats);
     }
 
@@ -29,33 +30,40 @@ public class CityPresenter
         int available = model.seatCount - model.currentSeats;
         int toAdd = Mathf.Min(count, available);
 
-        // 1. 먼저 가능한 만큼 추가
+        // 1. 가능한 만큼 먼저 추가
         for (int i = 0; i < toAdd; i++)
             model.AddSeat(party);
 
-        // 2. 남은 만큼은 다른 당에서 제거 후 추가
         int remaining = count - toAdd;
-        for (int i = 0; i < remaining; i++)
+        if (remaining > 0)
         {
-            // 다른 당에서 하나 제거 (예시: 첫 번째로 seats가 있는 당)
-            Party toRemove = null;
+            // 2. 플레이어에게 어떤 당에서 뺄지 선택 요청
+            var removableParties = new List<Party>();
             foreach (var kv in model.seats)
             {
                 if (kv.Key != party && kv.Value > 0)
-                {
-                    toRemove = kv.Key;
-                    break;
-                }
+                    removableParties.Add(kv.Key);
             }
-            if (toRemove != null)
+
+            if (removableParties.Count > 0)
             {
-                model.RemoveSeat(toRemove);
-                model.AddSeat(party);
+                // 선택 UI를 띄우고, 선택 결과를 콜백으로 받음
+                view.RequestSeatRemovalChoice(removableParties, remaining, (chosenParties) =>
+                {
+                    // chosenParties: 플레이어가 선택한 당 리스트 (길이 == remaining)
+                    foreach (var toRemove in chosenParties)
+                    {
+                        model.RemoveSeat(toRemove);
+                        model.AddSeat(party);
+                    }
+                    view.UpdateSeatOccupancy(model.seats);
+                });
+                return; // 콜백에서 UpdateSeatOccupancy 호출
             }
             else
             {
-                // 더 이상 뺄 수 있는 좌석이 없음
-                break;
+                // 뺄 수 있는 의석이 없음
+                Debug.LogWarning("No seats available to remove from other parties.");
             }
         }
 

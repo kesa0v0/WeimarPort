@@ -16,7 +16,12 @@ public class CityView : MonoBehaviour, ICityView
         presenter = new CityPresenter(model, this);
         AddEventSubscriptions();
     }
-    
+
+    private void OnDestroy()
+    {
+        RemoveEventSubscriptions();
+    }
+
     private void AddEventSubscriptions()
     {
         // 이 오브젝트가 활성화될 때 Presenter의 핸들러를 이벤트 버스에 구독
@@ -48,7 +53,7 @@ public class CityView : MonoBehaviour, ICityView
         transform.position = position;
     }
 
-    public void SetSeatCount(int seatCount)
+    public void SetSeatsByCount(int seatCount)
     {
         // If exists, destroy old seats
         foreach (SeatView child in seats)
@@ -61,21 +66,17 @@ public class CityView : MonoBehaviour, ICityView
         for (int i = 0; i < seatCount; i++)
         {
             SeatView seat = Instantiate(seatGameObject, transform).GetComponent<SeatView>();
-            // 자리 중간 기준으로 배치 (가로 0.5 간격)
             seat.transform.localPosition = new Vector2((i - (seatCount - 1) / 2.0f) * 0.5f, -1);
             seats.Add(seat);
         }
     }
 
-
     public void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy)
     {
         int seatIndex = 0;
-        foreach (var entry in occupiedBy)
+        foreach (var party in PartyRegistry.GetAllMainParties)
         {
-            Party party = entry.Key;
-            int count = entry.Value;
-
+            int count = occupiedBy.TryGetValue(party, out int c) ? c : 0;
             for (int i = 0; i < count; i++)
             {
                 if (seatIndex < seats.Count)
@@ -85,7 +86,7 @@ public class CityView : MonoBehaviour, ICityView
                 }
                 else
                 {
-                    Debug.LogWarning("Not enough seats to display all parties.");
+                    Debug.LogError("Not enough seats to display all parties.");
                     return;
                 }
             }
@@ -97,13 +98,23 @@ public class CityView : MonoBehaviour, ICityView
             seats[i].SetColor(Color.gray); // Default color for unoccupied seats
         }
     }
+    
+    public void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen)
+    {
+        List<Party> chosenParties = new List<Party>();
+        for (int i = 0; i < Math.Min(count, removableParties.Count); i++)
+        {
+            chosenParties.Add(removableParties[i]);
+        }
+        onChosen?.Invoke(chosenParties);
+    }
 }
 
 public interface ICityView
 {
     void SetCityName(string cityName);
     void SetPosition(Vector2 position);
-    void SetSeatCount(int seatCount);
-
+    void SetSeatsByCount(int seatCount);
     void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy);
+    void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen);
 }
