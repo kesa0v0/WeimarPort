@@ -50,7 +50,7 @@ public class CityView : MonoBehaviour, ICityView
 
     public void SetPosition(Vector2 position)
     {
-        transform.position = position;
+        transform.position = new Vector3(position.x, 0, position.y);
     }
 
     public void SetSeatsByCount(int seatCount)
