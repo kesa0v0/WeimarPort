@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+[Serializable]
 public class CityView : MonoBehaviour, ICityView
 {
     [SerializeField] private TextMeshProUGUI cityName;
@@ -74,7 +75,7 @@ public class CityView : MonoBehaviour, ICityView
     public void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy)
     {
         int seatIndex = 0;
-        foreach (var party in PartyRegistry.GetAllMainParties)
+        foreach (var party in PartyRegistry.AllMainParties)
         {
             int count = occupiedBy.TryGetValue(party, out int c) ? c : 0;
             for (int i = 0; i < count; i++)
@@ -98,7 +99,7 @@ public class CityView : MonoBehaviour, ICityView
             seats[i].SetColor(Color.gray); // Default color for unoccupied seats
         }
     }
-    
+
     public void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen)
     {
         List<Party> chosenParties = new List<Party>();

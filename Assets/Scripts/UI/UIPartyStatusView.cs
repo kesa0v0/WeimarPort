@@ -10,12 +10,13 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
     [SerializeField] private TextMeshProUGUI partyStatusText;
     [SerializeField] private TextMeshProUGUI partyAgendaText;
     [SerializeField] private TextMeshProUGUI partySubPartiesText;
-    [SerializeField] private ScrollRect partyPreservedUnitsScrollView;
-    [SerializeField] private Transform partyPreservedUnitsContent;
-    [SerializeField] private GameObject preservedUnitItemPrefab;
+    [SerializeField] private ScrollRect partyInSupplyUnitsScrollView;
+    [SerializeField] private Transform partyInSupplyUnitsContent;
+    [SerializeField] private GameObject inSupplyUnitItemPrefab;
 
     
     public System.Action OnClicked;
+
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -25,11 +26,13 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
     public void SetPartyName(string name)
     {
         partyNameText.text = name;
+        partyNameText.color = PartyRegistry.GetPartyByName(name).partyColor;
     }
 
     public void SetPartyAgenda(string agenda)
     {
         partyAgendaText.text = agenda;
+        partyAgendaText.color = PartyRegistry.GetPartyByName(partyNameText.text).partyColor;
     }
 
     public void SetPartySubParties(string subParties)
@@ -42,10 +45,10 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
         partyStatusText.text = status;
     }
 
-    public void SetPreservedUnits(Dictionary<string, int> units)
+    public void SetInSupplyUnits(Dictionary<string, int> units)
     {
         // Clear existing items
-        foreach (Transform child in partyPreservedUnitsContent)
+        foreach (Transform child in partyInSupplyUnitsContent)
         {
             Destroy(child.gameObject);
         }
@@ -53,9 +56,9 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
         // Populate with new items
         foreach (var unit in units)
         {
-            var item = Instantiate(preservedUnitItemPrefab, partyPreservedUnitsContent);
+            var item = Instantiate(inSupplyUnitItemPrefab, partyInSupplyUnitsContent);
             var unitImage = item.transform.Find("ArmyImage").GetComponent<Image>();
-            var unitInfoText = item.transform.Find("PreservedArmyInfoText").GetComponent<TextMeshProUGUI>();
+            var unitInfoText = item.transform.Find("InSupplyArmyInfoText").GetComponent<TextMeshProUGUI>();
 
             unitInfoText.text = $"{unit.Key}: {unit.Value}";
         }
@@ -68,5 +71,5 @@ public interface IUIOtherPartyStatusView
     void SetPartyName(string name);
     void SetPartyStatus(string status);
     void SetPartyAgenda(string agenda);
-    void SetPreservedUnits(System.Collections.Generic.Dictionary<string, int> units);
+    void SetInSupplyUnits(Dictionary<string, int> units);
 }

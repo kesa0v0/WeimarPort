@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIPartyStatusManager : MonoBehaviour
@@ -30,18 +31,35 @@ public class UIPartyStatusManager : MonoBehaviour
             var capturedParty = party;
             view.OnClicked = () => OnPartyStatusClicked(capturedParty);
         }
+
+        UpdatePartyOrderUI(GameManager.Instance.GetCurrentRoundPartyOrder());
     }
 
-    public void UpdatePartyStatusView(Party party)
+    public void UpdatePartyStatusView(MainParty party)
     {
-        if (partyViews.TryGetValue(party, out var view) && partyModels.TryGetValue(party, out var model))
+        if (partyViews.TryGetValue(party, out var view))
         {
-            view.SetPartyName(model.partyName);
-            if (model is MainParty mainModel)
+            view.SetPartyName(party.partyName);
+            view.SetPartyStatus($"Opposition");
+            view.SetPartyAgenda(party.currentPartyAgenda);
+
+            // 보유한 하위 정당 목록 표시
+            var subPartyNames = party.heldSubParties.Count > 0 ? string.Join(", ", party.heldSubParties.ConvertAll(sp => sp.partyName)) : "None";
+            view.SetPartySubParties(subPartyNames);
+
+            // 보유 군대 표시
+            view.SetInSupplyUnits(party.preservedPartyUnits);
+        }
+    }
+
+    public void UpdatePartyOrderUI(List<MainParty> newOrder)
+    {
+        for (int i = 0; i < newOrder.Count; i++)
+        {
+            Debug.Log($"Updating UI order: {newOrder[i].partyName} to index {i}");
+            if (partyViews.TryGetValue(newOrder[i], out var view))
             {
-                view.SetPartyStatus(mainModel.partyGovernmentStatus);
-                view.SetPartyAgenda(mainModel.currentPartyAgenda);
-                view.SetPreservedUnits(mainModel.preservedPartyUnits);
+                view.transform.SetSiblingIndex(i);
             }
         }
     }

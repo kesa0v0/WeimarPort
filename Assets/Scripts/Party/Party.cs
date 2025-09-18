@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,9 +9,9 @@ public static class PartyRegistry
     public static readonly KPD KPD = KPD.Instance;
     public static readonly DNVP DNVP = DNVP.Instance;
 
-    public static readonly List<Party> GetAllParties = new() { KPD, SPD, Zentrum, DNVP, USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
-    public static readonly List<Party> GetAllMainParties = new() { KPD, SPD, Zentrum, DNVP };
-    public static readonly List<Party> GetAllSubParties = new() { USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
+    public static readonly List<Party> AllParties = new() { KPD, SPD, Zentrum, DNVP, USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
+    public static readonly List<MainParty> AllMainParties = new() { KPD, SPD, Zentrum, DNVP };
+    public static readonly List<SubParty> AllSubParties = new() { USPD.Instance, DDP.Instance, DVP.Instance, NSDAP.Instance };
 
     public static Party GetPartyByName(string name)
     {
@@ -34,6 +35,7 @@ public static class PartyRegistry
     
 }
 
+[Serializable]
 public class Party
 {
     public string partyName;
@@ -46,6 +48,7 @@ public class Party
     }
 }
 
+[Serializable]
 public class MainParty : Party
 {
     // Playable faction
@@ -58,6 +61,7 @@ public class MainParty : Party
     public MainParty(string name, Color color) : base(name, color) { }
 }
 
+[Serializable]
 public class SubParty : Party
 {
     // Non-playable faction

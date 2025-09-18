@@ -10,8 +10,10 @@ public class GameManager : MonoBehaviour
     public GameObject cityPrefab; // 도시에 사용할 프리팹을 Inspector에서 직접 할당
     public Transform cityParent;  // 도시들이 생성될 부모 Transform
 
-    // 생성된 모든 도시를 관리하는 딕셔너리
-    private readonly Dictionary<string, CityView> cities = new();
+    [Header("Game State")]
+    public MainParty firstPlayerParty;
+    public List<MainParty> partyTurnOrder = new();
+    private Dictionary<string, CityView> cities = new();
 
     private void Awake()
     {
@@ -22,10 +24,16 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        UIPartyStatusManager.instance.Initialize(PartyRegistry.GetAllMainParties());
+        // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
+        // 그리고 파티 턴 순서도 설정
+        firstPlayerParty = PartyRegistry.AllMainParties[Random.Range(0, PartyRegistry.AllMainParties.Count)];
+        partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
+        ShuffleList(partyTurnOrder);
+
+        UIPartyStatusManager.instance.Initialize(PartyRegistry.AllMainParties);
         AddEventSubscriptions();
 
-        TestScript();
+        // TestScript();
     }
 
     private void OnDestroy()
@@ -88,5 +96,26 @@ public class GameManager : MonoBehaviour
         DebugLogConsole.ExecuteCommand("event.addCity Hamburg 2 2 3");
 
         DebugLogConsole.ExecuteCommand("event.addCitySeat Berlin SPD 2");
+    }
+
+    // Fisher-Yates shuffle for lists
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
+    public List<MainParty> GetCurrentRoundPartyOrder()
+    {
+        var order = new List<MainParty>();
+        int count = partyTurnOrder.Count;
+        for (int i = 0; i < count; i++)
+        {
+            int index = (partyTurnOrder.IndexOf(firstPlayerParty) + i) % count;
+            order.Add(partyTurnOrder[index]);
+        }
+        return order;
     }
 }
