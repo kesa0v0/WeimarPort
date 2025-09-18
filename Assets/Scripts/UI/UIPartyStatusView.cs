@@ -26,6 +26,7 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
     {
         partyStatusText.text = status;
     }
+    
     public void SetPreservedUnits(Dictionary<string, int> units)
     {
         // Clear existing items

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class UIPartyStatusPresenter
 {
-    private UIPartyStatusModel model;
-    private UIPartyStatusView view;
+    public UIPartyStatusModel model;
+    public UIPartyStatusView view;
 
     public UIPartyStatusPresenter(UIPartyStatusModel model, UIPartyStatusView view)
     {
