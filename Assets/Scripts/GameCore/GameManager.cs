@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using IngameDebugConsole;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -22,6 +23,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         AddEventSubscriptions();
+
+        TestScript();
     }
 
     private void OnDestroy()
@@ -38,13 +41,13 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"City '{cityName}' already exists.");
             return;
         }
-        
+
         // GameManager가 직접 CityParameters를 만듭니다.
         // 왜냐하면 cityPrefab 같은 핵심 에셋은 GameManager만 알고 있기 때문입니다.
         var parameters = new CityParameters(cityName, position, seatCount, cityPrefab, cityParent);
 
         var cityPresenter = CityFactory.SpawnCity(parameters);
-        
+
         // 생성된 도시를 딕셔너리에 저장하여 관리합니다.
         cities.Add(cityName, cityPresenter);
         Debug.Log($"City '{cityName}' has been created and registered.");
@@ -76,5 +79,13 @@ public class GameManager : MonoBehaviour
     {
         EventBus.Instance.OnAddCityRequested -= CreateCity;
         EventBus.Instance.OnRemoveCityRequested -= RemoveCity;
+    }
+
+    void TestScript()
+    {
+        DebugLogConsole.ExecuteCommand("event.addCity Berlin 0 0 5");
+        DebugLogConsole.ExecuteCommand("event.addCity Hamburg 2 2 3");
+
+        DebugLogConsole.ExecuteCommand("event.addCitySeat Berlin SPD 2");
     }
 }
