@@ -6,7 +6,7 @@ public class CityFactory
     public static CityView SpawnCity(CityParameters paramenters)
     {
         // CityModel 생성
-        var model = new CityModel(paramenters.cityName, paramenters.position, paramenters.seatCount);
+        var model = new CityModel(paramenters.cityName, paramenters.position, paramenters.seatMaxCount);
 
         // CityView 생성
         var viewObj = Object.Instantiate(paramenters.cityPrefab, paramenters.position, Quaternion.identity, paramenters.parent);

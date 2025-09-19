@@ -11,6 +11,10 @@ public class UIPartyStatusManager : MonoBehaviour
     private Dictionary<Party, UIPartyStatusView> partyViews = new();
     private Dictionary<Party, MainParty> partyModels = new();
 
+    // 현재 진행 중인 선택 세션을 안정적으로 관리하기 위한 상태
+    private Dictionary<Party, System.Action> _activeOriginalOnClicked = new();
+    private bool _selectionActive = false;
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -62,39 +66,62 @@ public class UIPartyStatusManager : MonoBehaviour
 
     public void RequestPartySelection(List<Party> candidates, int count, System.Action<List<Party>> onChosen)
     {
+        // 이전에 진행 중이던 선택 세션이 있으면 안전하게 정리
+        CancelActiveSelection();
+
         // candidates 전체 하이라이트
         foreach (var kvp in partyViews)
         {
             kvp.Value.SetHighlight(candidates.Contains(kvp.Key));
         }
 
-        Dictionary<Party, System.Action> originalOnClicked = new();
+        _activeOriginalOnClicked.Clear();
+        _selectionActive = true;
         bool selected = false;
 
         foreach (var party in candidates)
         {
             if (partyViews.TryGetValue(party, out var view))
             {
-                originalOnClicked[party] = view.OnClicked;
+                _activeOriginalOnClicked[party] = view.OnClicked;
                 view.OnClicked = () =>
                 {
                     if (selected) return;
                     selected = true;
-                    // 모든 하이라이트 해제
-                    foreach (var kv in partyViews)
-                    {
-                        kv.Value.SetHighlight(false);
-                    }
+
+                    // 모든 하이라이트 해제 및 이벤트 복구를 먼저 수행(새 세션 하이라이트가 바로 적용되도록)
+                    CancelActiveSelection();
+
                     // 콜백 호출 (한 파티만 리스트로)
                     onChosen?.Invoke(new List<Party> { party });
-                    // 이벤트 원상복구
-                    foreach (var p in candidates)
-                    {
-                        if (partyViews.TryGetValue(p, out var v) && originalOnClicked.ContainsKey(p))
-                            v.OnClicked = originalOnClicked[p];
-                    }
                 };
             }
         }
+    }
+
+    // 현재 선택 세션을 종료하며, 하이라이트/클릭 이벤트를 원복
+    private void CancelActiveSelection()
+    {
+        if (!_selectionActive)
+        {
+            // 그래도 하이라이트는 항상 초기화 보장
+            foreach (var kv in partyViews)
+                kv.Value.SetHighlight(false);
+            return;
+        }
+
+        // 하이라이트 초기화
+        foreach (var kv in partyViews)
+            kv.Value.SetHighlight(false);
+
+        // 이벤트 원상복구
+        foreach (var kv in _activeOriginalOnClicked)
+        {
+            if (partyViews.TryGetValue(kv.Key, out var v))
+                v.OnClicked = kv.Value;
+        }
+
+        _activeOriginalOnClicked.Clear();
+        _selectionActive = false;
     }
 }
