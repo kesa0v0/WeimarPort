@@ -13,8 +13,9 @@ public class CityFactory
         viewObj.transform.localRotation = Quaternion.identity; // 로컬 회전값 초기화
         var view = viewObj.GetComponent<CityView>();
 
-        view.Initialize(model);
-
+        // 생성된 도시를 딕셔너리에 저장하여 관리합니다.
+        CityManager.Instance.RegisterCity(model.cityName, model, view);
+    
         return view;
     }
 }

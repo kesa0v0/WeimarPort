@@ -11,16 +11,6 @@ public class CityView : MonoBehaviour, ICityView
     [SerializeField] private GameObject seatGameObject;
     private readonly List<SeatView> seats = new();
 
-    public void Initialize(CityModel model)
-    {
-        CityManager.Instance.RegisterCity(model.cityName, model, this);
-    }
-
-    private void OnDestroy()
-    {
-        CityManager.Instance.UnregisterCity(cityName.text);
-    }
-
     public void SetCityName(string cityName)
     {
         this.cityName.text = cityName;

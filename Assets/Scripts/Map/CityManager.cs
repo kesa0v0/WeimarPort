@@ -5,9 +5,14 @@ using UnityEngine;
 public class CityManager : MonoBehaviour
 {
     public static CityManager Instance { get; private set; }
+    
 
+    [Header("Game Assets")]
+    public GameObject cityPrefab; // 도시에 사용할 프리팹을 Inspector에서 직접 할당
+    public Transform cityParent;  // 도시들이 생성될 부모 Transform
+    
+    private Dictionary<string, CityView> cities = new();
     private Dictionary<string, CityPresenter> cityPresenters = new();
-    private Dictionary<string, CityView> cityViews = new();
 
     private void Awake()
     {
@@ -16,17 +21,53 @@ public class CityManager : MonoBehaviour
         RegisterDebugCommands();
     }
 
-    public void RegisterCity(string cityName, CityModel model, CityView view)
+
+    // public API: 도시를 생성하는 유일한 창구
+    public void CreateCity(string cityName, Vector2 position, int seatCount)
     {
+        if (cities.ContainsKey(cityName))
+        {
+            Debug.LogWarning($"City '{cityName}' already exists.");
+            return;
+        }
+
+        var parameters = new CityParameters(cityName, position, seatCount, cityPrefab, cityParent);
+        var cityView = CityFactory.SpawnCity(parameters);
+        var cityModel = new CityModel(cityName, position, seatCount);
+
+        RegisterCity(cityName, cityModel, cityView);
+    }
+
+    public void RemoveCity(string cityName)
+    {
+        if (cities.TryGetValue(cityName, out var cityView))
+        {
+            cities.Remove(cityName);
+            cityPresenters.Remove(cityName);
+
+            Destroy(cityView.gameObject);
+            UnregisterCity(cityName);
+            Debug.Log($"City '{cityName}' has been removed.");
+        }
+        else
+        {
+            Debug.LogWarning($"City '{cityName}' not found.");
+        }
+    }
+
+    internal void RegisterCity(string cityName, CityModel model, CityView view)
+    {
+        // 이미 등록된 경우 덮어쓰지 않음
+        if (cities.ContainsKey(cityName)) return;
         var presenter = new CityPresenter(model, view);
         cityPresenters[cityName] = presenter;
-        cityViews[cityName] = view;
+        cities[cityName] = view;
     }
 
     public void UnregisterCity(string cityName)
     {
         cityPresenters.Remove(cityName);
-        cityViews.Remove(cityName);
+        cities.Remove(cityName);
     }
 
     public void AddSeatToCity(string cityName, string partyName, int count)

@@ -3,16 +3,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public GameState gameState;
     public static GameManager Instance { get; private set; }
 
-    [Header("Game Assets")]
-    public GameObject cityPrefab; // 도시에 사용할 프리팹을 Inspector에서 직접 할당
-    public Transform cityParent;  // 도시들이 생성될 부모 Transform
-
-    [Header("Game State")]
-    public MainParty firstPlayerParty;
-    public List<MainParty> partyTurnOrder = new();
-    private Dictionary<string, CityView> cities = new();
 
     private void Awake()
     {
@@ -23,60 +16,23 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        gameState = new GameState();
+
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         // 그리고 파티 턴 순서도 설정
-        firstPlayerParty = PartyRegistry.AllMainParties[Random.Range(0, PartyRegistry.AllMainParties.Count)];
-        partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
-        ShuffleList(partyTurnOrder);
+        gameState.firstPlayerParty = PartyRegistry.AllMainParties[Random.Range(0, PartyRegistry.AllMainParties.Count)];
+        gameState.partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
+        ShuffleList(gameState.partyTurnOrder);
 
         UIPartyStatusManager.instance.Initialize(PartyRegistry.AllMainParties);
 
         TestScript();
     }
 
-    private void OnDestroy()
-    {
-    }
-
-    // public API: 도시를 생성하는 유일한 창구
-    public void CreateCity(string cityName, Vector2 position, int seatCount)
-    {
-        if (cities.ContainsKey(cityName))
-        {
-            Debug.LogWarning($"City '{cityName}' already exists.");
-            return;
-        }
-
-        // GameManager가 직접 CityParameters를 만듭니다.
-        // 왜냐하면 cityPrefab 같은 핵심 에셋은 GameManager만 알고 있기 때문입니다.
-        var parameters = new CityParameters(cityName, position, seatCount, cityPrefab, cityParent);
-
-        var cityPresenter = CityFactory.SpawnCity(parameters);
-
-        // 생성된 도시를 딕셔너리에 저장하여 관리합니다.
-        cities.Add(cityName, cityPresenter);
-        Debug.Log($"City '{cityName}' has been created and registered.");
-    }
-
-    public void RemoveCity(string cityName)
-    {
-        if (cities.TryGetValue(cityName, out _))
-        {
-            // 실제 게임 오브젝트 파괴 등...
-            // city.Destroy(); 
-            cities.Remove(cityName);
-            Debug.Log($"City '{cityName}' has been removed.");
-        }
-        else
-        {
-            Debug.LogWarning($"City '{cityName}' not found.");
-        }
-    }
-
     void TestScript()
     {
-        CreateCity("Berlin", new Vector2(0, 0), 5);
-        CreateCity("Hamburg", new Vector2(2, 2), 3);
+        CityManager.Instance.CreateCity("Berlin", new Vector2(0, 0), 5);
+        CityManager.Instance.CreateCity("Hamburg", new Vector2(2, 2), 3);
 
         // 의석 추가/제거 테스트
         CityManager.Instance.AddSeatToCity("Berlin", "SPD", 3);
@@ -97,11 +53,11 @@ public class GameManager : MonoBehaviour
     public List<MainParty> GetCurrentRoundPartyOrder()
     {
         var order = new List<MainParty>();
-        int count = partyTurnOrder.Count;
+        int count = gameState.partyTurnOrder.Count;
         for (int i = 0; i < count; i++)
         {
-            int index = (partyTurnOrder.IndexOf(firstPlayerParty) + i) % count;
-            order.Add(partyTurnOrder[index]);
+            int index = (gameState.partyTurnOrder.IndexOf(gameState.firstPlayerParty) + i) % count;
+            order.Add(gameState.partyTurnOrder[index]);
         }
         return order;
     }

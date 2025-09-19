@@ -1,16 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class GameState : MonoBehaviour
+public enum RoundPhase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    Republic,
+    Agenda,
+    Impulse,
+    Politics
+}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+public class GameState
+{
+    public int currentRound = 1;
+    public RoundPhase currentPhase = RoundPhase.Republic;
+    public MainParty firstPlayerParty;
+    public List<MainParty> partyTurnOrder = new();
 }
