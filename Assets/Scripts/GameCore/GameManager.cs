@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using IngameDebugConsole;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -31,15 +30,12 @@ public class GameManager : MonoBehaviour
         ShuffleList(partyTurnOrder);
 
         UIPartyStatusManager.instance.Initialize(PartyRegistry.AllMainParties);
-        AddEventSubscriptions();
 
         TestScript();
     }
 
     private void OnDestroy()
     {
-        // 오브젝트 파괴 시 이벤트 구독 해제 (메모리 누수 방지)
-        RemoveEventSubscriptions();
     }
 
     // public API: 도시를 생성하는 유일한 창구
@@ -77,25 +73,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 이벤트 구독 설정
-    void AddEventSubscriptions()
-    {
-        EventBus.Instance.OnAddCityRequested += CreateCity;
-        EventBus.Instance.OnRemoveCityRequested += RemoveCity;
-    }
-
-    void RemoveEventSubscriptions()
-    {
-        EventBus.Instance.OnAddCityRequested -= CreateCity;
-        EventBus.Instance.OnRemoveCityRequested -= RemoveCity;
-    }
-
     void TestScript()
     {
-        DebugLogConsole.ExecuteCommand("event.addCity Berlin 0 0 5");
-        DebugLogConsole.ExecuteCommand("event.addCity Hamburg 2 2 3");
-
-        DebugLogConsole.ExecuteCommand("event.addCitySeat Berlin SPD 2");
+        CreateCity("Berlin", new Vector2(0, 0), 5);
+        CreateCity("Hamburg", new Vector2(2, 2), 3);
     }
 
     // Fisher-Yates shuffle for lists

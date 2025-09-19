@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -10,39 +11,15 @@ public class CityView : MonoBehaviour, ICityView
     [SerializeField] private GameObject seatGameObject;
     private readonly List<SeatView> seats = new();
 
-    private CityPresenter presenter;
-
     public void Initialize(CityModel model)
     {
-        presenter = new CityPresenter(model, this);
-        AddEventSubscriptions();
+        CityManager.Instance.RegisterCity(model.cityName, model, this);
     }
 
     private void OnDestroy()
     {
-        RemoveEventSubscriptions();
+        CityManager.Instance.UnregisterCity(cityName.text);
     }
-
-    private void AddEventSubscriptions()
-    {
-        // 이 오브젝트가 활성화될 때 Presenter의 핸들러를 이벤트 버스에 구독
-        if (presenter != null)
-        {
-            EventBus.Instance.OnAddCitySeatRequested += presenter.HandleAddCitySeatRequested;
-            EventBus.Instance.OnRemoveCitySeatRequested += presenter.HandleRemoveCitySeatRequested;
-        }
-    }
-
-    private void RemoveEventSubscriptions()
-    {
-        // 이 오브젝트가 비활성화될 때 이벤트 버스에서 구독 해제
-        if (presenter != null)
-        {
-            EventBus.Instance.OnAddCitySeatRequested -= presenter.HandleAddCitySeatRequested;
-            EventBus.Instance.OnRemoveCitySeatRequested -= presenter.HandleRemoveCitySeatRequested;
-        }
-    }
-
 
     public void SetCityName(string cityName)
     {
@@ -105,6 +82,7 @@ public class CityView : MonoBehaviour, ICityView
         UIPartyStatusManager.instance.RequestPartySelection(removableParties, count, onChosen);
     }
 }
+
 
 public interface ICityView
 {

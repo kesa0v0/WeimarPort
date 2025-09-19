@@ -14,8 +14,6 @@ public class EventBus : MonoBehaviour
             Instance = this;
 
             DontDestroyOnLoad(gameObject);
-
-            RegisterDebugCommands();
         }
         else
         {
@@ -54,95 +52,36 @@ public class EventBus : MonoBehaviour
     #endregion
 
 
+
     #region StreetEvents
 
-    public event Action<string, Vector2, int> OnAddCityRequested;
+    // 상태 변화 알림만 남김
     public event Action<string, Vector2, int> OnCityAdded;
-
-    public event Action<string> OnRemoveCityRequested;
     public event Action<string> OnCityRemoved;
-
-    public event Action<string, Party, int> OnAddCitySeatRequested;
     public event Action<string, Party, int> OnCitySeatAdded;
-
-    public event Action<string, Party, int> OnRemoveCitySeatRequested;
     public event Action<string, Party, int> OnCitySeatRemoved;
 
-    public void AddCityRequested(string cityName, float x, float y, int seatCount)
-    {
-        Debug.Log($"AddCityRequested: {cityName} at ({x}, {y}) with {seatCount} seats.");
-        OnAddCityRequested?.Invoke(cityName, new Vector2(x, y), seatCount);
-    }
     public void CityAdded(string cityName, float x, float y, int seatCount)
     {
         Debug.Log($"CityAdded: {cityName} at ({x}, {y}) with {seatCount} seats.");
         OnCityAdded?.Invoke(cityName, new Vector2(x, y), seatCount);
     }
 
-    public void RemoveCityRequested(string cityName)
-    {
-        Debug.Log($"RemoveCityRequested: {cityName}");
-        OnRemoveCityRequested?.Invoke(cityName);
-    }
     public void CityRemoved(string cityName) {
         Debug.Log($"CityRemoved: {cityName}");
         OnCityRemoved?.Invoke(cityName);
     }
-    
-    public void AddCitySeatRequested(string cityName, string partyName, int count)
-    {
-        var party = PartyRegistry.GetPartyByName(partyName);
-        if (party == null)
-        {
-            Debug.LogError($"Party '{partyName}' not found.");
-            return;
-        }
-        OnAddCitySeatRequested?.Invoke(cityName, party, count);
-    }
-    public void CitySeatAdded(string cityName, string partyName, int count) {
-        var party  = PartyRegistry.GetPartyByName(partyName);
-        if (party == null)
-        {
-            Debug.LogError($"Party '{partyName}' not found.");
-            return;
-        }
+
+    public void CitySeatAdded(string cityName, Party party, int count) {
+        Debug.Log($"CitySeatAdded: {cityName}, {party.partyName}, {count}");
         OnCitySeatAdded?.Invoke(cityName, party, count);
     }
 
-    public void RemoveCitySeatRequested(string cityName, string partyName, int count)
+    public void CitySeatRemoved(string cityName, Party party, int count)
     {
-        var party = PartyRegistry.GetPartyByName(partyName);
-        if (party == null)
-        {
-            Debug.LogError($"Party '{partyName}' not found.");
-            return;
-        }
-        OnRemoveCitySeatRequested?.Invoke(cityName, party, count);
-    }
-    public void CitySeatRemoved(string cityName, string partyName, int count)
-    {
-        var party = PartyRegistry.GetPartyByName(partyName);
-        if (party == null)
-        {
-            Debug.LogError($"Party '{partyName}' not found.");
-            return;
-        }
+        Debug.Log($"CitySeatRemoved: {cityName}, {party.partyName}, {count}");
         OnCitySeatRemoved?.Invoke(cityName, party, count);
     }
 
     #endregion
-
-
-    private void RegisterDebugCommands()
-    {
-        // AddCommandInstance( string command, string description, string methodName, object instance )
-        DebugLogConsole.AddCommandInstance("event.addCity", "Add City. Usage: event.addCity [Name] [X] [Y] [Seats]", "AddCityRequested", this);
-        DebugLogConsole.AddCommandInstance("event.removeCity", "Remove City. Usage: event.removeCity [Name]", "RemoveCityRequested", this);
-        DebugLogConsole.AddCommandInstance("event.addCitySeat", "Add City Seat. Usage: event.addCitySeat [CityName] [Count]", "AddCitySeatRequested", this);
-        DebugLogConsole.AddCommandInstance("event.removeCitySeat", "Remove City Seat. Usage: event.removeCitySeat [CityName] [Count]", "RemoveCitySeatRequested", this);
-
-
-        DebugLogConsole.AddCommandInstance("debug.newRound", "Start New Round. Usage: debug.newRound [RoundNumber]", "RoundStarted", this);
-        DebugLogConsole.AddCommandInstance("debug.endTurn", "End Turn for Party. Usage: debug.endTurn [PartyName]", "TurnEnded", this);
-    }
 }

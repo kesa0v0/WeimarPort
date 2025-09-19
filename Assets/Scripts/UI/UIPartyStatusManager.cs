@@ -53,7 +53,6 @@ public class UIPartyStatusManager : MonoBehaviour
     {
         for (int i = 0; i < newOrder.Count; i++)
         {
-            Debug.Log($"Updating UI order: {newOrder[i].partyName} to index {i}");
             if (partyViews.TryGetValue(newOrder[i], out var view))
             {
                 view.transform.SetSiblingIndex(i);
