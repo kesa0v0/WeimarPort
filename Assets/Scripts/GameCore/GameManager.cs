@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
         UIPartyStatusManager.instance.Initialize(PartyRegistry.AllMainParties);
         AddEventSubscriptions();
 
-        // TestScript();
+        TestScript();
     }
 
     private void OnDestroy()

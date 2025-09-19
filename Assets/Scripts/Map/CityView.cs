@@ -102,12 +102,7 @@ public class CityView : MonoBehaviour, ICityView
 
     public void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen)
     {
-        List<Party> chosenParties = new List<Party>();
-        for (int i = 0; i < Math.Min(count, removableParties.Count); i++)
-        {
-            chosenParties.Add(removableParties[i]);
-        }
-        onChosen?.Invoke(chosenParties);
+        UIPartyStatusManager.instance.RequestPartySelection(removableParties, count, onChosen);
     }
 }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
+public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointerClickHandler
 {
     [SerializeField] private TextMeshProUGUI partyNameText;
     [SerializeField] private TextMeshProUGUI partyStatusText;
@@ -14,7 +14,7 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
     [SerializeField] private Transform partyInSupplyUnitsContent;
     [SerializeField] private GameObject inSupplyUnitItemPrefab;
 
-    
+
     public System.Action OnClicked;
 
 
@@ -61,6 +61,16 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView
             var unitInfoText = item.transform.Find("InSupplyArmyInfoText").GetComponent<TextMeshProUGUI>();
 
             unitInfoText.text = $"{unit.Key}: {unit.Value}";
+        }
+    }
+    
+    public void SetHighlight(bool highlight)
+    {
+        // Implement highlight logic, e.g., change background color or add border
+        var image = GetComponent<Image>();
+        if (image != null)
+        {
+            image.color = highlight ? Color.yellow : Color.white; // Example: yellow highlight
         }
     }
 }

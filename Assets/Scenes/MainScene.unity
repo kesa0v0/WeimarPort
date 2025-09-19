@@ -151,6 +151,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cityPrefab: {fileID: 6013466665521026029, guid: 64e6dfaaacc77e54c9e954f6efbbd3bc, type: 3}
   cityParent: {fileID: 671373481}
+  firstPlayerParty:
+    partyName: 
+    partyColor: {r: 0, g: 0, b: 0, a: 0}
+    partyGovernmentStatus: 
+    currentPartyAgenda: 
+  partyTurnOrder: []
 --- !u!4 &117777338
 Transform:
   m_ObjectHideFlags: 0

@@ -27,9 +27,6 @@ public class UIPartyStatusManager : MonoBehaviour
             partyModels.Add(party, party);
 
             UpdatePartyStatusView(party);
-
-            var capturedParty = party;
-            view.OnClicked = () => OnPartyStatusClicked(capturedParty);
         }
 
         UpdatePartyOrderUI(GameManager.Instance.GetCurrentRoundPartyOrder());
@@ -64,18 +61,41 @@ public class UIPartyStatusManager : MonoBehaviour
         }
     }
 
-    private void OnPartyStatusClicked(Party party)
+    public void RequestPartySelection(List<Party> candidates, int count, System.Action<List<Party>> onChosen)
     {
-        // 파티 상태창 클릭 시 처리 (예: 선택, 상세 정보, 등)
-        Debug.Log($"{party.partyName} 상태창 클릭됨");
-    }
-
-    // 필요시 위치 이동 등도 여기서 제어
-    public void SetPartyStatusPosition(Party party, Vector2 anchoredPos)
-    {
-        if (partyViews.TryGetValue(party, out var view))
+        // candidates 전체 하이라이트
+        foreach (var kvp in partyViews)
         {
-            (view.transform as RectTransform).anchoredPosition = anchoredPos;
+            kvp.Value.SetHighlight(candidates.Contains(kvp.Key));
+        }
+
+        Dictionary<Party, System.Action> originalOnClicked = new();
+        bool selected = false;
+
+        foreach (var party in candidates)
+        {
+            if (partyViews.TryGetValue(party, out var view))
+            {
+                originalOnClicked[party] = view.OnClicked;
+                view.OnClicked = () =>
+                {
+                    if (selected) return;
+                    selected = true;
+                    // 모든 하이라이트 해제
+                    foreach (var kv in partyViews)
+                    {
+                        kv.Value.SetHighlight(false);
+                    }
+                    // 콜백 호출 (한 파티만 리스트로)
+                    onChosen?.Invoke(new List<Party> { party });
+                    // 이벤트 원상복구
+                    foreach (var p in candidates)
+                    {
+                        if (partyViews.TryGetValue(p, out var v) && originalOnClicked.ContainsKey(p))
+                            v.OnClicked = originalOnClicked[p];
+                    }
+                };
+            }
         }
     }
 }
