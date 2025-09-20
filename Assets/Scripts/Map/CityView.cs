@@ -8,7 +8,9 @@ using UnityEngine;
 public class CityView : MonoBehaviour, ICityView
 {
     [SerializeField] private TextMeshProUGUI cityName;
+    [SerializeField] private GameObject cityIndicator;
     [SerializeField] private GameObject seatGameObject;
+    [SerializeField] private Transform seatParent;
     private readonly List<SeatView> seats = new();
 
     public void SetCityName(string cityName)
@@ -33,10 +35,20 @@ public class CityView : MonoBehaviour, ICityView
         // Create new seats
         for (int i = 0; i < seatCount; i++)
         {
-            SeatView seat = Instantiate(seatGameObject, transform).GetComponent<SeatView>();
-            seat.transform.localPosition = new Vector2((i - (seatCount - 1) / 2.0f) * 0.5f, -1);
+            SeatView seat = Instantiate(seatGameObject, seatParent).GetComponent<SeatView>();
+            seat.transform.localPosition = new Vector2((i - (seatCount - 1) / 2.0f) * 0.5f, 0);
             seats.Add(seat);
         }
+
+        // 좌석 개수에 따라 인디케이터 크기 자동 조절 (예: 최소 1, seatCount 1당 0.3씩 증가)
+        float indicatorWidth = 1f + seatCount * 0.3f;
+        SetCityIndicatorSize(indicatorWidth);
+    }
+
+    public void SetCityIndicatorSize(float size)
+    {
+        var currentScale = cityIndicator.transform.localScale;
+        cityIndicator.transform.localScale = new Vector3(size, currentScale.y, currentScale.z);
     }
 
     public void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy)
@@ -69,7 +81,7 @@ public class CityView : MonoBehaviour, ICityView
 
     public void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen)
     {
-        UIPartyStatusManager.instance.RequestPartySelection(removableParties, count, onChosen);
+        UIManager.Instance.partyStatusManager.RequestPartySelection(removableParties, count, onChosen);
     }
 }
 

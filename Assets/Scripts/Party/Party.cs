@@ -52,6 +52,7 @@ public class Party
 public class MainParty : Party
 {
     // Playable faction
+    public int score;
     public string partyGovernmentStatus;
     public string currentPartyAgenda;
     public List<SubParty> heldSubParties { get; set; } = new List<SubParty>();

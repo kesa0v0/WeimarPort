@@ -55,6 +55,21 @@ public class CityManager : MonoBehaviour
         }
     }
 
+    public void CreateCities()
+    {
+        Instance.CreateCity("Rostock", new Vector2(-2, 5), 2);
+        Instance.CreateCity("Konigsberg", new Vector2(3, 5), 2);
+        Instance.CreateCity("Essen", new Vector2(-6, 2), 3);
+        Instance.CreateCity("Hamburg", new Vector2(-2, 2), 4);
+        Instance.CreateCity("Berlin", new Vector2(3, 2), 5);
+        Instance.CreateCity("Koln", new Vector2(-6, -1), 3);
+        Instance.CreateCity("Frankfurt", new Vector2(-3, -1), 3);
+        Instance.CreateCity("Leipzig", new Vector2(1, -1), 3);
+        Instance.CreateCity("Breslau", new Vector2(5, -1), 3);
+        Instance.CreateCity("Stuttgart", new Vector2(-3, -4), 3);
+        Instance.CreateCity("Munchen", new Vector2(1, -4), 3);
+    }
+
     internal void RegisterCity(string cityName, CityModel model, CityView view)
     {
         // 이미 등록된 경우 덮어쓰지 않음

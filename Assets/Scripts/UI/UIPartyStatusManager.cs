@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UIPartyStatusManager : MonoBehaviour
 {
-    public static UIPartyStatusManager instance;
     [SerializeField] private GameObject partyStatusPrefab;
     [SerializeField] private Transform partyStatusParent; // UI에서 배치할 부모 오브젝트
 
@@ -15,11 +14,6 @@ public class UIPartyStatusManager : MonoBehaviour
     private Dictionary<Party, System.Action> _activeOriginalOnClicked = new();
     private bool _selectionActive = false;
 
-    private void Awake()
-    {
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
-    }
 
     public void Initialize(List<MainParty> parties)
     {

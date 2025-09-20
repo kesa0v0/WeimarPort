@@ -24,20 +24,15 @@ public class GameManager : MonoBehaviour
         gameState.partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
         ShuffleList(gameState.partyTurnOrder);
 
-        UIPartyStatusManager.instance.Initialize(PartyRegistry.AllMainParties);
+        UIManager.Instance.partyStatusManager.Initialize(PartyRegistry.AllMainParties);
 
+
+        CityManager.Instance.CreateCities();
         TestScript();
     }
 
     void TestScript()
     {
-        CityManager.Instance.CreateCity("Berlin", new Vector2(0, 0), 5);
-        CityManager.Instance.CreateCity("Hamburg", new Vector2(2, 2), 3);
-
-        // 의석 추가/제거 테스트
-        CityManager.Instance.AddSeatToCity("Berlin", "SPD", 3);
-        CityManager.Instance.AddSeatToCity("Berlin", "KPD", 2);
-        CityManager.Instance.AddSeatToCity("Hamburg", "Zentrum", 2);
 
     }
 
