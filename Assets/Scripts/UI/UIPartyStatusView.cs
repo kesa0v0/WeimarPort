@@ -10,6 +10,7 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
     [SerializeField] private TextMeshProUGUI partyStatusText;
     [SerializeField] private TextMeshProUGUI partyAgendaText;
     [SerializeField] private TextMeshProUGUI partySubPartiesText;
+    [SerializeField] private TextMeshProUGUI partyHeldCardsCountText;
     [SerializeField] private ScrollRect partyInSupplyUnitsScrollView;
     [SerializeField] private Transform partyInSupplyUnitsContent;
     [SerializeField] private GameObject inSupplyUnitItemPrefab;
@@ -43,6 +44,11 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
     public void SetPartyStatus(string status)
     {
         partyStatusText.text = status;
+    }
+
+    public void SetPartyHeldCardsCount(int timelineCards, int policyCards)
+    {
+        partyHeldCardsCountText.text = $"T {timelineCards} : {policyCards} P";
     }
 
     public void SetInSupplyUnits(Dictionary<string, int> units)

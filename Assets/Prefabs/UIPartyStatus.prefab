@@ -445,7 +445,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 50}
+  m_SizeDelta: {x: 100, y: 70}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &5572967829775772449
 CanvasRenderer:
@@ -875,6 +875,7 @@ MonoBehaviour:
   partyStatusText: {fileID: 5320445738046136542}
   partyAgendaText: {fileID: 3592192610502928676}
   partySubPartiesText: {fileID: 8746056097824609607}
+  partyHeldCardsCountText: {fileID: 0}
   partyInSupplyUnitsScrollView: {fileID: 4264545867931352696}
   partyInSupplyUnitsContent: {fileID: 6927930046328070845}
   inSupplyUnitItemPrefab: {fileID: 1103965201852120305, guid: 92ddb2ee5efcff64196fb21b31740727, type: 3}
