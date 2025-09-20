@@ -111,6 +111,18 @@ public class CityManager : MonoBehaviour
         cities.Remove(cityName);
     }
 
+    public CityPresenter GetCity(string cityName)
+    {
+        if (cityPresenters.TryGetValue(cityName, out var presenter))
+        {
+            return presenter;
+        }
+        Debug.LogWarning($"City '{cityName}' not found.");
+        return null;
+    }
+
+    #region Seat Management
+
     public void AddSeatToCity(string cityName, string partyName, int count)
     {
         if (!cityPresenters.TryGetValue(cityName, out var presenter))
@@ -142,6 +154,8 @@ public class CityManager : MonoBehaviour
         }
         presenter.RemoveSeatFromParty(party, count);
     }
+
+    #endregion
 
     private void RegisterDebugCommands()
     {

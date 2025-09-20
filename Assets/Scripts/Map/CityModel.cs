@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,8 +8,8 @@ public class CityModel
 {
     public string cityName;
     public Vector2 position;
-    public int seatMaxCount;
 
+    public int seatMaxCount;
     public int currentSeats => seats.Values.Sum();
     public Dictionary<Party, int> seats = new()
     {
@@ -17,6 +18,8 @@ public class CityModel
         { PartyRegistry.Zentrum, 0 },
         { PartyRegistry.DNVP, 0 },
     };
+
+    public List<UnitModel> UnitContained { get; private set; } = new List<UnitModel>();
 
     public CityModel(string name, Vector2 pos, int seatMaxCount)
     {
@@ -58,6 +61,16 @@ public class CityModel
     }
 
     #endregion
+
+    internal void AddUnit(UnitModel model)
+    {
+        UnitContained.Add(model);
+    }
+
+    internal void RemoveUnit(UnitModel model)
+    {
+        UnitContained.Remove(model);
+    }
 
 }
 

@@ -22,7 +22,7 @@ public class UnitView : MonoBehaviour, IPointerClickHandler
         this.presenter = presenter;
 
         // Presenter로부터 Model 데이터를 받아와서 초기 비주얼 설정
-        SetVisuals(presenter.Model.unitType, presenter.Model.ownerParty.partyColor);
+        SetVisuals(presenter.Model.Data.unitName, presenter.Model.ownerParty.partyColor);
         
         // 초기 선택 상태는 꺼둠
         ShowAsSelected(false);
@@ -66,7 +66,7 @@ public class UnitView : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         // View는 스스로 판단하지 않고, 클릭되었다는 사실을 Presenter에게 '보고'만 합니다.
-        Debug.Log($"View of unit '{presenter.Model.unitType}' was clicked.");
+        Debug.Log($"View of unit '{presenter.Model.Data.unitName}' was clicked.");
         presenter?.OnViewClicked();
     }
 }

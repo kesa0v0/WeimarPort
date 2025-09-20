@@ -6,21 +6,28 @@ public enum UnitLocation
     InPool         // 사용 가능한 유닛 풀 (아직 아무도 소유하지 않음)
 }
 
+public enum SpawnPosition
+{
+    OnBoard,
+    InReserved,
+    InPool
+}
+
 public class UnitModel
 {
-    public readonly int uniqueId;       // 모든 유닛을 구분할 고유 ID
-    public readonly string unitType;   // 유닛 종류 (예: "Freikorps", "Reichswehr")
+    public UnitData Data { get; private set; }
+
+    public readonly string uniqueId;       // 모든 유닛을 구분할 고유 ID
     public Party ownerParty;
-    
     public UnitLocation currentLocation; // 현재 유닛의 위치
     public string locationId;            // 위치에 대한 구체적인 정보 (도시 이름 또는 플레이어 ID)
 
     private static int nextId = 0;
 
-    public UnitModel(string type)
+    public UnitModel(UnitData data)
     {
-        uniqueId = nextId++;
-        unitType = type;
-        currentLocation = UnitLocation.InPool; // 기본값은 풀
+        Data = data; // 원본 데이터 참조 연결
+        uniqueId = $"{data.unitName}_{nextId++}";
+        currentLocation = UnitLocation.InPool;
     }
 }

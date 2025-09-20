@@ -1,11 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 
-public class CityPresenter
+public class CityPresenter : IUnitContainer
 {
-    private CityModel model;
-    public CityModel Model => model;
+    public CityModel model { get; }
     private ICityView view;
 
     public CityPresenter(CityModel model, ICityView view)
@@ -22,6 +22,8 @@ public class CityPresenter
         view.SetSeatsByCount(model.seatMaxCount);
         view.UpdateSeatOccupancy(model.seats);
     }
+
+    #region Seat Management
 
     public void AddSeatToParty(Party party, int count = 1)
     {
@@ -83,4 +85,36 @@ public class CityPresenter
             ProcessAddSeatSequentially(targetParty, remaining - 1);
         });
     }
+
+    #endregion
+
+    #region Unit Management
+
+    public IReadOnlyList<UnitPresenter> ContainedUnits
+    {
+        get
+        {
+            // Model에 있는 UnitModel 목록을 UnitPresenter 목록으로 변환해서 반환합니다.
+            // 이를 위해서는 UnitManager의 도움이 필요합니다.
+            return model.UnitContained
+                        .Select(unitModel => UnitManager.Instance.GetPresenterForModel(unitModel))
+                        .ToList()
+                        .AsReadOnly();
+        }
+    }
+    public void AddUnit(UnitPresenter unit)
+    {
+        model.AddUnit(unit.Model);
+
+        Debug.Log($"{unit.Model.Data.unitName} added to {model.cityName}.");
+    }
+
+    public void RemoveUnit(UnitPresenter unit)
+    {
+        model.RemoveUnit(unit.Model);
+
+        Debug.Log($"{unit.Model.Data.unitName} removed from {model.cityName}.");
+    }
+
+    #endregion
 }

@@ -1,0 +1,14 @@
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "New UnitData", menuName = "Weimar/Unit Data")]
+public class UnitData : ScriptableObject
+{
+    [Header("기본 정보")]
+    public string unitName; // "자유군단", "국가방위군" 등
+    public Sprite unitIcon; // UI에 표시될 아이콘
+
+    [Header("게임 능력치")]
+    public SpawnPosition spawnPosition; // 생성 위치
+    public int combatStrength; // 전투력
+    public string spawnMembership;
+}
