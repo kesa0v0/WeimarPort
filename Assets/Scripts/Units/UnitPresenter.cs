@@ -19,7 +19,7 @@ public class UnitPresenter
         // 예: 이 유닛을 선택 상태로 만든다.
         // 예: GameManager에게 이 유닛이 선택되었다고 알린다.
         
-        GameManager.Instance.SelectUnit(this);
+        // GameManager.Instance.SelectUnit(this);
         view.ShowAsSelected(true); // View에게 선택된 것처럼 보이게 하라고 지시
     }
 }

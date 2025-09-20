@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems; // 클릭 이벤트를 위해 필요
-using DG.Tweening;              // 부드러운 이동을 위해 DOTween 사용
+using DG.Tweening; // DOTween 네임스페이스
 
 // IPointerClickHandler: UI 요소에 대한 클릭을 감지하는 인터페이스
 public class UnitView : MonoBehaviour, IPointerClickHandler
