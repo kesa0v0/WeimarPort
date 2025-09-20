@@ -59,14 +59,14 @@ public class CityManager : MonoBehaviour
     {
         Instance.CreateCity("Rostock", new Vector2(-2, 5), 2);
         Instance.CreateCity("Konigsberg", new Vector2(3, 5), 2);
-        Instance.CreateCity("Essen", new Vector2(-6, 2), 3);
+        Instance.CreateCity("Essen", new Vector2(-7, 2), 3);
         Instance.CreateCity("Hamburg", new Vector2(-2, 2), 4);
         Instance.CreateCity("Berlin", new Vector2(3, 2), 5);
-        Instance.CreateCity("Koln", new Vector2(-6, -1), 3);
-        Instance.CreateCity("Frankfurt", new Vector2(-3, -1), 3);
+        Instance.CreateCity("Koln", new Vector2(-7, -1), 3);
+        Instance.CreateCity("Frankfurt", new Vector2(-3, -1), 2);
         Instance.CreateCity("Leipzig", new Vector2(1, -1), 3);
         Instance.CreateCity("Breslau", new Vector2(5, -1), 3);
-        Instance.CreateCity("Stuttgart", new Vector2(-3, -4), 3);
+        Instance.CreateCity("Stuttgart", new Vector2(-3, -4), 2);
         Instance.CreateCity("Munchen", new Vector2(1, -4), 3);
     }
 

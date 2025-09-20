@@ -41,7 +41,7 @@ public class CityView : MonoBehaviour, ICityView
         }
 
         // 좌석 개수에 따라 인디케이터 크기 자동 조절 (예: 최소 1, seatCount 1당 0.3씩 증가)
-        float indicatorWidth = 1f + seatCount * 0.3f;
+        float indicatorWidth = 2f + seatCount * 0.3f;
         SetCityIndicatorSize(indicatorWidth);
     }
 
