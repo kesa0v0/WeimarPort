@@ -1,10 +1,27 @@
 using System.Collections.Generic;
 using IngameDebugConsole;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CityManager : MonoBehaviour
 {
-    public static CityManager Instance { get; private set; }
+    private static CityManager _instance;
+    private bool _initialized = false;
+
+    public static CityManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<CityManager>(FindObjectsInactive.Include);
+                if (_instance != null)
+                    _instance.InitializeIfNeeded();
+            }
+            return _instance;
+        }
+        private set { _instance = value; }
+    }
     
 
     [Header("Game Assets")]
@@ -16,9 +33,20 @@ public class CityManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        InitializeIfNeeded();
+    }
+
+    private void InitializeIfNeeded()
+    {
+        if (_initialized) return;
         RegisterDebugCommands();
+        _initialized = true;
     }
 
 
@@ -32,10 +60,8 @@ public class CityManager : MonoBehaviour
         }
 
         var parameters = new CityParameters(cityName, position, seatCount, cityPrefab, cityParent);
-        var cityView = CityFactory.SpawnCity(parameters);
-        var cityModel = new CityModel(cityName, position, seatCount);
-
-        RegisterCity(cityName, cityModel, cityView);
+        // CityFactory에서 등록까지 처리함
+        CityFactory.SpawnCity(parameters);
     }
 
     public void RemoveCity(string cityName)
