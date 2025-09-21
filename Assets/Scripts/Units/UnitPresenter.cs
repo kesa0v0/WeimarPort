@@ -1,10 +1,10 @@
 public class UnitPresenter
 {
     public UnitModel Model { get; private set; }
-    private UnitView view;
+    private BaseUnitView view;
     private IUnitContainer currentContainerCache;
 
-    public UnitPresenter(UnitModel model, UnitView view)
+    public UnitPresenter(UnitModel model, BaseUnitView view)
     {
         Model = model;
         this.view = view;
@@ -44,6 +44,16 @@ public class UnitPresenter
     
     public void ShowAsSelected(bool isSelected)
     {
-        view.ShowAsSelected(isSelected);
+        view?.ShowAsSelected(isSelected);
+    }
+
+    // 런타임 중 View를 생성/교체할 때 사용
+    public void BindView(BaseUnitView newView)
+    {
+        this.view = newView;
+        if (this.view != null)
+        {
+            this.view.Initialize(this);
+        }
     }
 }

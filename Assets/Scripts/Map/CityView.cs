@@ -15,6 +15,7 @@ public class CityView : MonoBehaviour, ICityView
 
     public void SetCityName(string cityName)
     {
+        this.name = cityName;
         this.cityName.text = cityName;
     }
 
