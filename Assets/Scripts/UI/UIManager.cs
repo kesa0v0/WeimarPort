@@ -4,10 +4,13 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     public UIPartyStatusManager partyStatusManager;
+    public PlayerHandPanel playerHandPanel;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
     }
 }

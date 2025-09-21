@@ -6,38 +6,30 @@ public class UnitManager : MonoBehaviour
 {
     public static UnitManager Instance { get; private set; }
 
-    // 게임에 존재하는 모든 유닛의 '원본 데이터' 목록
-    private Dictionary<string, UnitModel> allUnits = new Dictionary<string, UnitModel>();
+    public Dictionary<string, UnitModel> allUnits = new Dictionary<string, UnitModel>();
+    public Dictionary<string, UnitModel> InBoardUnits = new Dictionary<string, UnitModel>();
 
     // 화면에 생성된 '시각적 표현' 목록
     // Key: UnitModel의 uniqueId, Value: 생성된 UnitView 게임오브젝트
-    private Dictionary<string, UnitView> spawnedUnitViews = new Dictionary<string, UnitView>();
+    public Dictionary<string, UnitView> spawnedUnitViews = new Dictionary<string, UnitView>();
 
-    private void Awake()
+    public void Awake()
     {
         // 간단한 싱글톤 설정
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
+
     // --- Public API ---
 
     // 새로운 유닛 데이터를 생성하고 관제 목록에 추가
-    public UnitModel CreateUnitData(UnitData unitType, int count = 1)
+    public UnitModel CreateUnitData(UnitData unitData)
     {
-        var newUnit = new UnitModel(unitType);
+        var newUnit = new UnitModel(unitData);
+        // 이제 key는 newUnit.uniqueId (string) 입니다.
         allUnits.Add(newUnit.uniqueId, newUnit);
-
-        if (PartyRegistry.GetPartyByName(newUnit.membership) is IUnitOwner party)
-        {
-            party.AddPreservedUnit(unitType.unitName, count);
-        }
-        else
-        {
-            Debug.LogWarning($"No party found with name: {newUnit.membership}");
-        }
-
-        Debug.Log($"Unit data created: {unitType} (ID: {newUnit.uniqueId})");
+        Debug.Log($"Unit data created: {newUnit.Data.name} (ID: {newUnit.uniqueId})");
         return newUnit;
     }
 
@@ -61,9 +53,15 @@ public class UnitManager : MonoBehaviour
 
     public void MoveUnitToHand(UnitPresenter unit, MainParty player)
     {
+        if (unit.Model.position != UnitPosition.InPool)
+        {
+            Debug.LogWarning($"Unit {unit.Model.uniqueId} is not in pool and cannot be moved to hand.");
+            return;
+        }
+
         // 1. 데이터(Model)의 상태 변경
         unit.Model.locationId = player.ToString();
-        unit.Model.postition = UnitPosition.InReserved;
+        unit.Model.position = UnitPosition.InReserved;
 
         // 1.5. Presenter에 cache update
         unit.UpdateLocation(player);
@@ -95,7 +93,7 @@ public class UnitManager : MonoBehaviour
     public void MoveUnitToCity(UnitPresenter unit, CityPresenter city)
     {
         // 1. 데이터(Model)의 상태를 먼저 변경
-        unit.Model.postition = UnitPosition.OnBoard;
+        unit.Model.position = UnitPosition.OnBoard;
         unit.Model.locationId = city.model.cityName;
 
         // 1.5. Presenter에 cache update
@@ -107,18 +105,17 @@ public class UnitManager : MonoBehaviour
         {
             // UnitFactory를 통해 View를 생성하고 spawnedUnitViews에 등록
             var newView = UnitFactory.SpawnUnitView(unit);
-            spawnedUnitViews.Add(unitId, newView);
+            spawnedUnitViews.Add(unit.Model.uniqueId, newView);
         }
 
         // 3. View에게 도시로 이동하라고 지시
-        // CityPresenter city = CityManager.Instance.GetCity(cityName);
-        // spawnedUnitViews[unitId].AttachToCity(city.View.transform);
+        spawnedUnitViews[unit.Model.uniqueId].AttachToCity(city);
 
         // 4. 이벤트 발행: "유닛이 도시로 이동했다!"
         // EventBus.Instance.UnitMovedToCity(unit, cityName);
     }
 
-    private UnitPresenter GetPresenterById(string unitId)
+    public UnitPresenter GetPresenterById(string unitId)
     {
         if (allUnits.TryGetValue(unitId, out UnitModel unit))
         {
@@ -150,7 +147,7 @@ public interface IUnitContainer
     /// <summary>
     /// 이 컨테이너가 현재 담고 있는 유닛들의 목록입니다. (읽기 전용)
     /// </summary>
-    IReadOnlyList<UnitPresenter> ContainedUnits { get; }
+    Dictionary<UnitPresenter, int> ContainedUnits { get; }
 
 
     /// <summary>
@@ -164,15 +161,4 @@ public interface IUnitContainer
     /// </summary>
     /// <param name="unit">제거할 유닛입니다.</param>
     void RemoveUnit(UnitPresenter unit);
-}
-
-public interface IUnitOwner
-{
-    public Dictionary<string, int> preservedPartyUnits { get; }
-    public Dictionary<string, int> inSupplyPartyUnits { get; }
-
-    void AddPreservedUnit(string unitType, int count = 1);
-    void RemovePreservedUnit(string unitType, int count = 1);
-    void AddInSupplyUnit(string unitType, int count = 1);
-    void RemoveInSupplyUnit(string unitType, int count = 1);
 }

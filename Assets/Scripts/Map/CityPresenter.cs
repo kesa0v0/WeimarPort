@@ -6,7 +6,8 @@ using UnityEngine;
 public class CityPresenter : IUnitContainer
 {
     public CityModel model { get; }
-    private ICityView view;
+    public ICityView view;
+
 
     public CityPresenter(CityModel model, ICityView view)
     {
@@ -90,30 +91,28 @@ public class CityPresenter : IUnitContainer
 
     #region Unit Management
 
-    public IReadOnlyList<UnitPresenter> ContainedUnits
-    {
-        get
-        {
-            // Model에 있는 UnitModel 목록을 UnitPresenter 목록으로 변환해서 반환합니다.
-            // 이를 위해서는 UnitManager의 도움이 필요합니다.
-            return model.UnitContained
-                        .Select(unitModel => UnitManager.Instance.GetPresenterForModel(unitModel))
-                        .ToList()
-                        .AsReadOnly();
-        }
-    }
+    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new Dictionary<UnitPresenter, int>();
+
     public void AddUnit(UnitPresenter unit)
     {
-        model.AddUnit(unit.Model);
-
-        Debug.Log($"{unit.Model.Data.unitName} added to {model.cityName}.");
+        if (ContainedUnits.ContainsKey(unit))
+            ContainedUnits[unit]++;
+        else
+            ContainedUnits[unit] = 1;
     }
 
     public void RemoveUnit(UnitPresenter unit)
     {
-        model.RemoveUnit(unit.Model);
-
-        Debug.Log($"{unit.Model.Data.unitName} removed from {model.cityName}.");
+        if (ContainedUnits.ContainsKey(unit))
+        {
+            ContainedUnits[unit]--;
+            if (ContainedUnits[unit] <= 0)
+                ContainedUnits.Remove(unit);
+        }
+        else
+        {
+            Debug.LogWarning($"Attempted to remove unit '{unit.Model.uniqueId}' which is not contained in city '{model.cityName}'.");
+        }
     }
 
     #endregion

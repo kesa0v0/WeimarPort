@@ -9,6 +9,11 @@ public class UnitPresenter
         Model = model;
         this.view = view;
 
+        if (view == null)
+        {
+            return;
+        }
+
         // View에게 자신을 알려주고 초기화하도록 지시
         view.Initialize(this);
     }

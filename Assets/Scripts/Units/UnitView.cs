@@ -23,7 +23,7 @@ public class UnitView : MonoBehaviour, IPointerClickHandler
 
         // Presenter로부터 Model 데이터를 받아와서 초기 비주얼 설정
         SetVisuals(presenter.Model.Data.unitName, PartyRegistry.GetPartyByName(presenter.Model.membership).partyColor);
-        
+
         // 초기 선택 상태는 꺼둠
         ShowAsSelected(false);
     }
@@ -68,5 +68,16 @@ public class UnitView : MonoBehaviour, IPointerClickHandler
         // View는 스스로 판단하지 않고, 클릭되었다는 사실을 Presenter에게 '보고'만 합니다.
         Debug.Log($"View of unit '{presenter.Model.Data.unitName}' was clicked.");
         presenter?.OnViewClicked();
+    }
+    
+
+    public void AttachToCity(CityPresenter city)
+    {
+        Transform cityTransform = city.view.GetCityIndicator().transform;
+
+        // 유닛 뷰의 부모를 도시 트랜스폼으로 설정하여 도시 안에 포함되도록 함
+        transform.SetParent(cityTransform);
+        // 유닛 뷰의 위치를 도시 중심으로 이동
+        transform.localPosition = Vector3.zero;
     }
 }

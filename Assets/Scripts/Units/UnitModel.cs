@@ -1,3 +1,5 @@
+using System;
+
 public enum UnitPosition
 {
     OnBoard,
@@ -5,13 +7,14 @@ public enum UnitPosition
     InPool
 }
 
+[Serializable]
 public class UnitModel
 {
     public UnitData Data { get; private set; }
 
     public readonly string uniqueId;       // 모든 유닛을 구분할 고유 ID
     public string membership;        // 이 유닛을 소유한 플레이어 또는 정부
-    public UnitPosition postition;
+    public UnitPosition position;
     public string locationId;            // 위치에 대한 구체적인 정보 (도시 이름 또는 플레이어 ID)
 
     private static int nextId = 0;
@@ -23,6 +26,6 @@ public class UnitModel
         locationId = data.defaultSpawnPosition.ToString();
 
         membership = data.spawnMembership;
-        postition = data.defaultSpawnPosition;
+        position = data.defaultSpawnPosition;
     }
 }

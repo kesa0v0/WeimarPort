@@ -9,7 +9,7 @@ public class PlayerHandPanel : MonoBehaviour
     /// <summary>
     /// 핸드 모델의 데이터를 기반으로 UI 전체를 다시 그립니다.
     /// </summary>
-    public void Redraw(PlayerHandModel model)
+    public void Redraw(IUnitContainer model)
     {
         // 1. 기존에 있던 아이콘들을 모두 삭제합니다.
         foreach (Transform child in unitContainer)
@@ -18,9 +18,9 @@ public class PlayerHandPanel : MonoBehaviour
         }
 
         // 2. 모델의 데이터를 기반으로 새 아이콘들을 생성합니다.
-        foreach (var entry in model.ReservedUnits)
+        foreach (var entry in model.ContainedUnits)
         {
-            UnitData data = entry.Key;
+            UnitData data = entry.Key.Model.Data;
             int count = entry.Value;
 
             GameObject iconObj = Instantiate(unitIconPrefab, unitContainer);

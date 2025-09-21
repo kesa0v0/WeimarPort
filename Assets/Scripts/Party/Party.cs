@@ -49,60 +49,36 @@ public class Party
 }
 
 [Serializable]
-public class MainParty : Party, IUnitOwner
+public class MainParty : Party, IUnitContainer
 {
     // Playable faction
     public int score;
     public string partyGovernmentStatus;
     public string currentPartyAgenda;
     public List<SubParty> heldSubParties { get; set; } = new List<SubParty>();
-
-    private Dictionary<string, int> _preservedPartyUnits = new();
-    private Dictionary<string, int> _inSupplyPartyUnits = new();
-
-    public Dictionary<string, int> preservedPartyUnits => _preservedPartyUnits;
-    public Dictionary<string, int> inSupplyPartyUnits => _inSupplyPartyUnits;
+    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new (); // In Reserved Units
 
     public MainParty(string name, Color color) : base(name, color) { }
 
-    public void AddPreservedUnit(string unitType, int count = 1)
+    public void AddUnit(UnitPresenter unit)
     {
-        if (!preservedPartyUnits.ContainsKey(unitType))
-        {
-            preservedPartyUnits[unitType] = 0;
-        }
-        preservedPartyUnits[unitType] += count;
+        if (ContainedUnits.ContainsKey(unit))
+            ContainedUnits[unit]++;
+        else
+            ContainedUnits[unit] = 1;
     }
 
-    public void RemovePreservedUnit(string unitType, int count = 1)
+    public void RemoveUnit(UnitPresenter unit)
     {
-        if (preservedPartyUnits.ContainsKey(unitType))
+        if (ContainedUnits.ContainsKey(unit))
         {
-            preservedPartyUnits[unitType] -= count;
-            if (preservedPartyUnits[unitType] <= 0)
-            {
-                preservedPartyUnits.Remove(unitType);
-            }
+            ContainedUnits[unit]--;
+            if (ContainedUnits[unit] <= 0)
+                ContainedUnits.Remove(unit);
         }
-    }
-    public void AddInSupplyUnit(string unitType, int count = 1)
-    {
-        if (!inSupplyPartyUnits.ContainsKey(unitType))
+        else
         {
-            inSupplyPartyUnits[unitType] = 0;
-        }
-        inSupplyPartyUnits[unitType] += count;
-    }
-
-    public void RemoveInSupplyUnit(string unitType, int count = 1)
-    {
-        if (inSupplyPartyUnits.ContainsKey(unitType))
-        {
-            inSupplyPartyUnits[unitType] -= count;
-            if (inSupplyPartyUnits[unitType] <= 0)
-            {
-                inSupplyPartyUnits.Remove(unitType);
-            }
+            Debug.LogWarning($"Attempted to remove unit not in party's contained units.");
         }
     }
 }

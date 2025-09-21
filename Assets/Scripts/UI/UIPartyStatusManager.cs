@@ -43,7 +43,7 @@ public class UIPartyStatusManager : MonoBehaviour
             view.SetPartySubParties(subPartyNames);
 
             // 보유 군대 표시
-            view.SetInSupplyUnits(party.preservedPartyUnits);
+            view.SetInSupplyUnits(party.ContainedUnits);
         }
     }
 
