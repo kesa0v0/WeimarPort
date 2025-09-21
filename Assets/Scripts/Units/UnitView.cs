@@ -22,7 +22,7 @@ public class UnitView : MonoBehaviour, IPointerClickHandler
         this.presenter = presenter;
 
         // Presenter로부터 Model 데이터를 받아와서 초기 비주얼 설정
-        SetVisuals(presenter.Model.Data.unitName, presenter.Model.ownerParty.partyColor);
+        SetVisuals(presenter.Model.Data.unitName, PartyRegistry.GetPartyByName(presenter.Model.membership).partyColor);
         
         // 초기 선택 상태는 꺼둠
         ShowAsSelected(false);

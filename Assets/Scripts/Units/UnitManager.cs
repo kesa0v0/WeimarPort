@@ -23,12 +23,53 @@ public class UnitManager : MonoBehaviour
     // --- Public API ---
 
     // 새로운 유닛 데이터를 생성하고 관제 목록에 추가
-    public UnitModel CreateUnitData(UnitData unitType)
+    public UnitModel CreateUnitData(UnitData unitType, int count = 1)
     {
         var newUnit = new UnitModel(unitType);
         allUnits.Add(newUnit.uniqueId, newUnit);
+
+        if (PartyRegistry.GetPartyByName(newUnit.membership) is IUnitOwner party)
+        {
+            party.AddPreservedUnit(unitType.unitName, count);
+        }
+        else
+        {
+            Debug.LogWarning($"No party found with name: {newUnit.membership}");
+        }
+
         Debug.Log($"Unit data created: {unitType} (ID: {newUnit.uniqueId})");
         return newUnit;
+    }
+
+    // 유닛을 플레이어의 손으로 이동시키는 '명령'
+    public void MoveUnitToHand(string unitId, string playerId)
+    {
+        UnitPresenter presenter = GetPresenterById(unitId);
+        if (presenter == null)
+        {
+            Debug.LogWarning($"No presenter found for Unit ID: {unitId}");
+            return;
+        }
+        MainParty player = PartyRegistry.GetPartyByName(playerId) as MainParty;
+        if (player == null)
+        {
+            Debug.LogWarning($"No main party found with ID: {playerId}");
+            return;
+        }
+        MoveUnitToHand(presenter, player);
+    }
+
+    public void MoveUnitToHand(UnitPresenter unit, MainParty player)
+    {
+        // 1. 데이터(Model)의 상태 변경
+        unit.Model.locationId = player.ToString();
+        unit.Model.postition = UnitPosition.InReserved;
+
+        // 1.5. Presenter에 cache update
+        unit.UpdateLocation(player);
+
+        // 2. 시각적 표현(View)을 처리
+
     }
 
     // 유닛을 특정 도시로 이동시키는 '명령'
@@ -36,22 +77,37 @@ public class UnitManager : MonoBehaviour
     {
         if (!allUnits.TryGetValue(unitId, out UnitModel unit)) return;
         UnitPresenter presenter = GetPresenterById(unitId);
+        if (presenter == null)
+        {
+            Debug.LogWarning($"No presenter found for Unit ID: {unitId}");
+            return;
+        }
+        CityPresenter city = CityManager.Instance.GetCity(cityName);
+        if (city == null)
+        {
+            Debug.LogWarning($"No city found with name: {cityName}");
+            return;
+        }
 
+        MoveUnitToCity(presenter, city);
+    }
+
+    public void MoveUnitToCity(UnitPresenter unit, CityPresenter city)
+    {
         // 1. 데이터(Model)의 상태를 먼저 변경
-        unit.currentLocation = UnitLocation.OnBoard;
-        unit.locationId = cityName;
+        unit.Model.postition = UnitPosition.OnBoard;
+        unit.Model.locationId = city.model.cityName;
 
         // 1.5. Presenter에 cache update
-
-        presenter.UpdateLocation(CityManager.Instance.GetCity(cityName));
+        unit.UpdateLocation(city);
 
         // 2. 시각적 표현(View)을 처리
         // 만약 유닛이 손에 있어서 View가 없었다면, 새로 생성!
-        if (!spawnedUnitViews.ContainsKey(unitId))
+        if (!spawnedUnitViews.ContainsKey(unit.Model.uniqueId))
         {
             // UnitFactory를 통해 View를 생성하고 spawnedUnitViews에 등록
-            // var newView = UnitFactory.SpawnUnitView(unit);
-            // spawnedUnitViews.Add(unitId, newView);
+            var newView = UnitFactory.SpawnUnitView(unit);
+            spawnedUnitViews.Add(unitId, newView);
         }
 
         // 3. View에게 도시로 이동하라고 지시
@@ -69,26 +125,6 @@ public class UnitManager : MonoBehaviour
             return GetPresenterForModel(unit);
         }
         return null;
-    }
-
-    // 유닛을 플레이어의 손으로 이동시키는 '명령'
-    public void MoveUnitToHand(string unitId, int playerId)
-    {
-        if (!allUnits.TryGetValue(unitId, out UnitModel unit)) return;
-
-        // 1. 데이터(Model)의 상태 변경
-        unit.currentLocation = UnitLocation.InPlayerHand;
-        unit.locationId = playerId.ToString();
-
-        // 2. 시각적 표현(View)이 있었다면, 파괴하거나 숨김
-        if (spawnedUnitViews.TryGetValue(unitId, out UnitView view))
-        {
-            Destroy(view.gameObject);
-            spawnedUnitViews.Remove(unitId);
-        }
-
-        // 3. 이벤트 발행: "유닛이 핸드로 들어왔다!"
-        // EventBus.Instance.UnitAddedToHand(unit, playerId);
     }
 
     public UnitPresenter GetPresenterForModel(UnitModel unitModel)
@@ -128,4 +164,15 @@ public interface IUnitContainer
     /// </summary>
     /// <param name="unit">제거할 유닛입니다.</param>
     void RemoveUnit(UnitPresenter unit);
+}
+
+public interface IUnitOwner
+{
+    public Dictionary<string, int> preservedPartyUnits { get; }
+    public Dictionary<string, int> inSupplyPartyUnits { get; }
+
+    void AddPreservedUnit(string unitType, int count = 1);
+    void RemovePreservedUnit(string unitType, int count = 1);
+    void AddInSupplyUnit(string unitType, int count = 1);
+    void RemoveInSupplyUnit(string unitType, int count = 1);
 }

@@ -14,3 +14,13 @@ public class PlayerState : MonoBehaviour
         
     }
 }
+
+
+public enum PlayerActionState
+{
+    None,
+    SelectingCityForUnitMove,
+    SelectingCityForAddSeat,
+    SelectingCityForRemoveSeat,
+    SelectingCityForCardEffect 
+}

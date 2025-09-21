@@ -49,17 +49,62 @@ public class Party
 }
 
 [Serializable]
-public class MainParty : Party
+public class MainParty : Party, IUnitOwner
 {
     // Playable faction
     public int score;
     public string partyGovernmentStatus;
     public string currentPartyAgenda;
     public List<SubParty> heldSubParties { get; set; } = new List<SubParty>();
-    public Dictionary<string, int> preservedPartyUnits { get; set; } = new Dictionary<string, int>();
-    public Dictionary<string, int> inSupplyPartyUnits { get; set; } = new Dictionary<string, int>();
-    
+
+    private Dictionary<string, int> _preservedPartyUnits = new();
+    private Dictionary<string, int> _inSupplyPartyUnits = new();
+
+    public Dictionary<string, int> preservedPartyUnits => _preservedPartyUnits;
+    public Dictionary<string, int> inSupplyPartyUnits => _inSupplyPartyUnits;
+
     public MainParty(string name, Color color) : base(name, color) { }
+
+    public void AddPreservedUnit(string unitType, int count = 1)
+    {
+        if (!preservedPartyUnits.ContainsKey(unitType))
+        {
+            preservedPartyUnits[unitType] = 0;
+        }
+        preservedPartyUnits[unitType] += count;
+    }
+
+    public void RemovePreservedUnit(string unitType, int count = 1)
+    {
+        if (preservedPartyUnits.ContainsKey(unitType))
+        {
+            preservedPartyUnits[unitType] -= count;
+            if (preservedPartyUnits[unitType] <= 0)
+            {
+                preservedPartyUnits.Remove(unitType);
+            }
+        }
+    }
+    public void AddInSupplyUnit(string unitType, int count = 1)
+    {
+        if (!inSupplyPartyUnits.ContainsKey(unitType))
+        {
+            inSupplyPartyUnits[unitType] = 0;
+        }
+        inSupplyPartyUnits[unitType] += count;
+    }
+
+    public void RemoveInSupplyUnit(string unitType, int count = 1)
+    {
+        if (inSupplyPartyUnits.ContainsKey(unitType))
+        {
+            inSupplyPartyUnits[unitType] -= count;
+            if (inSupplyPartyUnits[unitType] <= 0)
+            {
+                inSupplyPartyUnits.Remove(unitType);
+            }
+        }
+    }
 }
 
 [Serializable]
