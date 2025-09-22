@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
 
         CityManager.Instance.CreateCities();
         // 유닛 초기화: 데이터 리스트를 기반으로 초기 배치
-        UnitManager.Instance?.InitializeUnitsFromDataList();
+        UnitManager.Instance.InitializeUnitsFromJson("scenarios/RepublicOnTheBrink");
         // 정부 패널 초기 렌더
         UIManager.Instance?.governmentPanel?.Redraw();
         AddDebugCommands();
