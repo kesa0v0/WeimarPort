@@ -84,6 +84,16 @@ public class CityView : MonoBehaviour, ICityView
     {
         return cityIndicator;
     }
+
+    // 간단한 클릭 전달: collider + raycast 또는 EventSystem 환경에서 동작
+    private void OnMouseDown()
+    {
+        var presenter = CityManager.Instance.GetCity(this.name);
+        if (presenter != null)
+        {
+            GameManager.Instance?.OnCityClicked(presenter);
+        }
+    }
 }
 
 

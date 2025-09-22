@@ -50,6 +50,7 @@ public class SelectionManager
         _onCitiesSelected = onSelected;
         _onCanceled = onCanceled;
         _cityChosen.Clear();
+        UIManager.Instance?.ShowActionPrompt("도시를 선택하세요...");
     }
 
     public void RequestSingleCity(Action<CityPresenter> onSelected, Predicate<CityPresenter> filter = null, Action onCanceled = null)
@@ -67,6 +68,7 @@ public class SelectionManager
         if (_cityChosen.Count >= _cityTargetCount)
         {
             var result = new List<CityPresenter>(_cityChosen);
+            UIManager.Instance?.HideActionPrompt();
             Cancel(); // will clear and call _onCanceled, so capture first
             _onCitiesSelected?.Invoke(result);
         }
@@ -82,6 +84,7 @@ public class SelectionManager
         _onUnitsSelected = onSelected;
         _onCanceled = onCanceled;
         _unitChosen.Clear();
+        UIManager.Instance?.ShowActionPrompt("유닛을 선택하세요...");
     }
 
     public void RequestSingleUnit(Action<UnitPresenter> onSelected, Predicate<UnitPresenter> filter = null, Action onCanceled = null)
@@ -99,9 +102,23 @@ public class SelectionManager
         if (_unitChosen.Count >= _unitTargetCount)
         {
             var result = new List<UnitPresenter>(_unitChosen);
+            UIManager.Instance?.HideActionPrompt();
             Cancel();
             _onUnitsSelected?.Invoke(result);
         }
         return true;
+    }
+}
+
+// 브리지: Esc로 Selection 취소
+public class SelectionInputBridge : UnityEngine.MonoBehaviour
+{
+    private void Update()
+    {
+        if (SelectionManager.Instance.IsActive && UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Escape))
+        {
+            UIManager.Instance?.HideActionPrompt();
+            SelectionManager.Instance.Cancel();
+        }
     }
 }
