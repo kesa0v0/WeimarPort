@@ -30,20 +30,16 @@ public class GameManager : MonoBehaviour
 
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         // 그리고 파티 턴 순서도 설정
-    gameState.firstPlayerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
+        gameState.firstPlayerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
         gameState.partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
         ShuffleList(gameState.partyTurnOrder);
 
-        // 임시: 집권 연정(최대 2개)을 무작위로 구성
-        var coalition = new List<MainParty>();
-        coalition.Add(gameState.firstPlayerParty);
-        // 50% 확률로 2번째 파트너 추가
-        if (UnityEngine.Random.value < 0.5f)
+        // 최초 집권연정은 SPD와 Zentrum으로 설정 < 나중에 불러오기나 UI로 선택 가능하게 변경 예정
+        var coalition = new List<MainParty>
         {
-            var other = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
-            if (other != gameState.firstPlayerParty)
-                coalition.Add(other);
-        }
+            PartyRegistry.SPD,
+            PartyRegistry.Zentrum
+        };
         gameState.government.SetRulingCoalition(coalition);
 
         UIManager.Instance.partyStatusManager.Initialize(PartyRegistry.AllMainParties);
@@ -52,8 +48,8 @@ public class GameManager : MonoBehaviour
         CityManager.Instance.CreateCities();
         // 유닛 초기화: 데이터 리스트를 기반으로 초기 배치
         UnitManager.Instance?.InitializeUnitsFromDataList();
-    // 정부 패널 초기 렌더
-    UIManager.Instance?.governmentPanel?.Redraw();
+        // 정부 패널 초기 렌더
+        UIManager.Instance?.governmentPanel?.Redraw();
         AddDebugCommands();
         TestScript();
     }

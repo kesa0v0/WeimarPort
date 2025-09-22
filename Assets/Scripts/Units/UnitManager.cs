@@ -122,6 +122,108 @@ public class UnitManager : MonoBehaviour
         }
     }
 
+    // --- Scenario / Load Init ---
+
+    public void ClearAllUnits()
+    {
+        foreach (var view in spawnedUnitViews.Values)
+        {
+            if (view != null) Destroy(view.gameObject);
+        }
+        spawnedUnitViews.Clear();
+        spawnedPresenter.Clear();
+        spawnedUnits.Clear();
+    }
+
+    public void InitializeUnitsFromSpecs(IEnumerable<UnitSpawnSpec> specs)
+    {
+        if (specs == null) return;
+        foreach (var spec in specs)
+        {
+            if (spec == null || string.IsNullOrEmpty(spec.unitName)) continue;
+            for (int i = 0; i < Mathf.Max(1, spec.count); i++)
+            {
+                CreateUnitFromSpec(spec);
+            }
+        }
+        TryRedrawLocalPlayerHand();
+    }
+
+    public void InitializeUnitsFromJson(string resourcesPath)
+    {
+        // Resources.Load<TextAsset>(path) expects path without extension and relative to Resources root
+        var ta = Resources.Load<TextAsset>(resourcesPath);
+        if (ta == null)
+        {
+            Debug.LogError($"UnitManager: Could not load TextAsset at Resources/{resourcesPath}");
+            return;
+        }
+        try
+        {
+            var list = JsonUtility.FromJson<UnitSpawnSpecList>(ta.text);
+            if (list == null || list.units == null)
+            {
+                Debug.LogWarning("UnitManager: Parsed empty unit spec list.");
+                return;
+            }
+            ClearAllUnits();
+            InitializeUnitsFromSpecs(list.units);
+            Debug.Log($"UnitManager: Initialized {list.units.Count} spec lines from JSON.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"UnitManager: Failed to parse unit specs JSON. {ex.Message}");
+        }
+    }
+
+    private UnitPresenter CreateUnitFromSpec(UnitSpawnSpec spec)
+    {
+        var data = GetUnitDataByName(spec.unitName);
+        if (data == null)
+        {
+            Debug.LogWarning($"UnitManager: UnitData '{spec.unitName}' not found.");
+            return null;
+        }
+        var model = new UnitModel(data, spec.membership, spec.position, spec.locationId);
+        spawnedUnits.Add(model.uniqueId, model);
+        var presenter = new UnitPresenter(model, null);
+        spawnedPresenter[model.uniqueId] = presenter;
+
+        switch (model.position)
+        {
+            case UnitPosition.InPool:
+                // no container
+                break;
+            case UnitPosition.InReserved:
+            {
+                var party = PartyRegistry.GetPartyByName(model.locationId) as MainParty;
+                if (party == null)
+                {
+                    Debug.LogWarning($"UnitManager: Spec InReserved location '{model.locationId}' not found as MainParty.");
+                    break;
+                }
+                presenter.UpdateLocation(party);
+                // no UI view, PlayerHandPanel renders icons from party.ContainedUnits
+                break;
+            }
+            case UnitPosition.OnBoard:
+            {
+                var city = CityManager.Instance.GetCity(model.locationId);
+                if (city == null)
+                {
+                    Debug.LogWarning($"UnitManager: Spec OnBoard city '{model.locationId}' not found.");
+                    break;
+                }
+                presenter.UpdateLocation(city);
+                EnsureViewForContainer(presenter, city);
+                spawnedUnitViews[model.uniqueId]?.AttachToCity(city);
+                break;
+            }
+        }
+
+        return presenter;
+    }
+
 
     // --- Public API ---
 
@@ -354,6 +456,7 @@ public class UnitManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHand", "Moves a unit (by type) from pool to player's hand. usage: debug.moveUnitTypeToHand <unitName> <playerId>", "MoveUnitTypeToHand", this);
         DebugLogConsole.AddCommandInstance("debug.listUnits", "Lists all spawned units with IDs.", "ListUnits", this);
         DebugLogConsole.AddCommandInstance("debug.initUnits", "Initializes all units from UnitManager.unitDataList", "InitializeUnitsFromDataList", this);
+        DebugLogConsole.AddCommandInstance("debug.initUnitsFromJson", "Initializes units from Resources JSON. usage: debug.initUnitsFromJson <ResourcesPath>", "InitializeUnitsFromJson", this);
     }
 }
 

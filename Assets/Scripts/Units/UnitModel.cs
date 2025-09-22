@@ -33,4 +33,13 @@ public class UnitModel
         membership = data.spawnMembership;
         position = data.defaultSpawnPosition;
     }
+
+    public UnitModel(UnitData data, string membership, UnitPosition position, string locationId)
+    {
+        Data = data;
+        uniqueId = $"{data.unitName}_{nextId++}";
+        this.membership = string.IsNullOrEmpty(membership) ? data.spawnMembership : membership;
+        this.position = position;
+        this.locationId = string.IsNullOrEmpty(locationId) ? data.defaultLocationId : locationId;
+    }
 }
