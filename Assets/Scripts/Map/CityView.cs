@@ -80,11 +80,6 @@ public class CityView : MonoBehaviour, ICityView
         }
     }
 
-    public void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen)
-    {
-        UIManager.Instance.partyStatusManager.RequestPartySelection(removableParties, count, onChosen);
-    }
-
     public GameObject GetCityIndicator()
     {
         return cityIndicator;
@@ -98,6 +93,5 @@ public interface ICityView
     void SetPosition(Vector2 position);
     void SetSeatsByCount(int seatCount);
     void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy);
-    void RequestSeatRemovalChoice(List<Party> removableParties, int count, Action<List<Party>> onChosen);
     GameObject GetCityIndicator();
 }

@@ -110,6 +110,11 @@ public class GameManager : MonoBehaviour
         );
     }
 
+    public void RequestPartySelection(List<Party> candidates, int count, System.Action<List<Party>> onChosen)
+    {
+        UIManager.Instance.partyStatusManager.RequestPartySelection(candidates, count, onChosen);
+    }
+
 
     #region Helper Methods
 

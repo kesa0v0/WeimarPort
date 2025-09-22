@@ -74,7 +74,7 @@ public class CityPresenter : IUnitContainer
         }
 
         // 사용자에게 제거 대상을 한 번만 묻고, 완료되면 다음 스텝으로 진행
-        view.RequestSeatRemovalChoice(removableParties, 1, (chosenParties) =>
+        GameManager.Instance.RequestPartySelection(removableParties, 1, (chosenParties) =>
         {
             // 현재가 꽉 찬 상태이므로, 이번 스텝에서는 '제거만' 수행
             foreach (var toRemove in chosenParties)
