@@ -1949,6 +1949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partyStatusManager: {fileID: 2057562944}
   playerHandPanel: {fileID: 0}
+  governmentPanel: {fileID: 0}
 --- !u!1001 &2065676918
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -18,6 +18,11 @@ public class UnitModel
     public string locationId;            // 위치에 대한 구체적인 정보 (도시 이름 또는 플레이어 ID)
 
     private static int nextId = 0;
+    [UnityEngine.RuntimeInitializeOnLoadMethod]
+    static void OnRuntimeMethodLoad()
+    {
+        nextId = 0;
+    }
 
     public UnitModel(UnitData data)
     {

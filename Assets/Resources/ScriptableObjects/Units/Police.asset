@@ -16,5 +16,6 @@ MonoBehaviour:
   unitIcon: {fileID: 2800000, guid: d21dcde10eb38df47b99f434a9aef90f, type: 3}
   unitMaterial: {fileID: 2100000, guid: dce97687ffae17d4bb62e3ef1da34a31, type: 2}
   defaultSpawnPosition: 1
-  spawnMembership: Goverment
+  defaultLocationId: Government
+  spawnMembership: Government
   combatStrength: 0
