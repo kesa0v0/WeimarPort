@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: RoteRuhrarmee
   m_EditorClassIdentifier: 
-  unitName: 
-  unitIcon: {fileID: 0}
-  unitMaterial: {fileID: 0}
-  defaultSpawnPosition: 0
-  defaultLocationId: 
-  spawnMembership: 
-  combatStrength: 0
+  unitName: RoteRuhrarmee
+  unitIcon: {fileID: 2800000, guid: 5c6dba5a1503b2241a3f25f7363323e6, type: 3}
+  unitMaterial: {fileID: 2100000, guid: f4b1b2613d6e71e45bac4ff78bc1435c, type: 2}
+  membershipMutableOnBoard: 0
+  defaultSpawnPosition: 2
+  defaultLocationId: KPD
+  spawnMembership: KPD
+  combatStrength: 2

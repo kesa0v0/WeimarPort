@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: RoterFrontkampferbund
   m_EditorClassIdentifier: 
-  unitName: 
-  unitIcon: {fileID: 0}
-  unitMaterial: {fileID: 0}
-  defaultSpawnPosition: 0
-  defaultLocationId: 
-  spawnMembership: 
-  combatStrength: 0
+  unitName: RoterFrontkampferbund
+  unitIcon: {fileID: 2800000, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}
+  unitMaterial: {fileID: 2100000, guid: 3de7500c1cfaa1a4784cae2b57c164fd, type: 2}
+  membershipMutableOnBoard: 0
+  defaultSpawnPosition: 2
+  defaultLocationId: KPD
+  spawnMembership: KPD
+  combatStrength: 1

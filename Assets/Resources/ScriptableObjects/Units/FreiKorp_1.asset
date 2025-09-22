@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: FreiKorp_1
   m_EditorClassIdentifier: 
-  unitName: 
-  unitIcon: {fileID: 0}
-  unitMaterial: {fileID: 0}
-  defaultSpawnPosition: 0
-  defaultLocationId: 
-  spawnMembership: 
-  combatStrength: 0
+  unitName: FreiKorp_1
+  unitIcon: {fileID: 2800000, guid: df0d3957e1bdba143b155317d7cb97af, type: 3}
+  unitMaterial: {fileID: 2100000, guid: 0d2a664edced8224eaf7ae04e1f32d4f, type: 2}
+  membershipMutableOnBoard: 0
+  defaultSpawnPosition: 2
+  defaultLocationId: DNVP
+  spawnMembership: DNVP
+  combatStrength: 1
