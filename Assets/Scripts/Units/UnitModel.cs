@@ -4,7 +4,8 @@ public enum UnitPosition
 {
     OnBoard,
     InReserved,
-    InPool
+    InPool,
+    Disposed
 }
 
 [Serializable]

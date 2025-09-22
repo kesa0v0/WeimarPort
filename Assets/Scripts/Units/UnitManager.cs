@@ -420,6 +420,63 @@ public class UnitManager : MonoBehaviour
         TryRedrawLocalPlayerHand();
     }
 
+    public void MoveUnitToDisposed(UnitPresenter unit)
+    {
+        // 모델 상태 업데이트
+        unit.Model.position = UnitPosition.Disposed;
+        unit.Model.locationId = "Disposed";
+
+        // 컨테이너 업데이트
+        unit.UpdateLocation(DisposedBin.Instance);
+
+        // 뷰 정리: 폐기 상태에서는 뷰 없음
+        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var existing) && existing != null)
+        {
+            Destroy(existing.gameObject);
+            spawnedUnitViews.Remove(unit.Model.uniqueId);
+        }
+
+        TryRedrawLocalPlayerHand();
+    }
+
+    public void RestoreDisposedToCity(UnitPresenter unit, CityPresenter city)
+    {
+        if (unit.Model.position != UnitPosition.Disposed)
+        {
+            Debug.LogWarning($"Unit {unit.Model.uniqueId} is not disposed.");
+            return;
+        }
+
+        MoveUnitToCity(unit, city);
+    }
+
+    // --- Convenience debug wrappers ---
+
+    public void MoveUnitCityToCityById(string unitId, string toCity)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        var city = CityManager.Instance.GetCity(toCity);
+        if (city == null) { Debug.LogWarning($"City not found: {toCity}"); return; }
+        MoveUnitToCity(presenter, city);
+    }
+
+    public void DisposeUnitById(string unitId)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        MoveUnitToDisposed(presenter);
+    }
+
+    public void RestoreDisposedToCityById(string unitId, string toCity)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        var city = CityManager.Instance.GetCity(toCity);
+        if (city == null) { Debug.LogWarning($"City not found: {toCity}"); return; }
+        RestoreDisposedToCity(presenter, city);
+    }
+
     public UnitPresenter GetPresenterById(string unitId)
     {
         if (spawnedPresenter.TryGetValue(unitId, out var presenter))
@@ -457,6 +514,9 @@ public class UnitManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("debug.listUnits", "Lists all spawned units with IDs.", "ListUnits", this);
         DebugLogConsole.AddCommandInstance("debug.initUnits", "Initializes all units from UnitManager.unitDataList", "InitializeUnitsFromDataList", this);
         DebugLogConsole.AddCommandInstance("debug.initUnitsFromJson", "Initializes units from Resources JSON. usage: debug.initUnitsFromJson <ResourcesPath>", "InitializeUnitsFromJson", this);
+        DebugLogConsole.AddCommandInstance("debug.moveUnitCityToCity", "Moves a unit from city to city. usage: debug.moveUnitCityToCity <unitId> <toCity>", "MoveUnitCityToCityById", this);
+        DebugLogConsole.AddCommandInstance("debug.disposeUnit", "Moves a unit to disposed. usage: debug.disposeUnit <unitId>", "DisposeUnitById", this);
+        DebugLogConsole.AddCommandInstance("debug.restoreDisposedToCity", "Restores a disposed unit to city. usage: debug.restoreDisposedToCity <unitId> <toCity>", "RestoreDisposedToCityById", this);
     }
 }
 
