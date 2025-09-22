@@ -1,0 +1,24 @@
+{
+  "units": [
+    {
+      "unitName": "FreiKorps_1",
+      "membership": "SPD",
+      "position": "InPool",
+      "count": 2
+    },
+    {
+      "unitName": "Reichsweher_1",
+      "membership": "Government",
+      "position": "InReserved",
+      "locationId": "Government",
+      "count": 1
+    },
+    {
+      "unitName": "Reichsweher_1",
+      "membership": "DNVP",
+      "position": "OnBoard",
+      "locationId": "Berlin",
+      "count": 1
+    }
+  ]
+}

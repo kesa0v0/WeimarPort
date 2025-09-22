@@ -141,13 +141,33 @@ public class UnitManager : MonoBehaviour
         foreach (var spec in specs)
         {
             if (spec == null || string.IsNullOrEmpty(spec.unitName)) continue;
-            for (int i = 0; i < Mathf.Max(1, spec.count); i++)
+            int spawnCount = Mathf.Max(1, spec.count);
+            // id가 지정되어 있고 count>1이면, id-1, id-2... 형태로 부여. id 미지정이면 unitName-1.. 로 부여
+            for (int i = 0; i < spawnCount; i++)
             {
-                CreateUnitFromSpec(spec);
+                string baseId = string.IsNullOrEmpty(spec.id) ? spec.unitName : spec.id;
+                string desired = spawnCount == 1 ? baseId : $"{baseId}-{i+1}";
+                string instanceId = EnsureUniqueInstanceId(desired);
+                CreateUnitFromSpec(spec, instanceId);
             }
         }
         TryRedrawLocalPlayerHand();
         UIManager.Instance?.disposedPanel?.Redraw();
+    }
+
+    // 동일한 ID가 이미 존재하면 -2, -3...을 붙여 유니크 보장
+    private string EnsureUniqueInstanceId(string desired)
+    {
+        if (!spawnedUnits.ContainsKey(desired)) return desired;
+        int suffix = 2;
+        string candidate = $"{desired}-{suffix}";
+        while (spawnedUnits.ContainsKey(candidate))
+        {
+            suffix++;
+            candidate = $"{desired}-{suffix}";
+        }
+        Debug.LogWarning($"Duplicate unit id '{desired}' detected. Using '{candidate}' instead.");
+        return candidate;
     }
 
     public void InitializeUnitsFromJson(string resourcesPath)
@@ -177,7 +197,7 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    private UnitPresenter CreateUnitFromSpec(UnitSpawnSpec spec)
+    private UnitPresenter CreateUnitFromSpec(UnitSpawnSpec spec, string instanceId = null)
     {
         var data = GetUnitDataByName(spec.unitName);
         if (data == null)
@@ -185,7 +205,7 @@ public class UnitManager : MonoBehaviour
             Debug.LogWarning($"UnitManager: UnitData '{spec.unitName}' not found.");
             return null;
         }
-        var model = new UnitModel(data, spec.membership, spec.position, spec.locationId);
+        var model = new UnitModel(data, instanceId, spec.membership, spec.position, spec.locationId);
         spawnedUnits.Add(model.uniqueId, model);
         var presenter = new UnitPresenter(model, null);
         spawnedPresenter[model.uniqueId] = presenter;
@@ -309,16 +329,11 @@ public class UnitManager : MonoBehaviour
     // 디버그용: 현재 관리 중인 유닛을 나열
     public void ListUnits()
     {
-        if (spawnedUnits.Count == 0)
-        {
-            Debug.Log("No units spawned.");
-            return;
-        }
+        if (spawnedUnits.Count == 0) { Debug.Log("No units spawned."); return; }
         foreach (var kv in spawnedUnits)
         {
             var m = kv.Value;
-            string nm = m.Data != null ? m.Data.unitName : "(null)";
-            Debug.Log($"{m.uniqueId} | {nm} | pos={m.position} | loc={m.locationId}");
+            Debug.Log($"{m.uniqueId} | {m.Data.unitName} | {m.position} | {m.locationId} | owner={m.membership}");
         }
     }
 

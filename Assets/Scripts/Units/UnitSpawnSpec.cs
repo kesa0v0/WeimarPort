@@ -4,6 +4,8 @@ using System.Collections.Generic;
 [Serializable]
 public class UnitSpawnSpec
 {
+    // Optional unique instance id (for save/load). If omitted, an id will be auto-generated.
+    public string id;
     public string unitName;      // refers to UnitData.unitName
     public string membership;    // owning party (e.g., SPD)
     public UnitPosition position; // InPool, InReserved, OnBoard

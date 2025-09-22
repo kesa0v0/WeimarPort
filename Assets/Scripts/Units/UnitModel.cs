@@ -18,17 +18,11 @@ public class UnitModel
     public UnitPosition position;
     public string locationId;            // 위치에 대한 구체적인 정보 (도시 이름 또는 플레이어 ID)
 
-    private static int nextId = 0;
-    [UnityEngine.RuntimeInitializeOnLoadMethod]
-    static void OnRuntimeMethodLoad()
-    {
-        nextId = 0;
-    }
-
     public UnitModel(UnitData data)
     {
         Data = data; // 원본 데이터 참조 연결
-        uniqueId = $"{data.unitName}_{nextId++}";
+        // 자동 생성되는 인스턴스 고유 ID
+        uniqueId = Guid.NewGuid().ToString("N");
         locationId = data.defaultSpawnPosition.ToString();
 
         membership = data.spawnMembership;
@@ -38,7 +32,17 @@ public class UnitModel
     public UnitModel(UnitData data, string membership, UnitPosition position, string locationId)
     {
         Data = data;
-        uniqueId = $"{data.unitName}_{nextId++}";
+        uniqueId = Guid.NewGuid().ToString("N");
+        this.membership = string.IsNullOrEmpty(membership) ? data.spawnMembership : membership;
+        this.position = position;
+        this.locationId = string.IsNullOrEmpty(locationId) ? data.defaultLocationId : locationId;
+    }
+
+    // 저장/시나리오에서 고정 인스턴스 ID를 지정하고 싶을 때 사용하는 생성자
+    public UnitModel(UnitData data, string instanceId, string membership, UnitPosition position, string locationId)
+    {
+        Data = data;
+        uniqueId = string.IsNullOrEmpty(instanceId) ? Guid.NewGuid().ToString("N") : instanceId;
         this.membership = string.IsNullOrEmpty(membership) ? data.spawnMembership : membership;
         this.position = position;
         this.locationId = string.IsNullOrEmpty(locationId) ? data.defaultLocationId : locationId;
