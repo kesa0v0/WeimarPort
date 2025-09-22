@@ -5,6 +5,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     public UIPartyStatusManager partyStatusManager;
     public PlayerHandPanel playerHandPanel;
+    public GovernmentPanel governmentPanel;
 
     private void Awake()
     {
