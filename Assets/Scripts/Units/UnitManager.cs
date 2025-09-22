@@ -359,6 +359,60 @@ public class UnitManager : MonoBehaviour
         TryRedrawLocalPlayerHand();
     }
 
+    // Pool -> Hand: 자동(선택 UI 없음). 대상 파티는 명시적으로 전달.
+    public void MoveUnitToHandAutoById(string unitId, string partyId)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        var party = PartyRegistry.GetPartyByName(partyId) as MainParty;
+        if (party == null) { Debug.LogWarning($"Party not found or not MainParty: {partyId}"); return; }
+        MoveUnitToHand(presenter, party);
+    }
+
+    public void MoveUnitTypeToHandAuto(string unitName, string partyId)
+    {
+        var party = PartyRegistry.GetPartyByName(partyId) as MainParty;
+        if (party == null) { Debug.LogWarning($"Party not found or not MainParty: {partyId}"); return; }
+        foreach (var kv in spawnedUnits)
+        {
+            var m = kv.Value;
+            if (m.position == UnitPosition.InPool && m.Data != null && m.Data.unitName == unitName)
+            {
+                var presenter = GetPresenterByModel(m);
+                MoveUnitToHand(presenter, party);
+                Debug.Log($"Moved one {unitName} from Pool to {party.partyName} hand.");
+                return;
+            }
+        }
+        Debug.LogWarning($"No unit in pool found with type '{unitName}'.");
+    }
+
+    // Membership 변경: OnBoard에서만, 특정 유닛만 가능
+    public void TryChangeMembershipOnBoard(string unitId, string newMembership)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        var model = presenter.Model;
+        if (model.position != UnitPosition.OnBoard)
+        {
+            Debug.LogWarning("Membership can be changed only when the unit is OnBoard.");
+            return;
+        }
+        if (model.Data == null || !model.Data.membershipMutableOnBoard)
+        {
+            Debug.LogWarning("This unit does not allow membership change on board.");
+            return;
+        }
+        var party = PartyRegistry.GetPartyByName(newMembership);
+        if (party == null)
+        {
+            Debug.LogWarning($"Target membership party '{newMembership}' not found.");
+            return;
+        }
+        model.membership = newMembership;
+        Debug.Log($"Unit {model.uniqueId} membership changed to {newMembership}.");
+    }
+
     // 유닛을 특정 도시로 이동시키는 '명령'
     public void MoveUnitToCityByName(string unitId, string cityName)
     {
@@ -508,12 +562,34 @@ public class UnitManager : MonoBehaviour
         return presenter;
     }
 
+    // 핸드 아이콘 클릭 시: 해당 타입의 유닛 하나를 찾아 도시로 이동
+    public bool TryMoveOneUnitFromHandTypeToCity(MainParty party, UnitData unitData, CityPresenter city)
+    {
+        if (party == null || unitData == null || city == null) return false;
+
+        foreach (var kv in party.ContainedUnits)
+        {
+            var presenter = kv.Key;
+            int count = kv.Value;
+            if (presenter != null && presenter.Model != null && presenter.Model.Data == unitData && count > 0)
+            {
+                MoveUnitToCity(presenter, city);
+                return true;
+            }
+        }
+        Debug.LogWarning($"No unit of type '{unitData.unitName}' found in {party.partyName}'s hand.");
+        return false;
+    }
+
     private void AddDebugCommands()
     {
         DebugLogConsole.AddCommandInstance("debug.addUnitToPool", "Adds a unit to the pool. usage: debug.addUnitToPool <unitName>", "CreateUnitDataByString", this);
         DebugLogConsole.AddCommandInstance("debug.moveUnitToHand", "Moves a unit from pool to player's hand. usage: debug.moveUnitToHand <unitId> <playerId>", "MoveUnitToHandByName", this);
         DebugLogConsole.AddCommandInstance("debug.moveUnitToCity", "Moves a unit to a city. usage: debug.moveUnitToCity <unitId> <cityName>", "MoveUnitToCityByName", this);
         DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHand", "Moves a unit (by type) from pool to player's hand. usage: debug.moveUnitTypeToHand <unitName> <playerId>", "MoveUnitTypeToHand", this);
+    DebugLogConsole.AddCommandInstance("debug.moveUnitToHandAuto", "Moves a unit from pool to party hand without selection. usage: debug.moveUnitToHandAuto <unitId> <partyId>", "MoveUnitToHandAutoById", this);
+    DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHandAuto", "Moves a unit (by type) from pool to party hand. usage: debug.moveUnitTypeToHandAuto <unitName> <partyId>", "MoveUnitTypeToHandAuto", this);
+    DebugLogConsole.AddCommandInstance("debug.changeMembership", "Changes membership for allowed units OnBoard. usage: debug.changeMembership <unitId> <party>", "TryChangeMembershipOnBoard", this);
         DebugLogConsole.AddCommandInstance("debug.listUnits", "Lists all spawned units with IDs.", "ListUnits", this);
         DebugLogConsole.AddCommandInstance("debug.initUnits", "Initializes all units from UnitManager.unitDataList", "InitializeUnitsFromDataList", this);
         DebugLogConsole.AddCommandInstance("debug.initUnitsFromJson", "Initializes units from Resources JSON. usage: debug.initUnitsFromJson <ResourcesPath>", "InitializeUnitsFromJson", this);

@@ -43,6 +43,15 @@ public class UnitIconView : MonoBehaviour
     public void OnClick()
     {
         Debug.Log($"Clicked on {unitData.unitName}");
-        // GameManager.Instance.SelectUnitFromHand(unitData);
+        var local = GameManager.Instance?.gameState?.playerParty;
+        if (local == null) return;
+
+        GameManager.Instance.EnterCitySelectionMode(
+            PlayerActionState.SelectingCityForUnitMove,
+            (selectedCity) =>
+            {
+                UnitManager.Instance.TryMoveOneUnitFromHandTypeToCity(local, unitData, selectedCity);
+            }
+        );
     }
 }
