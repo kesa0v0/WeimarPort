@@ -113,11 +113,22 @@ public class GameManager : MonoBehaviour
         Debug.Log($"도시 선택 모드 진입: {newState}. 도시를 선택해주세요.");
         // 여기서 "도시를 선택하세요" 같은 UI 텍스트를 띄워주면 좋습니다.
         // UIManager.Instance.ShowActionPrompt("도시를 선택하세요...");
+
+        // 신규 SelectionManager와 병행 사용 가능: 기존 흐름 호환성 유지
+        SelectionManager.Instance.RequestSingleCity(city => {
+            onCitySelectedCallback?.Invoke(city);
+            ResetToActionStateNone();
+        });
     }
 
     
     public void OnUnitClicked(UnitPresenter unit)
     {
+        // SelectionManager 우선 처리
+        if (SelectionManager.Instance.IsActive && SelectionManager.Instance.CurrentType == SelectionType.Unit)
+        {
+            if (SelectionManager.Instance.HandleUnitClicked(unit)) return;
+        }
         // TODO: 유닛을 선택하는 더 정교한 로직 (예: 내 턴, 내 유닛인지 확인)
         selectedUnit = unit;
         // 선택 효과 표시
@@ -137,6 +148,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void OnCityClicked(CityPresenter city)
     {
+        // SelectionManager 우선 처리
+        if (SelectionManager.Instance.IsActive && SelectionManager.Instance.CurrentType == SelectionType.City)
+        {
+            if (SelectionManager.Instance.HandleCityClicked(city)) return;
+        }
         // 현재 특별한 선택 모드가 아니라면 아무것도 하지 않음
         if (currentState == PlayerActionState.None) return;
 

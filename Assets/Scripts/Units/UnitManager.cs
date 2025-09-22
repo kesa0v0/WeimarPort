@@ -587,9 +587,9 @@ public class UnitManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("debug.moveUnitToHand", "Moves a unit from pool to player's hand. usage: debug.moveUnitToHand <unitId> <playerId>", "MoveUnitToHandByName", this);
         DebugLogConsole.AddCommandInstance("debug.moveUnitToCity", "Moves a unit to a city. usage: debug.moveUnitToCity <unitId> <cityName>", "MoveUnitToCityByName", this);
         DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHand", "Moves a unit (by type) from pool to player's hand. usage: debug.moveUnitTypeToHand <unitName> <playerId>", "MoveUnitTypeToHand", this);
-    DebugLogConsole.AddCommandInstance("debug.moveUnitToHandAuto", "Moves a unit from pool to party hand without selection. usage: debug.moveUnitToHandAuto <unitId> <partyId>", "MoveUnitToHandAutoById", this);
-    DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHandAuto", "Moves a unit (by type) from pool to party hand. usage: debug.moveUnitTypeToHandAuto <unitName> <partyId>", "MoveUnitTypeToHandAuto", this);
-    DebugLogConsole.AddCommandInstance("debug.changeMembership", "Changes membership for allowed units OnBoard. usage: debug.changeMembership <unitId> <party>", "TryChangeMembershipOnBoard", this);
+        DebugLogConsole.AddCommandInstance("debug.moveUnitToHandAuto", "Moves a unit from pool to party hand without selection. usage: debug.moveUnitToHandAuto <unitId> <partyId>", "MoveUnitToHandAutoById", this);
+        DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHandAuto", "Moves a unit (by type) from pool to party hand. usage: debug.moveUnitTypeToHandAuto <unitName> <partyId>", "MoveUnitTypeToHandAuto", this);
+        DebugLogConsole.AddCommandInstance("debug.changeMembership", "Changes membership for allowed units OnBoard. usage: debug.changeMembership <unitId> <party>", "TryChangeMembershipOnBoard", this);
         DebugLogConsole.AddCommandInstance("debug.listUnits", "Lists all spawned units with IDs.", "ListUnits", this);
         DebugLogConsole.AddCommandInstance("debug.initUnits", "Initializes all units from UnitManager.unitDataList", "InitializeUnitsFromDataList", this);
         DebugLogConsole.AddCommandInstance("debug.initUnitsFromJson", "Initializes units from Resources JSON. usage: debug.initUnitsFromJson <ResourcesPath>", "InitializeUnitsFromJson", this);
