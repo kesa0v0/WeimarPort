@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using IngameDebugConsole;
 
 public class GameManager : MonoBehaviour
 {
@@ -53,12 +54,55 @@ public class GameManager : MonoBehaviour
         UnitManager.Instance?.InitializeUnitsFromDataList();
     // 정부 패널 초기 렌더
     UIManager.Instance?.governmentPanel?.Redraw();
+        AddDebugCommands();
         TestScript();
     }
 
     void TestScript()
     {
 
+    }
+
+    private void AddDebugCommands()
+    {
+        DebugLogConsole.AddCommandInstance(
+            "debug.setGovernmentCoalition",
+            "Sets government coalition. Usage: debug.setGovernmentCoalition <Primary> [Secondary]",
+            nameof(CmdSetGovernmentCoalition), this);
+
+        DebugLogConsole.AddCommandInstance(
+            "debug.redrawGovernment",
+            "Redraws the Government panel UI.",
+            nameof(CmdRedrawGovernment), this);
+    }
+
+    public void CmdRedrawGovernment()
+    {
+        UIManager.Instance?.governmentPanel?.Redraw();
+    }
+
+    public void CmdSetGovernmentCoalition(string primary, string secondary = null)
+    {
+        var p1 = PartyRegistry.GetPartyByName(primary) as MainParty;
+        MainParty p2 = null;
+        if (!string.IsNullOrEmpty(secondary))
+            p2 = PartyRegistry.GetPartyByName(secondary) as MainParty;
+
+        if (p1 == null)
+        {
+            Debug.LogWarning($"Primary party '{primary}' not found or not a MainParty.");
+            return;
+        }
+
+        if (p2 == null && !string.IsNullOrEmpty(secondary))
+        {
+            Debug.LogWarning($"Secondary party '{secondary}' not found or not a MainParty. Proceeding with single-party government.");
+        }
+
+        gameState.government.SetRulingCoalition(p1, p2);
+        // Setters already trigger redraw, but ensure anyway
+        UIManager.Instance?.governmentPanel?.Redraw();
+        Debug.Log($"Government coalition set to: {p1.partyName}{(p2 != null ? "+" + p2.partyName : "")}");
     }
 
     /// <summary>

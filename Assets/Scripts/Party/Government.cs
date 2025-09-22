@@ -18,6 +18,7 @@ public class Government : IUnitContainer
     public void SetRulingParty(MainParty party)
     {
         SetRulingCoalition(party, null);
+        UIManager.Instance?.governmentPanel?.Redraw();
     }
 
     public void SetRulingCoalition(MainParty primary, MainParty secondary = null)
@@ -27,6 +28,7 @@ public class Government : IUnitContainer
             CoalitionParties.Add(primary);
         if (secondary != null && secondary != primary)
             CoalitionParties.Add(secondary);
+        UIManager.Instance?.governmentPanel?.Redraw();
     }
 
     public void SetRulingCoalition(List<MainParty> parties)
@@ -40,6 +42,7 @@ public class Government : IUnitContainer
             if (!CoalitionParties.Contains(p))
                 CoalitionParties.Add(p);
         }
+        UIManager.Instance?.governmentPanel?.Redraw();
     }
 
     public void AddUnit(UnitPresenter unit)
