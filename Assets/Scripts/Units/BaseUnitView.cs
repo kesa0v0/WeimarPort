@@ -23,6 +23,14 @@ public abstract class BaseUnitView : MonoBehaviour
     public virtual void ShowAsSelected(bool isSelected) { }
 
     /// <summary>
+    /// 후보(선택 가능) 상태의 시각적 표현을 토글합니다. 기본 구현은 선택 효과와 동일하게 동작합니다.
+    /// </summary>
+    public virtual void ShowAsCandidate(bool isCandidate)
+    {
+        ShowAsSelected(isCandidate);
+    }
+
+    /// <summary>
     /// 위치 이동. 기본은 즉시 이동, 서브클래스에서 애니메이션 등으로 오버라이드 가능.
     /// </summary>
     public virtual void MoveTo(Vector3 targetPosition, float duration)

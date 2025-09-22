@@ -15,6 +15,14 @@ public class UnitGameView : BaseUnitView, IPointerClickHandler
         }
     }
 
+    public override void ShowAsCandidate(bool isCandidate)
+    {
+        if (highlightRenderer != null)
+        {
+            highlightRenderer.enabled = isCandidate;
+        }
+    }
+
     public override void AttachToCity(CityPresenter city)
     {
         // CityView의 cityIndicator를 기준 부모로 사용

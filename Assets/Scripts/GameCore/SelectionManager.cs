@@ -51,6 +51,9 @@ public class SelectionManager
         _onCanceled = onCanceled;
         _cityChosen.Clear();
         UIManager.Instance?.ShowActionPrompt("도시를 선택하세요...");
+
+        // 후보 하이라이트
+        ToggleCityCandidates(true, filter);
     }
 
     public void RequestSingleCity(Action<CityPresenter> onSelected, Predicate<CityPresenter> filter = null, Action onCanceled = null)
@@ -69,6 +72,7 @@ public class SelectionManager
         {
             var result = new List<CityPresenter>(_cityChosen);
             UIManager.Instance?.HideActionPrompt();
+            ToggleCityCandidates(false, null);
             Cancel(); // will clear and call _onCanceled, so capture first
             _onCitiesSelected?.Invoke(result);
         }
@@ -85,6 +89,8 @@ public class SelectionManager
         _onCanceled = onCanceled;
         _unitChosen.Clear();
         UIManager.Instance?.ShowActionPrompt("유닛을 선택하세요...");
+
+        ToggleUnitCandidates(true, filter);
     }
 
     public void RequestSingleUnit(Action<UnitPresenter> onSelected, Predicate<UnitPresenter> filter = null, Action onCanceled = null)
@@ -103,10 +109,40 @@ public class SelectionManager
         {
             var result = new List<UnitPresenter>(_unitChosen);
             UIManager.Instance?.HideActionPrompt();
+            ToggleUnitCandidates(false, null);
             Cancel();
             _onUnitsSelected?.Invoke(result);
         }
         return true;
+    }
+
+    private void ToggleCityCandidates(bool on, Predicate<CityPresenter> filter)
+    {
+        // 단순 전수: CityManager가 보유한 모든 프레젠터를 순회
+        var field = typeof(CityManager).GetField("cityPresenters", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (field == null) return;
+        var dict = field.GetValue(CityManager.Instance) as System.Collections.IDictionary;
+        if (dict == null) return;
+        foreach (System.Collections.DictionaryEntry kv in dict)
+        {
+            var city = kv.Value as CityPresenter;
+            if (city == null) continue;
+            if (filter != null && !filter(city)) continue;
+            city.ShowAsCandidate(on);
+        }
+    }
+
+    private void ToggleUnitCandidates(bool on, Predicate<UnitPresenter> filter)
+    {
+        foreach (var kv in UnitManager.Instance.spawnedUnitViews)
+        {
+            var view = kv.Value;
+            if (view == null) continue;
+            var presenter = view.Presenter;
+            if (presenter == null) continue;
+            if (filter != null && !filter(presenter)) continue;
+            view.ShowAsCandidate(on);
+        }
     }
 }
 

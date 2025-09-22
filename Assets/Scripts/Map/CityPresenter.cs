@@ -116,4 +116,11 @@ public class CityPresenter : IUnitContainer
     }
 
     #endregion
+
+    #region Highlight
+    public void ShowAsCandidate(bool isCandidate)
+    {
+        (view as CityView)?.ShowAsCandidate(isCandidate);
+    }
+    #endregion
 }

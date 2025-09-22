@@ -52,6 +52,14 @@ public class UnitUIView : BaseUnitView, IPointerClickHandler
         }
     }
 
+    public override void ShowAsCandidate(bool isCandidate)
+    {
+        if (selectionOutline != null)
+        {
+            selectionOutline.SetActive(isCandidate);
+        }
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         // View는 스스로 판단하지 않고, 클릭되었다는 사실을 Presenter에게 '보고'만 합니다.

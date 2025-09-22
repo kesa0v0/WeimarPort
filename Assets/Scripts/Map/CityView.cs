@@ -85,6 +85,14 @@ public class CityView : MonoBehaviour, ICityView
         return cityIndicator;
     }
 
+    public void ShowAsCandidate(bool isCandidate)
+    {
+        // 간단 구현: 인디케이터 활성/비활성 토글 또는 색 변경 가능
+        if (cityIndicator != null)
+            cityIndicator.SetActive(true); // ensure visible
+        // 추가로 머터리얼 색을 바꾸는 등의 연출을 여기에 추가 가능
+    }
+
     // 간단한 클릭 전달: collider + raycast 또는 EventSystem 환경에서 동작
     private void OnMouseDown()
     {
