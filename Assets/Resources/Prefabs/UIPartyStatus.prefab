@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: USPD, DDP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -203,8 +203,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Opposition
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -339,8 +339,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: This is Space for Agenda
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -707,8 +707,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: PartyName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -875,7 +875,7 @@ MonoBehaviour:
   partyStatusText: {fileID: 5320445738046136542}
   partyAgendaText: {fileID: 3592192610502928676}
   partySubPartiesText: {fileID: 8746056097824609607}
-  partyHeldCardsCountText: {fileID: 0}
+  partyHeldCardsCountText: {fileID: 5609765722727772306}
   partyInSupplyUnitsScrollView: {fileID: 4264545867931352696}
   partyInSupplyUnitsContent: {fileID: 6927930046328070845}
   inSupplyUnitItemPrefab: {fileID: 1103965201852120305, guid: 92ddb2ee5efcff64196fb21b31740727, type: 3}
@@ -966,8 +966,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '2 : 3'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

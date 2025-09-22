@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb280730bda93ac4eb44a8ddb8d5a2f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitIconPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  unitIconPrefab: {fileID: 1103965201852120305, guid: 92ddb2ee5efcff64196fb21b31740727, type: 3}
   unitContainer: {fileID: 305828120}
 --- !u!114 &305828123
 MonoBehaviour:
@@ -1436,8 +1436,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 0
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 169ad576e160ba240b137dc60cacac0a, type: 2}
-  m_sharedMaterial: {fileID: -966149892744259842, guid: 169ad576e160ba240b137dc60cacac0a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2363,6 +2363,10 @@ PrefabInstance:
     - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: popupVisibility
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
+      propertyPath: logItemFontOverride
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
