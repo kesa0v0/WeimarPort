@@ -147,6 +147,7 @@ public class UnitManager : MonoBehaviour
             }
         }
         TryRedrawLocalPlayerHand();
+        UIManager.Instance?.disposedPanel?.Redraw();
     }
 
     public void InitializeUnitsFromJson(string resourcesPath)
@@ -437,6 +438,7 @@ public class UnitManager : MonoBehaviour
         }
 
         TryRedrawLocalPlayerHand();
+        UIManager.Instance?.disposedPanel?.Redraw();
     }
 
     public void RestoreDisposedToCity(UnitPresenter unit, CityPresenter city)
@@ -448,6 +450,7 @@ public class UnitManager : MonoBehaviour
         }
 
         MoveUnitToCity(unit, city);
+        UIManager.Instance?.disposedPanel?.Redraw();
     }
 
     // --- Convenience debug wrappers ---
