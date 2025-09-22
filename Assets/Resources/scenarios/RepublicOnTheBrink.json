@@ -1,15 +1,23 @@
 {
   "units": [
     {
-      "unitName": "FreiKorps_1",
+      "unitName": "BlackRedGold_Reichbanner",
       "membership": "SPD",
-      "position": "InPool",
+      "position": "InReserved",
+      "locationId": "SPD",
       "count": 2
     },
     {
-      "unitName": "Reichsweher_1",
+      "unitName": "Police",
       "membership": "Government",
       "position": "InReserved",
+      "locationId": "Government",
+      "count": 1
+    },
+    {
+      "unitName": "Police",
+      "membership": "Government",
+      "position": "InPool",
       "locationId": "Government",
       "count": 1
     },

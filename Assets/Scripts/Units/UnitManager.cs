@@ -181,15 +181,41 @@ public class UnitManager : MonoBehaviour
         }
         try
         {
-            var list = JsonUtility.FromJson<UnitSpawnSpecList>(ta.text);
-            if (list == null || list.units == null)
+            // 1) 문자열 기반 DTO로 먼저 파싱 (enum 문자열 안전 처리)
+            var raw = JsonUtility.FromJson<UnitSpawnSpecJsonList>(ta.text);
+            if (raw == null || raw.units == null)
             {
                 Debug.LogWarning("UnitManager: Parsed empty unit spec list.");
                 return;
             }
+            // 2) 안전 변환: 문자열 position -> UnitPosition, 누락 시 InPool
+            var cooked = new List<UnitSpawnSpec>(raw.units.Count);
+            foreach (var r in raw.units)
+            {
+                if (r == null || string.IsNullOrEmpty(r.unitName)) continue;
+                UnitPosition pos;
+                if (!Enum.TryParse<UnitPosition>(r.position, true, out pos))
+                {
+                    // 숫자로 들어온 경우 등도 커버
+                    if (int.TryParse(r.position, out int ival) && Enum.IsDefined(typeof(UnitPosition), ival))
+                        pos = (UnitPosition)ival;
+                    else
+                        pos = UnitPosition.InPool; // 안전 기본값
+                }
+                cooked.Add(new UnitSpawnSpec
+                {
+                    id = r.id,
+                    unitName = r.unitName,
+                    membership = r.membership,
+                    position = pos,
+                    locationId = r.locationId,
+                    count = Math.Max(1, r.count)
+                });
+            }
+
             ClearAllUnits();
-            InitializeUnitsFromSpecs(list.units);
-            Debug.Log($"UnitManager: Initialized {list.units.Count} spec lines from JSON.");
+            InitializeUnitsFromSpecs(cooked);
+            Debug.Log($"UnitManager: Initialized {cooked.Count} spec lines from JSON.");
         }
         catch (Exception ex)
         {
@@ -217,14 +243,23 @@ public class UnitManager : MonoBehaviour
                 break;
             case UnitPosition.InReserved:
             {
-                var party = PartyRegistry.GetPartyByName(model.locationId) as MainParty;
-                if (party == null)
+                if (string.Equals(model.locationId, "Government", StringComparison.OrdinalIgnoreCase))
                 {
-                    Debug.LogWarning($"UnitManager: Spec InReserved location '{model.locationId}' not found as MainParty.");
-                    break;
+                    // 정부 보유로 처리 (별도 뷰 없음)
+                    presenter.Model.membership = "Government";
+                    presenter.UpdateLocation(GameManager.Instance.gameState.government);
                 }
-                presenter.UpdateLocation(party);
-                // no UI view, PlayerHandPanel renders icons from party.ContainedUnits
+                else
+                {
+                    var party = PartyRegistry.GetPartyByName(model.locationId) as MainParty;
+                    if (party == null)
+                    {
+                        Debug.LogWarning($"UnitManager: Spec InReserved location '{model.locationId}' not found as MainParty.");
+                        break;
+                    }
+                    presenter.UpdateLocation(party);
+                }
+                // no UI view, PlayerHandPanel/Government panel renders icons from container.ContainedUnits
                 break;
             }
             case UnitPosition.OnBoard:

@@ -27,8 +27,10 @@ public class UnitGameView : BaseUnitView, IPointerClickHandler
     {
         // CityView의 cityIndicator를 기준 부모로 사용
         Transform anchor = city.view.GetCityIndicator().transform;
-        transform.SetParent(anchor, true);
-        // 세부 배치는 CityPresenter/CityView 쪽 레이아웃 로직이 담당
+        // 로컬 좌표계를 사용하여 도시 기준으로 붙이고, 기본 위치는 (0,0,0)
+        transform.SetParent(anchor, false);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
     }
 
     // EventSystem이 있는 경우

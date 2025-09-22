@@ -51,6 +51,8 @@ public class Government : IUnitContainer
             ContainedUnits[unit]++;
         else
             ContainedUnits[unit] = 1;
+
+        UIManager.Instance?.governmentPanel?.Redraw();
     }
 
     public void RemoveUnit(UnitPresenter unit)
@@ -60,6 +62,7 @@ public class Government : IUnitContainer
             ContainedUnits[unit]--;
             if (ContainedUnits[unit] <= 0)
                 ContainedUnits.Remove(unit);
+            UIManager.Instance?.governmentPanel?.Redraw();
         }
         else
         {
