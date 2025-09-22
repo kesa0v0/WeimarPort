@@ -63,8 +63,8 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
         foreach (var unit in units)
         {
             var item = Instantiate(inSupplyUnitItemPrefab, partyInSupplyUnitsContent);
-            var unitImage = item.transform.Find("ArmyImage").GetComponent<Image>();
-            var unitInfoText = item.transform.Find("InSupplyArmyInfoText").GetComponent<TextMeshProUGUI>();
+            var unitImage = item.transform.Find("UnitImage").GetComponent<Image>();
+            var unitInfoText = item.transform.Find("UnitText").GetComponent<TextMeshProUGUI>();
 
             unitInfoText.text = $"{unit.Key}: {unit.Value}";
         }
