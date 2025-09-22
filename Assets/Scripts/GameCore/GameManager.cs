@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     {
         gameState = new GameState();
 
+        // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
+        gameState.playerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
+
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         // 그리고 파티 턴 순서도 설정
         gameState.firstPlayerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
