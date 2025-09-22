@@ -22,5 +22,54 @@ public class UnitFactory
         presenter.BindView(view);
         return view;
     }
+
+    // 컨테이너 타입에 따라 적절한 뷰(UI/World)를 생성
+    internal static BaseUnitView SpawnUnitViewForContainer(UnitPresenter presenter, IUnitContainer container)
+    {
+        if (container is MainParty)
+        {
+            // 핸드 UI는 PlayerHandPanel에서 그려주므로 뷰 생성 안 함
+            return null;
+        }
+        else if (container is Government)
+        {
+            // 정부 보유 유닛도 별도 핸드/패널에서 그리거나 논-월드이므로 뷰 생성 안 함
+            return null;
+        }
+        else if (container is CityPresenter city)
+        {
+            // 보드용 3D 뷰 생성
+            var worldPrefab = Resources.Load<GameObject>("Prefabs/World/UnitGameView");
+            BaseUnitView viewComponent = null;
+            GameObject go = null;
+            if (worldPrefab != null)
+            {
+                go = Object.Instantiate(worldPrefab);
+                viewComponent = go.GetComponent<BaseUnitView>();
+            }
+            if (viewComponent == null)
+            {
+                // 폴백: 기존 경로 사용
+                var legacy = Resources.Load<GameObject>("Prefabs/unitObj");
+                if (legacy != null)
+                {
+                    go = Object.Instantiate(legacy);
+                    viewComponent = go.GetComponent<BaseUnitView>();
+                }
+            }
+            if (viewComponent == null)
+            {
+                Debug.LogError("UnitFactory: Could not find suitable world unit view prefab with BaseUnitView.");
+                return null;
+            }
+            presenter.BindView(viewComponent);
+            // 도시 앵커에 부착
+            viewComponent.AttachToCity(city);
+            return viewComponent;
+        }
+
+        // 기본 폴백
+        return SpawnUnitView(presenter);
+    }
     
 }

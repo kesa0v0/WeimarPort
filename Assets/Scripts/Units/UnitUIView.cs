@@ -16,7 +16,16 @@ public class UnitUIView : BaseUnitView, IPointerClickHandler
         base.Initialize(presenter);
 
         // Presenter로부터 Model 데이터를 받아와서 초기 비주얼 설정
-        SetVisuals(presenter.Model.Data.unitName, PartyRegistry.GetPartyByName(presenter.Model.membership).partyColor);
+        if (string.Equals(presenter.Model.membership, "Government", System.StringComparison.OrdinalIgnoreCase))
+        {
+            SetVisuals(presenter.Model.Data.unitName, GameManager.Instance.gameState.government.Color);
+        }
+        else
+        {
+            var party = PartyRegistry.GetPartyByName(presenter.Model.membership);
+            var color = party != null ? party.partyColor : Color.white;
+            SetVisuals(presenter.Model.Data.unitName, color);
+        }
     }
 
     /// <summary>

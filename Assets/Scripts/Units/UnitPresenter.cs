@@ -34,12 +34,7 @@ public class UnitPresenter
     // View로부터 클릭되었다는 보고를 받는 메소드
     public void OnViewClicked()
     {
-        // 여기에 유닛이 클릭되었을 때의 실제 '로직'이 들어갑니다.
-        // 예: 이 유닛을 선택 상태로 만든다.
-        // 예: GameManager에게 이 유닛이 선택되었다고 알린다.
-
-        // GameManager.Instance.SelectUnit(this);
-        // view.ShowAsSelected(true); // View에게 선택된 것처럼 보이게 하라고 지시
+        GameManager.Instance?.OnUnitClicked(this);
     }
     
     public void ShowAsSelected(bool isSelected)

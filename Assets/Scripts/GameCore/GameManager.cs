@@ -29,14 +29,19 @@ public class GameManager : MonoBehaviour
 
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         // 그리고 파티 턴 순서도 설정
-        gameState.firstPlayerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
+    gameState.firstPlayerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
         gameState.partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
         ShuffleList(gameState.partyTurnOrder);
+
+    // 기본: 집권 당을 첫 플레이어로 가정하고 정부에 설정 (임시 로직)
+    gameState.government.SetRulingParty(gameState.firstPlayerParty);
 
         UIManager.Instance.partyStatusManager.Initialize(PartyRegistry.AllMainParties);
 
 
         CityManager.Instance.CreateCities();
+        // 유닛 초기화: 데이터 리스트를 기반으로 초기 배치
+        UnitManager.Instance?.InitializeUnitsFromDataList();
         TestScript();
     }
 

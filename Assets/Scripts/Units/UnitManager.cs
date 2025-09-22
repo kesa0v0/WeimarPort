@@ -24,6 +24,104 @@ public class UnitManager : MonoBehaviour
         AddDebugCommands();
     }
 
+    // 모든 유닛 데이터를 기준으로 최초 스폰/등록 처리
+    public void InitializeUnitsFromDataList()
+    {
+        if (unitDataList == null || unitDataList.Count == 0)
+        {
+            Debug.Log("UnitManager: unitDataList is empty; nothing to initialize.");
+            return;
+        }
+
+        foreach (var data in unitDataList)
+        {
+            if (data == null) continue;
+            var model = CreateUnitData(data);
+            if (model == null) continue;
+
+            var presenter = GetPresenterByModel(model);
+
+            // 기본 스폰 위치에 따라 컨테이너 결정 및 배치
+            switch (data.defaultSpawnPosition)
+            {
+                case UnitPosition.InPool:
+                    // 풀은 실제 컨테이너가 없으므로 아무 컨테이너도 연결하지 않음 (뷰 미생성)
+                    break;
+                case UnitPosition.InReserved:
+                {
+                    if (string.Equals(data.defaultLocationId, "Government", StringComparison.OrdinalIgnoreCase))
+                    {
+                        presenter.Model.position = UnitPosition.InReserved;
+                        presenter.Model.locationId = "Government";
+                        presenter.Model.membership = "Government";
+                        presenter.UpdateLocation(GameManager.Instance.gameState.government);
+                        EnsureViewForContainer(presenter, GameManager.Instance.gameState.government);
+                    }
+                    else
+                    {
+                        var party = PartyRegistry.GetPartyByName(data.defaultLocationId) as MainParty;
+                        if (party == null)
+                        {
+                            Debug.LogWarning($"Unit {data.unitName} default InReserved location '{data.defaultLocationId}' not found as MainParty.");
+                            break;
+                        }
+                        presenter.Model.position = UnitPosition.InReserved;
+                        presenter.Model.locationId = party.partyName;
+                        presenter.UpdateLocation(party);
+
+                        EnsureViewForContainer(presenter, party);
+                    }
+                    break;
+                }
+                case UnitPosition.OnBoard:
+                {
+                    var city = CityManager.Instance.GetCity(data.defaultLocationId);
+                    if (city == null)
+                    {
+                        Debug.LogWarning($"Unit {data.unitName} default OnBoard city '{data.defaultLocationId}' not found.");
+                        break;
+                    }
+                    presenter.Model.position = UnitPosition.OnBoard;
+                    presenter.Model.locationId = city.model.cityName;
+                    presenter.UpdateLocation(city);
+
+                    EnsureViewForContainer(presenter, city);
+                    spawnedUnitViews[presenter.Model.uniqueId].AttachToCity(city);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
+        // 플레이어 핸드 UI 새로고침 (있다면)
+        TryRedrawLocalPlayerHand();
+    }
+
+    private void TryRedrawLocalPlayerHand()
+    {
+        if (UIManager.Instance != null && UIManager.Instance.playerHandPanel != null && GameManager.Instance != null && GameManager.Instance.gameState != null)
+        {
+            var local = GameManager.Instance.gameState.playerParty;
+            if (local != null)
+            {
+                UIManager.Instance.playerHandPanel.Redraw(local);
+            }
+        }
+    }
+
+    private void EnsureViewForContainer(UnitPresenter presenter, IUnitContainer container)
+    {
+        if (presenter == null) return;
+        if (spawnedUnitViews.ContainsKey(presenter.Model.uniqueId)) return;
+
+        var newView = UnitFactory.SpawnUnitViewForContainer(presenter, container);
+        if (newView != null)
+        {
+            spawnedUnitViews[presenter.Model.uniqueId] = newView;
+        }
+    }
+
 
     // --- Public API ---
 
@@ -129,22 +227,33 @@ public class UnitManager : MonoBehaviour
             return;
         }
 
-        // 1. 데이터(Model)의 상태 변경
-        unit.Model.locationId = player.ToString();
+    // 1. 데이터(Model)의 상태 변경
+    unit.Model.locationId = player.partyName;
         unit.Model.position = UnitPosition.InReserved;
 
         // 1.5. Presenter에 cache update
         unit.UpdateLocation(player);
 
-        // 2. 시각적 표현(View): 손(UI)으로 갈 때, 뷰가 없으면 UI 뷰 생성
-        if (!spawnedUnitViews.ContainsKey(unit.Model.uniqueId))
+        // 2. 시각적 표현(View): 손(UI)용 뷰 보장. 기존 월드 뷰가 있다면 제거 후 UI 뷰 생성
+        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var existing))
         {
-            var newView = UnitFactory.SpawnUnitView(unit);
-            if (newView != null)
+            if (!(existing is UnitUIView))
             {
-                spawnedUnitViews.Add(unit.Model.uniqueId, newView);
+                Destroy(existing.gameObject);
+                spawnedUnitViews.Remove(unit.Model.uniqueId);
             }
         }
+        if (!spawnedUnitViews.ContainsKey(unit.Model.uniqueId))
+        {
+            var newView = UnitFactory.SpawnUnitViewForContainer(unit, player);
+            if (newView != null)
+            {
+                spawnedUnitViews[unit.Model.uniqueId] = newView;
+            }
+        }
+
+        // 3. 로컬 플레이어의 경우 핸드 UI 갱신
+        TryRedrawLocalPlayerHand();
     }
 
     // 유닛을 특정 도시로 이동시키는 '명령'
@@ -178,19 +287,35 @@ public class UnitManager : MonoBehaviour
         unit.UpdateLocation(city);
 
         // 2. 시각적 표현(View)을 처리
-        // 만약 유닛이 손에 있어서 View가 없었다면, 새로 생성!
+        // 손(UI) 뷰가 있으면 파괴 후 월드 뷰로 교체
+        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var existing))
+        {
+            if (!(existing is UnitGameView))
+            {
+                Destroy(existing.gameObject);
+                spawnedUnitViews.Remove(unit.Model.uniqueId);
+            }
+        }
         if (!spawnedUnitViews.ContainsKey(unit.Model.uniqueId))
         {
-            // UnitFactory를 통해 View를 생성하고 spawnedUnitViews에 등록
-            var newView = UnitFactory.SpawnUnitView(unit);
-            spawnedUnitViews.Add(unit.Model.uniqueId, newView);
+            var newView = UnitFactory.SpawnUnitViewForContainer(unit, city);
+            if (newView != null)
+            {
+                spawnedUnitViews[unit.Model.uniqueId] = newView;
+            }
         }
 
-        // 3. View에게 도시로 이동하라고 지시
-        spawnedUnitViews[unit.Model.uniqueId].AttachToCity(city);
+        // 3. View에게 도시로 이동하라고 지시 (뷰가 있으면)
+        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var view) && view != null)
+        {
+            view.AttachToCity(city);
+        }
 
         // 4. 이벤트 발행: "유닛이 도시로 이동했다!"
         // EventBus.Instance.UnitMovedToCity(unit, cityName);
+
+        // 5. 핸드에서 빠졌을 수 있으니 로컬 플레이어 핸드 UI 업데이트
+        TryRedrawLocalPlayerHand();
     }
 
     public UnitPresenter GetPresenterById(string unitId)
@@ -228,6 +353,7 @@ public class UnitManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("debug.moveUnitToCity", "Moves a unit to a city. usage: debug.moveUnitToCity <unitId> <cityName>", "MoveUnitToCityByName", this);
         DebugLogConsole.AddCommandInstance("debug.moveUnitTypeToHand", "Moves a unit (by type) from pool to player's hand. usage: debug.moveUnitTypeToHand <unitName> <playerId>", "MoveUnitTypeToHand", this);
         DebugLogConsole.AddCommandInstance("debug.listUnits", "Lists all spawned units with IDs.", "ListUnits", this);
+        DebugLogConsole.AddCommandInstance("debug.initUnits", "Initializes all units from UnitManager.unitDataList", "InitializeUnitsFromDataList", this);
     }
 }
 

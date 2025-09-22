@@ -8,6 +8,7 @@ public class UnitData : ScriptableObject
     public Texture2D unitIcon; // UI에 표시될 아이콘
     public Material unitMaterial; // 유닛의 외형을 나타내는 머티리얼
     public UnitPosition defaultSpawnPosition; // 기본 생성 위치
+    public string defaultLocationId; // 기본 생성 위치 ID (도시 이름 또는 플레이어 ID)
     public string spawnMembership; // 생성시 소속 (KPD, SPD 등)
 
     [Header("게임 능력치")]

@@ -12,6 +12,7 @@ public enum RoundPhase
 public class GameState
 {
     public MainParty playerParty;
+    public Government government = new();
 
     public int currentRound = 1;
     public RoundPhase currentPhase = RoundPhase.Republic;
