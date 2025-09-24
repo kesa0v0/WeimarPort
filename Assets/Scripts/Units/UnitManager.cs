@@ -313,23 +313,8 @@ public class UnitManager : MonoBehaviour
         // 1.5. Presenter에 cache update
         unit.UpdateLocation(player);
 
-        // 2. 시각적 표현(View): 손(UI)용 뷰 보장. 기존 월드 뷰가 있다면 제거 후 UI 뷰 생성
-        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var existing))
-        {
-            if (!(existing is UnitUIView))
-            {
-                Destroy(existing.gameObject);
-                spawnedUnitViews.Remove(unit.Model.uniqueId);
-            }
-        }
-        if (!spawnedUnitViews.ContainsKey(unit.Model.uniqueId))
-        {
-            var newView = UnitFactory.SpawnUnitViewForContainer(unit, player);
-            if (newView != null)
-            {
-                spawnedUnitViews[unit.Model.uniqueId] = newView;
-            }
-        }
+        // 2. 시각적 표현(View) 처리 공통 함수 사용
+        TransitionUnitView(unit, player);
 
         // 3. 로컬 플레이어의 경우 핸드 UI 갱신
         TryRedrawLocalPlayerHand();
@@ -419,30 +404,8 @@ public class UnitManager : MonoBehaviour
         // 1.5. Presenter에 cache update
         unit.UpdateLocation(city);
 
-        // 2. 시각적 표현(View)을 처리
-        // 손(UI) 뷰가 있으면 파괴 후 월드 뷰로 교체
-        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var existing))
-        {
-            if (!(existing is UnitGameView))
-            {
-                Destroy(existing.gameObject);
-                spawnedUnitViews.Remove(unit.Model.uniqueId);
-            }
-        }
-        if (!spawnedUnitViews.ContainsKey(unit.Model.uniqueId))
-        {
-            var newView = UnitFactory.SpawnUnitViewForContainer(unit, city);
-            if (newView != null)
-            {
-                spawnedUnitViews[unit.Model.uniqueId] = newView;
-            }
-        }
-
-        // 3. View에게 도시로 이동하라고 지시 (뷰가 있으면)
-        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var view) && view != null)
-        {
-            view.AttachToCity(city);
-        }
+        // 2. 시각적 표현(View) 처리 공통 함수 사용 (필요 시 월드 뷰 생성/교체)
+        TransitionUnitView(unit, city);
 
         // 4. 이벤트 발행: "유닛이 도시로 이동했다!"
         // EventBus.Instance.UnitMovedToCity(unit, cityName);
@@ -460,12 +423,8 @@ public class UnitManager : MonoBehaviour
         // 컨테이너 업데이트
         unit.UpdateLocation(DisposedBin.Instance);
 
-        // 뷰 정리: 폐기 상태에서는 뷰 없음
-        if (spawnedUnitViews.TryGetValue(unit.Model.uniqueId, out var existing) && existing != null)
-        {
-            Destroy(existing.gameObject);
-            spawnedUnitViews.Remove(unit.Model.uniqueId);
-        }
+        // 공통 전환 처리 (폐기 상태 -> 뷰 제거)
+        TransitionUnitView(unit, DisposedBin.Instance);
 
         TryRedrawLocalPlayerHand();
         UIManager.Instance?.disposedPanel?.Redraw();
@@ -571,6 +530,79 @@ public class UnitManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("debug.moveUnitCityToCity", "Moves a unit from city to city. usage: debug.moveUnitCityToCity <unitId> <toCity>", "MoveUnitCityToCityById", this);
         DebugLogConsole.AddCommandInstance("debug.disposeUnit", "Moves a unit to disposed. usage: debug.disposeUnit <unitId>", "DisposeUnitById", this);
         DebugLogConsole.AddCommandInstance("debug.restoreDisposedToCity", "Restores a disposed unit to city. usage: debug.restoreDisposedToCity <unitId> <toCity>", "RestoreDisposedToCityById", this);
+    }
+
+    /// <summary>
+    /// 유닛이 다른 컨테이너(도시/플레이어/폐기 등)로 이동할 때 필요한 View 생성/교체/제거 로직을 중앙집중화.
+    /// - 도시(CityPresenter): 월드용 UnitGameView 필요. 기존에 다른 타입 뷰가 있으면 제거 후 새로 생성.
+    /// - 플레이어/정부(MainParty/Government): 핸드/정부 패널이 자체 렌더 -> 월드 뷰 제거, 새 뷰 생성 안 함.
+    /// - 폐기(DisposedBin): 모든 뷰 제거.
+    /// </summary>
+    private void TransitionUnitView(UnitPresenter presenter, IUnitContainer newContainer)
+    {
+        if (presenter == null) return;
+
+        // DisposedBin: 모든 뷰 제거
+        if (newContainer is DisposedBin)
+        {
+            if (spawnedUnitViews.TryGetValue(presenter.Model.uniqueId, out var existingDisposed) && existingDisposed != null)
+            {
+                Destroy(existingDisposed.gameObject);
+                spawnedUnitViews.Remove(presenter.Model.uniqueId);
+            }
+            return;
+        }
+
+        // 플레이어/정부 -> 뷰 유지 필요 없음
+        if (newContainer is MainParty || newContainer is Government)
+        {
+            if (spawnedUnitViews.TryGetValue(presenter.Model.uniqueId, out var existingHand) && existingHand != null)
+            {
+                // UI 전용 핸드 뷰 정책이 바뀐다면 여기서 타입 검사로 유지/제거 가능
+                Destroy(existingHand.gameObject);
+                spawnedUnitViews.Remove(presenter.Model.uniqueId);
+            }
+            return; // 핸드 뷰는 패널이 그려줌 (Factory도 null 반환)
+        }
+
+        // 도시 -> 월드 뷰 필요
+        if (newContainer is CityPresenter cityContainer)
+        {
+            bool needsSpawn = true;
+            if (spawnedUnitViews.TryGetValue(presenter.Model.uniqueId, out var existingCityView) && existingCityView != null)
+            {
+                if (existingCityView is UnitGameView)
+                {
+                    // 이미 적절한 타입 뷰 존재 - 위치만 재부착
+                    existingCityView.AttachToCity(cityContainer);
+                    needsSpawn = false;
+                }
+                else
+                {
+                    Destroy(existingCityView.gameObject);
+                    spawnedUnitViews.Remove(presenter.Model.uniqueId);
+                }
+            }
+            if (needsSpawn)
+            {
+                var newView = UnitFactory.SpawnUnitViewForContainer(presenter, cityContainer);
+                if (newView != null)
+                {
+                    spawnedUnitViews[presenter.Model.uniqueId] = newView;
+                }
+            }
+            return;
+        }
+
+        // 그 외(폴백) - 기존 로직 유지 (필요 시 기본 뷰 생성)
+        if (!spawnedUnitViews.ContainsKey(presenter.Model.uniqueId))
+        {
+            var view = UnitFactory.SpawnUnitViewForContainer(presenter, newContainer);
+            if (view != null)
+            {
+                spawnedUnitViews[presenter.Model.uniqueId] = view;
+            }
+        }
     }
 }
 
