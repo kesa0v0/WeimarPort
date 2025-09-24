@@ -5,25 +5,29 @@ using IngameDebugConsole;
 
 public class UnitManager : MonoBehaviour
 {
+    #region Singleton & Fields
     public static UnitManager Instance { get; private set; }
 
-    public List<UnitData> unitDataList; // 에디터에서 할당
+    // Data references (assigned in Editor)
+    public List<UnitData> unitDataList; 
+
+    // Runtime caches
     public Dictionary<string, UnitModel> spawnedUnits = new Dictionary<string, UnitModel>();
     public Dictionary<string, UnitPresenter> spawnedPresenter = new Dictionary<string, UnitPresenter>();
 
-    // 화면에 생성된 '시각적 표현' 목록
-    // Key: UnitModel의 uniqueId, Value: 생성된 UnitView 게임오브젝트
+    // View instances (key = UnitModel.uniqueId)
     public Dictionary<string, BaseUnitView> spawnedUnitViews = new Dictionary<string, BaseUnitView>();
+    #endregion
 
+    #region Unity Lifecycle
     public void Awake()
     {
-        // 간단한 싱글톤 설정
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-
+        if (Instance == null) Instance = this; else Destroy(gameObject);
         AddDebugCommands();
     }
+    #endregion
 
+    #region UI Helpers
     private void TryRedrawLocalPlayerHand()
     {
         if (UIManager.Instance != null && UIManager.Instance.playerHandPanel != null && GameManager.Instance != null && GameManager.Instance.gameState != null)
@@ -35,7 +39,9 @@ public class UnitManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region View Helpers
     private void EnsureViewForContainer(UnitPresenter presenter, IUnitContainer container)
     {
         if (presenter == null) return;
@@ -48,7 +54,9 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    // --- Scenario / Load Init ---
+    #endregion
+
+    #region Initialization / Scenario Loading
 
     public void ClearAllUnits()
     {
@@ -149,6 +157,158 @@ public class UnitManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Unified Movement API
+
+    public enum UnitActionType
+    {
+        MoveToHandById,
+        MoveTypeToHand,
+        MoveToCityById,
+        MoveCityToCity,
+        DisposeById,
+        RestoreDisposedToCity,
+        ChangeMembership,
+        MoveTypeToHandAuto,
+        MoveToHandAutoById
+    }
+
+    public class UnitActionRequest
+    {
+        public UnitActionType ActionType;
+        public string UnitId;          // 대상 유닛 ID (필요 시)
+        public string UnitType;        // 타입 이동 시 이름
+        public string FromCity;        // city-to-city 등 (확장용)
+        public string ToCity;          // 목표 도시
+        public string PartyId;         // 파티/플레이어 ID
+        public string Membership;      // 변경할 소속
+    }
+
+    public void ExecuteUnitAction(UnitActionRequest req)
+    {
+        if (req == null) { Debug.LogWarning("ExecuteUnitAction: request is null"); return; }
+        switch (req.ActionType)
+        {
+            case UnitActionType.MoveToHandById:
+                HandleMoveToHandById(req.UnitId, req.PartyId);
+                break;
+            case UnitActionType.MoveTypeToHand:
+                HandleMoveTypeToHand(req.UnitType, req.PartyId);
+                break;
+            case UnitActionType.MoveToCityById:
+                HandleMoveUnitToCityById(req.UnitId, req.ToCity);
+                break;
+            case UnitActionType.MoveCityToCity:
+                HandleMoveCityToCity(req.UnitId, req.ToCity);
+                break;
+            case UnitActionType.DisposeById:
+                HandleDisposeById(req.UnitId);
+                break;
+            case UnitActionType.RestoreDisposedToCity:
+                HandleRestoreDisposed(req.UnitId, req.ToCity);
+                break;
+            case UnitActionType.ChangeMembership:
+                TryChangeMembershipOnBoard(req.UnitId, req.Membership);
+                break;
+            case UnitActionType.MoveTypeToHandAuto:
+                HandleMoveTypeToHandAuto(req.UnitType, req.PartyId);
+                break;
+            case UnitActionType.MoveToHandAutoById:
+                HandleMoveToHandAutoById(req.UnitId, req.PartyId);
+                break;
+            default:
+                Debug.LogWarning($"ExecuteUnitAction: Unhandled action {req.ActionType}");
+                break;
+        }
+    }
+
+    private void HandleMoveToHandById(string unitId, string playerId)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"No presenter for {unitId}"); return; }
+        var party = PartyRegistry.GetPartyByName(playerId) as MainParty;
+        if (party == null) { Debug.LogWarning($"No main party {playerId}"); return; }
+        MoveUnitToHand(presenter, party);
+    }
+    private void HandleMoveTypeToHand(string unitName, string playerId)
+    {
+        var party = PartyRegistry.GetPartyByName(playerId) as MainParty;
+        if (party == null) { Debug.LogWarning($"No main party {playerId}"); return; }
+        foreach (var kv in spawnedUnits)
+        {
+            var model = kv.Value;
+            if (model.Data != null && model.Data.unitName == unitName && model.position == UnitPosition.InPool)
+            {
+                var presenter = GetPresenterByModel(model);
+                if (presenter == null) { Debug.LogWarning($"Presenter missing for {model.uniqueId}"); return; }
+                MoveUnitToHand(presenter, party);
+                Debug.Log($"Moved {model.uniqueId} to {party.partyName} hand.");
+                return;
+            }
+        }
+    Debug.LogWarning($"No unit in pool of type '{unitName}'.");
+    }
+    private void HandleMoveToHandAutoById(string unitId, string partyId)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found {unitId}"); return; }
+        var party = PartyRegistry.GetPartyByName(partyId) as MainParty;
+        if (party == null) { Debug.LogWarning($"Party not found or not MainParty: {partyId}"); return; }
+        MoveUnitToHand(presenter, party);
+    }
+    private void HandleMoveTypeToHandAuto(string unitName, string partyId)
+    {
+        var party = PartyRegistry.GetPartyByName(partyId) as MainParty;
+        if (party == null) { Debug.LogWarning($"Party not found or not MainParty: {partyId}"); return; }
+        foreach (var kv in spawnedUnits)
+        {
+            var m = kv.Value;
+            if (m.position == UnitPosition.InPool && m.Data != null && m.Data.unitName == unitName)
+            {
+                var presenter = GetPresenterByModel(m);
+                MoveUnitToHand(presenter, party);
+                Debug.Log($"Moved one {unitName} to {party.partyName} hand.");
+                return;
+            }
+        }
+    Debug.LogWarning($"No unit in pool of type '{unitName}'.");
+    }
+    private void HandleMoveUnitToCityById(string unitId, string cityName)
+    {
+        if (!spawnedUnits.TryGetValue(unitId, out _)) return;
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"No presenter for {unitId}"); return; }
+        var city = CityManager.Instance.GetCity(cityName);
+        if (city == null) { Debug.LogWarning($"City not found: {cityName}"); return; }
+        MoveUnitToCity(presenter, city);
+    }
+    private void HandleMoveCityToCity(string unitId, string toCity)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        var city = CityManager.Instance.GetCity(toCity);
+        if (city == null) { Debug.LogWarning($"City not found: {toCity}"); return; }
+        MoveUnitToCity(presenter, city);
+    }
+    private void HandleDisposeById(string unitId)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        MoveUnitToDisposed(presenter);
+    }
+    private void HandleRestoreDisposed(string unitId, string toCity)
+    {
+        var presenter = GetPresenterById(unitId);
+        if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
+        var city = CityManager.Instance.GetCity(toCity);
+        if (city == null) { Debug.LogWarning($"City not found: {toCity}"); return; }
+        RestoreDisposedToCity(presenter, city);
+    }
+    #endregion // Unified Movement API
+
+    #region Public API - Creation
+    
     private UnitPresenter CreateUnitFromSpec(UnitSpawnSpec spec, string instanceId = null)
     {
         var data = GetUnitDataByName(spec.unitName);
@@ -168,46 +328,43 @@ public class UnitManager : MonoBehaviour
                 // no container
                 break;
             case UnitPosition.InReserved:
-            {
-                if (string.Equals(model.locationId, "Government", StringComparison.OrdinalIgnoreCase))
                 {
-                    // 정부 보유로 처리 (별도 뷰 없음)
-                    presenter.Model.membership = "Government";
-                    presenter.UpdateLocation(GameManager.Instance.gameState.government);
-                }
-                else
-                {
-                    var party = PartyRegistry.GetPartyByName(model.locationId) as MainParty;
-                    if (party == null)
+                    if (string.Equals(model.locationId, "Government", StringComparison.OrdinalIgnoreCase))
                     {
-                        Debug.LogWarning($"UnitManager: Spec InReserved location '{model.locationId}' not found as MainParty.");
-                        break;
+                        // 정부 보유로 처리 (별도 뷰 없음)
+                        presenter.Model.membership = "Government";
+                        presenter.UpdateLocation(GameManager.Instance.gameState.government);
                     }
-                    presenter.UpdateLocation(party);
-                }
-                // no UI view, PlayerHandPanel/Government panel renders icons from container.ContainedUnits
-                break;
-            }
-            case UnitPosition.OnBoard:
-            {
-                var city = CityManager.Instance.GetCity(model.locationId);
-                if (city == null)
-                {
-                    Debug.LogWarning($"UnitManager: Spec OnBoard city '{model.locationId}' not found.");
+                    else
+                    {
+                        var party = PartyRegistry.GetPartyByName(model.locationId) as MainParty;
+                        if (party == null)
+                        {
+                            Debug.LogWarning($"UnitManager: Spec InReserved location '{model.locationId}' not found as MainParty.");
+                            break;
+                        }
+                        presenter.UpdateLocation(party);
+                    }
+                    // no UI view, PlayerHandPanel/Government panel renders icons from container.ContainedUnits
                     break;
                 }
-                presenter.UpdateLocation(city);
-                EnsureViewForContainer(presenter, city);
-                spawnedUnitViews[model.uniqueId]?.AttachToCity(city);
-                break;
-            }
+            case UnitPosition.OnBoard:
+                {
+                    var city = CityManager.Instance.GetCity(model.locationId);
+                    if (city == null)
+                    {
+                        Debug.LogWarning($"UnitManager: Spec OnBoard city '{model.locationId}' not found.");
+                        break;
+                    }
+                    presenter.UpdateLocation(city);
+                    EnsureViewForContainer(presenter, city);
+                    spawnedUnitViews[model.uniqueId]?.AttachToCity(city);
+                    break;
+                }
         }
 
         return presenter;
     }
-
-
-    // --- Public API ---
 
     public UnitData GetUnitDataByName(string unitName)
     {
@@ -239,6 +396,9 @@ public class UnitManager : MonoBehaviour
         return newUnit;
     }
 
+    #endregion
+
+    #region Movement - Hand Acquisition (LEGACY public wrappers kept temporarily -> now handled by ExecuteUnitAction)
     // 유닛을 플레이어의 손으로 이동시키는 '명령'
     public void MoveUnitToHandByName(string unitId, string playerId)
     {
@@ -287,6 +447,9 @@ public class UnitManager : MonoBehaviour
         Debug.LogWarning($"No unit in pool found with type '{unitName}'.");
     }
 
+    #endregion
+
+    #region Debug Listing
     // 디버그용: 현재 관리 중인 유닛을 나열
     public void ListUnits()
     {
@@ -298,7 +461,10 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    public void MoveUnitToHand(UnitPresenter unit, MainParty player)
+    #endregion
+
+    #region Movement - Pool -> Hand
+    private void MoveUnitToHand(UnitPresenter unit, MainParty player)
     {
         if (unit.Model.position != UnitPosition.InPool)
         {
@@ -321,7 +487,7 @@ public class UnitManager : MonoBehaviour
     }
 
     // Pool -> Hand: 자동(선택 UI 없음). 대상 파티는 명시적으로 전달.
-    public void MoveUnitToHandAutoById(string unitId, string partyId)
+    private void MoveUnitToHandAutoById(string unitId, string partyId)
     {
         var presenter = GetPresenterById(unitId);
         if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
@@ -330,7 +496,7 @@ public class UnitManager : MonoBehaviour
         MoveUnitToHand(presenter, party);
     }
 
-    public void MoveUnitTypeToHandAuto(string unitName, string partyId)
+    private void MoveUnitTypeToHandAuto(string unitName, string partyId)
     {
         var party = PartyRegistry.GetPartyByName(partyId) as MainParty;
         if (party == null) { Debug.LogWarning($"Party not found or not MainParty: {partyId}"); return; }
@@ -348,8 +514,11 @@ public class UnitManager : MonoBehaviour
         Debug.LogWarning($"No unit in pool found with type '{unitName}'.");
     }
 
+    #endregion
+
+    #region Movement - Membership Change
     // Membership 변경: OnBoard에서만, 특정 유닛만 가능
-    public void TryChangeMembershipOnBoard(string unitId, string newMembership)
+    private void TryChangeMembershipOnBoard(string unitId, string newMembership)
     {
         var presenter = GetPresenterById(unitId);
         if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
@@ -374,8 +543,11 @@ public class UnitManager : MonoBehaviour
         Debug.Log($"Unit {model.uniqueId} membership changed to {newMembership}.");
     }
 
+    #endregion
+
+    #region Movement - City
     // 유닛을 특정 도시로 이동시키는 '명령'
-    public void MoveUnitToCityByName(string unitId, string cityName)
+    private void MoveUnitToCityByName(string unitId, string cityName)
     {
         if (!spawnedUnits
 .TryGetValue(unitId, out UnitModel unit)) return;
@@ -395,7 +567,7 @@ public class UnitManager : MonoBehaviour
         MoveUnitToCity(presenter, city);
     }
 
-    public void MoveUnitToCity(UnitPresenter unit, CityPresenter city)
+    private void MoveUnitToCity(UnitPresenter unit, CityPresenter city)
     {
         // 1. 데이터(Model)의 상태를 먼저 변경
         unit.Model.position = UnitPosition.OnBoard;
@@ -414,7 +586,10 @@ public class UnitManager : MonoBehaviour
         TryRedrawLocalPlayerHand();
     }
 
-    public void MoveUnitToDisposed(UnitPresenter unit)
+    #endregion
+
+    #region Movement - Disposal / Restore
+    private void MoveUnitToDisposed(UnitPresenter unit)
     {
         // 모델 상태 업데이트
         unit.Model.position = UnitPosition.Disposed;
@@ -442,9 +617,11 @@ public class UnitManager : MonoBehaviour
         UIManager.Instance?.disposedPanel?.Redraw();
     }
 
-    // --- Convenience debug wrappers ---
+    #endregion
 
-    public void MoveUnitCityToCityById(string unitId, string toCity)
+    #region Debug Convenience Wrappers
+
+    private void MoveUnitCityToCityById(string unitId, string toCity)
     {
         var presenter = GetPresenterById(unitId);
         if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
@@ -453,14 +630,14 @@ public class UnitManager : MonoBehaviour
         MoveUnitToCity(presenter, city);
     }
 
-    public void DisposeUnitById(string unitId)
+    private void DisposeUnitById(string unitId)
     {
         var presenter = GetPresenterById(unitId);
         if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
         MoveUnitToDisposed(presenter);
     }
 
-    public void RestoreDisposedToCityById(string unitId, string toCity)
+    private void RestoreDisposedToCityById(string unitId, string toCity)
     {
         var presenter = GetPresenterById(unitId);
         if (presenter == null) { Debug.LogWarning($"Presenter not found for {unitId}"); return; }
@@ -469,6 +646,9 @@ public class UnitManager : MonoBehaviour
         RestoreDisposedToCity(presenter, city);
     }
 
+    #endregion
+
+    #region Presenter / Lookup
     public UnitPresenter GetPresenterById(string unitId)
     {
         if (spawnedPresenter.TryGetValue(unitId, out var presenter))
@@ -497,6 +677,9 @@ public class UnitManager : MonoBehaviour
         return presenter;
     }
 
+    #endregion
+
+    #region Hand UI Interaction
     // 핸드 아이콘 클릭 시: 해당 타입의 유닛 하나를 찾아 도시로 이동
     public bool TryMoveOneUnitFromHandTypeToCity(MainParty party, UnitData unitData, CityPresenter city)
     {
@@ -516,6 +699,9 @@ public class UnitManager : MonoBehaviour
         return false;
     }
 
+    #endregion
+
+    #region Debug Command Registration
     private void AddDebugCommands()
     {
         DebugLogConsole.AddCommandInstance("debug.addUnitToPool", "Adds a unit to the pool. usage: debug.addUnitToPool <unitName>", "CreateUnitDataByString", this);
@@ -532,6 +718,9 @@ public class UnitManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("debug.restoreDisposedToCity", "Restores a disposed unit to city. usage: debug.restoreDisposedToCity <unitId> <toCity>", "RestoreDisposedToCityById", this);
     }
 
+    #endregion
+
+    #region View Transition Core
     /// <summary>
     /// 유닛이 다른 컨테이너(도시/플레이어/폐기 등)로 이동할 때 필요한 View 생성/교체/제거 로직을 중앙집중화.
     /// - 도시(CityPresenter): 월드용 UnitGameView 필요. 기존에 다른 타입 뷰가 있으면 제거 후 새로 생성.
@@ -604,6 +793,7 @@ public class UnitManager : MonoBehaviour
             }
         }
     }
+    #endregion
 }
 
 
