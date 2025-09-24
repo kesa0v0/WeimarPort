@@ -25,7 +25,7 @@ public class PlayerHandPanel : MonoBehaviour
 
             GameObject iconObj = Instantiate(unitIconPrefab, unitContainer);
             UnitIconView iconView = iconObj.GetComponent<UnitIconView>();
-            iconView.Setup(data, count);
+            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, count);
         }
     }
 }

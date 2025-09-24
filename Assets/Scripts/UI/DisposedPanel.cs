@@ -48,7 +48,7 @@ public class DisposedPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     var iconView = item.GetComponent<UnitIconView>();
                     if (iconView != null)
                     {
-                        iconView.Setup(entry.Key, entry.Value);
+                        iconView.Setup(entry.Key, UnitIconView.HorizontalPortion.LeftHalf, entry.Value);
                     }
                 }
             }

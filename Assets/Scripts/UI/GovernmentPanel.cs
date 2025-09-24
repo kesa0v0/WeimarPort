@@ -20,7 +20,7 @@ public class GovernmentPanel : MonoBehaviour
             int count = entry.Value;
             var iconObj = Instantiate(unitIconPrefab, unitContainer);
             var iconView = iconObj.GetComponent<UnitIconView>();
-            iconView.Setup(data, count);
+            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, count);
         }
     }
 }
