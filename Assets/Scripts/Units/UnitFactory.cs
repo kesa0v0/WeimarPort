@@ -62,6 +62,11 @@ public class UnitFactory
                 Debug.LogError("UnitFactory: Could not find suitable world unit view prefab with BaseUnitView.");
                 return null;
             }
+            // 보드 평면(XZ)에 눕히기: 필요시 각도 조정 (예: -90,0,0)
+            if (go != null)
+            {
+                go.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+            }
             presenter.BindView(viewComponent);
             // 도시 앵커에 부착
             viewComponent.AttachToCity(city);

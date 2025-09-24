@@ -128,7 +128,7 @@ public class UnitManager : MonoBehaviour
             {
                 if (r == null || string.IsNullOrEmpty(r.unitName)) continue;
                 UnitPosition pos;
-                if (!Enum.TryParse<UnitPosition>(r.position, true, out pos))
+                if (!Enum.TryParse(r.position, true, out pos))
                 {
                     // 숫자로 들어온 경우 등도 커버
                     if (int.TryParse(r.position, out int ival) && Enum.IsDefined(typeof(UnitPosition), ival))

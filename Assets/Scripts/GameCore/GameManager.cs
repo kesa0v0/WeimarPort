@@ -138,7 +138,12 @@ public class GameManager : MonoBehaviour
         EnterCitySelectionMode(
             PlayerActionState.SelectingCityForUnitMove,
             (selectedCity) => {
-                UnitManager.Instance.MoveUnitToCity(unit, selectedCity);
+                UnitManager.Instance.ExecuteUnitAction(new UnitManager.UnitActionRequest
+                {
+                    ActionType = UnitManager.UnitActionType.MoveToCityById,
+                    UnitId = selectedUnit.Model.uniqueId,
+                    ToCity = selectedCity.model.cityName
+                });
             }
     );
 }
