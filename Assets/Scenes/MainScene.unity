@@ -2367,7 +2367,7 @@ PrefabInstance:
     - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: logItemFontOverride
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.000061035156
