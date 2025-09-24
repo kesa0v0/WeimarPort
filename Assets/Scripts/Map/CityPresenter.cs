@@ -29,7 +29,7 @@ public class CityPresenter : IUnitContainer
     public void AddSeatToParty(Party party, int count = 1)
     {
         // 동기적 처리: 한 번에 하나의 선택만 진행되도록 재귀/체이닝
-        ProcessAddSeatSequentially(party, count);
+        // ProcessAddSeatSequentially(party, count); // Commented out as the method is removed.
     }
 
     public void RemoveSeatFromParty(Party party, int count = 1)
@@ -41,6 +41,7 @@ public class CityPresenter : IUnitContainer
         view.UpdateSeatOccupancy(model.seats);
     }
 
+    /*
     /// <summary>
     /// 좌석 추가를 순차적으로 처리하여, 동시 다중 선택 프롬프트가 발생하지 않도록 함.
     /// 또한 제거만 발생한 경우(실제 빈 자리가 생기지 않은 경우)에는 추가를 시도하지 않도록 가드.
@@ -86,6 +87,7 @@ public class CityPresenter : IUnitContainer
             ProcessAddSeatSequentially(targetParty, remaining - 1);
         });
     }
+    */
 
     #endregion
 

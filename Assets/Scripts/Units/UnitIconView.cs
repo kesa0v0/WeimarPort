@@ -64,19 +64,5 @@ public class UnitIconView : MonoBehaviour
         }
     }
     
-    // 이 아이콘을 클릭했을 때의 로직 (예: 유닛 배치 시작)
-    public void OnClick()
-    {
-        Debug.Log($"Clicked on {unitData.unitName}");
-        var local = GameManager.Instance?.gameState?.playerParty;
-        if (local == null) return;
 
-        GameManager.Instance.EnterCitySelectionMode(
-            PlayerActionState.SelectingCityForUnitMove,
-            (selectedCity) =>
-            {
-                UnitManager.Instance.TryMoveOneUnitFromHandTypeToCity(local, unitData, selectedCity);
-            }
-        );
-    }
 }

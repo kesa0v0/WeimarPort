@@ -1,10 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems; // 클릭 이벤트를 위해 필요
 using DG.Tweening; // DOTween 네임스페이스
 
 // UI 전용 유닛 View
-public class UnitUIView : BaseUnitView, IPointerClickHandler
+public class UnitUIView : BaseUnitView
 {
     [Header("UI Components")]
     [SerializeField] private Image unitIcon;         // 유닛의 종류를 나타내는 아이콘 (예: 병사, 탱크)
@@ -60,12 +59,7 @@ public class UnitUIView : BaseUnitView, IPointerClickHandler
         }
     }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        // View는 스스로 판단하지 않고, 클릭되었다는 사실을 Presenter에게 '보고'만 합니다.
-        Debug.Log($"View of unit '{presenter.Model.Data.unitName}' was clicked.");
-        presenter?.OnViewClicked();
-    }
+
 
     public override void AttachToCity(CityPresenter city)
     {

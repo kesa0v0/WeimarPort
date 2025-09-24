@@ -31,11 +31,6 @@ public class UnitPresenter
         currentContainerCache = newContainer;
     }
 
-    // View로부터 클릭되었다는 보고를 받는 메소드
-    public void OnViewClicked()
-    {
-        GameManager.Instance?.OnUnitClicked(this);
-    }
     
     public void ShowAsSelected(bool isSelected)
     {
