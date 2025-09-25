@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class UnitView : MonoBehaviour
 {
     [Header("UI Components")]
@@ -17,9 +18,9 @@ public class UnitView : MonoBehaviour
         this.presenter = presenter;
 
         // Model에서 아이콘 정보를 가져와서 UI에 반영
-        if (unitIcon != null && presenter.Model.Icon != null)
+        if (unitIcon != null && presenter.Model.Data.unitSprite != null)
         {
-            unitIcon.sprite = presenter.Model.Icon;
+            unitIcon.sprite = presenter.Model.Data.unitSprite;
         }
         else
         {

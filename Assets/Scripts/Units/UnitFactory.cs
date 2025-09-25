@@ -4,7 +4,7 @@ public class UnitFactory
 {
     // Resources/Prefabs/UnitUIView_Default 프리팹을 로드해 UI 뷰를 만든다고 가정
     // 필요 시 프로젝트 사양에 맞게 교체하세요.
-    internal static BaseUnitView SpawnUnitView(UnitPresenter presenter)
+    internal static UnitView SpawnUnitView(UnitPresenter presenter)
     {
         var prefab = Resources.Load<GameObject>("Prefabs/unitObj");
         if (prefab == null)
@@ -13,7 +13,7 @@ public class UnitFactory
             return null;
         }
         var go = Object.Instantiate(prefab);
-        var view = go.GetComponent<BaseUnitView>();
+        var view = go.GetComponent<UnitView>();
         if (view == null)
         {
             Debug.LogError("UnitFactory: Prefab does not contain a BaseUnitView component.");
@@ -24,9 +24,9 @@ public class UnitFactory
     }
 
     // 컨테이너 타입에 따라 적절한 뷰(UI/World)를 생성
-    internal static BaseUnitView SpawnUnitViewForContainer(UnitPresenter presenter, IUnitContainer container)
+    internal static UnitView SpawnUnitViewForContainer(UnitPresenter presenter, IUnitContainer container)
     {
-        if (container is MainParty)
+        if (container is UnitView)
         {
             // 핸드 UI는 PlayerHandPanel에서 그려주므로 뷰 생성 안 함
             return null;
@@ -40,12 +40,12 @@ public class UnitFactory
         {
             // 보드용 3D 뷰 생성
             var worldPrefab = Resources.Load<GameObject>("Prefabs/World/UnitGameView");
-            BaseUnitView viewComponent = null;
+            UnitView viewComponent = null;
             GameObject go = null;
             if (worldPrefab != null)
             {
                 go = Object.Instantiate(worldPrefab);
-                viewComponent = go.GetComponent<BaseUnitView>();
+                viewComponent = go.GetComponent<UnitView>();
             }
             if (viewComponent == null)
             {
@@ -54,12 +54,12 @@ public class UnitFactory
                 if (legacy != null)
                 {
                     go = Object.Instantiate(legacy);
-                    viewComponent = go.GetComponent<BaseUnitView>();
+                    viewComponent = go.GetComponent<UnitView>();
                 }
             }
             if (viewComponent == null)
             {
-                Debug.LogError("UnitFactory: Could not find suitable world unit view prefab with BaseUnitView.");
+                Debug.LogError("UnitFactory: Could not find suitable world unit view prefab with UnitView.");
                 return null;
             }
             // 보드 평면(XZ)에 눕히기: 필요시 각도 조정 (예: -90,0,0)

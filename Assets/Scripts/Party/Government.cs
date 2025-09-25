@@ -18,13 +18,14 @@ public class Government : IUnitContainer
     }
 
     // 정부를 새로 구성하는 함수
-    public void FormNewGovernment(List<Party> newGoverningParties, Party newChancellor)
+    public void FormNewGovernment(Party newChancellor, Party newCoalitionPartner = null)
     {
-        GoverningParties.Clear();
-        GoverningParties.AddRange(newGoverningParties);
+        var newGoverningParties = new List<Party> { newChancellor };
+        if (newCoalitionPartner != null)
+            newGoverningParties.Add(newCoalitionPartner);
+
+        GoverningParties = newGoverningParties;
         Chancellor = newChancellor;
-        
-        Debug.Log($"{newChancellor.Data.factionName}을 총리로 하는 새로운 정부가 구성되었습니다.");
     }
     
     // 특정 정당이 현재 정부에 속해 있는지 확인하는 함수

@@ -23,19 +23,13 @@ public class UnitModel
         Data = data; // 원본 데이터 참조 연결
         // 자동 생성되는 인스턴스 고유 ID
         uniqueId = Guid.NewGuid().ToString("N");
-        locationId = data.defaultSpawnPosition.ToString();
-
-        membership = data.spawnMembership;
-        position = data.defaultSpawnPosition;
     }
 
     public UnitModel(UnitData data, string membership, UnitPosition position, string locationId)
     {
         Data = data;
         uniqueId = Guid.NewGuid().ToString("N");
-        this.membership = string.IsNullOrEmpty(membership) ? data.spawnMembership : membership;
         this.position = position;
-        this.locationId = string.IsNullOrEmpty(locationId) ? data.defaultLocationId : locationId;
     }
 
     // 저장/시나리오에서 고정 인스턴스 ID를 지정하고 싶을 때 사용하는 생성자
@@ -43,8 +37,6 @@ public class UnitModel
     {
         Data = data;
         uniqueId = string.IsNullOrEmpty(instanceId) ? Guid.NewGuid().ToString("N") : instanceId;
-        this.membership = string.IsNullOrEmpty(membership) ? data.spawnMembership : membership;
         this.position = position;
-        this.locationId = string.IsNullOrEmpty(locationId) ? data.defaultLocationId : locationId;
     }
 }

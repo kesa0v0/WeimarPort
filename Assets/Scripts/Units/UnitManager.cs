@@ -16,7 +16,7 @@ public class UnitManager : MonoBehaviour
     public Dictionary<string, UnitPresenter> spawnedPresenter = new Dictionary<string, UnitPresenter>();
 
     // View instances (key = UnitModel.uniqueId)
-    public Dictionary<string, BaseUnitView> spawnedUnitViews = new Dictionary<string, BaseUnitView>();
+    public Dictionary<string, UnitView> spawnedUnitViews = new Dictionary<string, UnitView>();
     #endregion
 
     #region Unity Lifecycle
@@ -161,34 +161,10 @@ public class UnitManager : MonoBehaviour
                 break;
             case UnitPosition.InReserved:
                 {
-                    if (string.Equals(model.locationId, "Government", StringComparison.OrdinalIgnoreCase))
-                    {
-                        presenter.Model.membership = "Government";
-                        presenter.UpdateLocation(GameManager.Instance.gameState.government);
-                    }
-                    else
-                    {
-                        var party = PartyRegistry.GetPartyByName(model.locationId) as MainParty;
-                        if (party == null)
-                        {
-                            Debug.LogWarning($"UnitManager: Spec InReserved location '{model.locationId}' not found as MainParty.");
-                            break;
-                        }
-                        presenter.UpdateLocation(party);
-                    }
                     break;
                 }
             case UnitPosition.OnBoard:
                 {
-                    var city = CityManager.Instance.GetCity(model.locationId);
-                    if (city == null)
-                    {
-                        Debug.LogWarning($"UnitManager: Spec OnBoard city '{model.locationId}' not found.");
-                        break;
-                    }
-                    presenter.UpdateLocation(city);
-                    EnsureViewForContainer(presenter, city);
-                    spawnedUnitViews[model.uniqueId]?.AttachToCity(city);
                     break;
                 }
         }
@@ -235,7 +211,7 @@ public class UnitManager : MonoBehaviour
             return presenter;
 
         presenter = new UnitPresenter(unitModel, null);
-        if (spawnedUnitViews.TryGetValue(unitModel.uniqueId, out BaseUnitView view))
+        if (spawnedUnitViews.TryGetValue(unitModel.uniqueId, out UnitView view))
         {
             presenter.BindView(view);
         }

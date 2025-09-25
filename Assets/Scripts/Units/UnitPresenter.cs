@@ -1,10 +1,10 @@
 public class UnitPresenter
 {
     public UnitModel Model { get; private set; }
-    private BaseUnitView view;
+    private UnitView view;
     private IUnitContainer currentContainerCache;
 
-    public UnitPresenter(UnitModel model, BaseUnitView view)
+    public UnitPresenter(UnitModel model, UnitView view)
     {
         Model = model;
         this.view = view;
@@ -32,7 +32,7 @@ public class UnitPresenter
     }
 
     // 런타임 중 View를 생성/교체할 때 사용
-    public void BindView(BaseUnitView newView)
+    public void BindView(UnitView newView)
     {
         this.view = newView;
         if (this.view != null)

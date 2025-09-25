@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using IngameDebugConsole;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,10 +10,10 @@ public class GameManager : MonoBehaviour
     private PlayerActionState currentState = PlayerActionState.IdleState;
 
     private UnitPresenter selectedUnit; // 현재 선택된 유닛
-    private Action<CityPresenter> onCitySelectedCallback; 
-    
+    private Action<CityPresenter> onCitySelectedCallback;
+
     public static GameManager Instance { get; private set; }
-    
+
 
 
     private void Awake()
@@ -27,23 +28,16 @@ public class GameManager : MonoBehaviour
         gameState = new GameState();
 
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
-        gameState.playerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
+        gameState.playerParty = GetParty(FactionType.SPD);
 
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         // 그리고 파티 턴 순서도 설정
-        gameState.firstPlayerParty = PartyRegistry.AllMainParties[UnityEngine.Random.Range(0, PartyRegistry.AllMainParties.Count)];
-        gameState.partyTurnOrder.AddRange(PartyRegistry.AllMainParties);
-        ShuffleList(gameState.partyTurnOrder);
+        gameState.firstPlayerParty = GetParty(FactionType.SPD);
 
         // 최초 집권연정은 SPD와 Zentrum으로 설정 < 나중에 불러오기나 UI로 선택 가능하게 변경 예정
-        var coalition = new List<MainParty>
-        {
-            PartyRegistry.SPD,
-            PartyRegistry.Zentrum
-        };
-        gameState.government.SetRulingCoalition(coalition);
+        gameState.government.FormNewGovernment(GetParty(FactionType.SPD), GetParty(FactionType.Z));
 
-        UIManager.Instance.partyStatusManager.Initialize(PartyRegistry.AllMainParties);
+        UIManager.Instance.partyStatusManager.Initialize(gameState.allParties);
 
 
         CityManager.Instance.CreateCities();
@@ -55,51 +49,14 @@ public class GameManager : MonoBehaviour
         TestScript();
     }
 
+    void AddDebugCommands()
+    {
+        
+    }
+
     void TestScript()
     {
 
-    }
-
-    private void AddDebugCommands()
-    {
-        DebugLogConsole.AddCommandInstance(
-            "debug.setGovernmentCoalition",
-            "Sets government coalition. Usage: debug.setGovernmentCoalition <Primary> [Secondary]",
-            nameof(CmdSetGovernmentCoalition), this);
-
-        DebugLogConsole.AddCommandInstance(
-            "debug.redrawGovernment",
-            "Redraws the Government panel UI.",
-            nameof(CmdRedrawGovernment), this);
-    }
-
-    public void CmdRedrawGovernment()
-    {
-        UIManager.Instance?.governmentPanel?.Redraw();
-    }
-
-    public void CmdSetGovernmentCoalition(string primary, string secondary = null)
-    {
-        var p1 = PartyRegistry.GetPartyByName(primary) as MainParty;
-        MainParty p2 = null;
-        if (!string.IsNullOrEmpty(secondary))
-            p2 = PartyRegistry.GetPartyByName(secondary) as MainParty;
-
-        if (p1 == null)
-        {
-            Debug.LogWarning($"Primary party '{primary}' not found or not a MainParty.");
-            return;
-        }
-
-        if (p2 == null && !string.IsNullOrEmpty(secondary))
-        {
-            Debug.LogWarning($"Secondary party '{secondary}' not found or not a MainParty. Proceeding with single-party government.");
-        }
-
-        gameState.government.SetRulingCoalition(p1, p2);
-        // Setters already trigger redraw, but ensure anyway
-        UIManager.Instance?.governmentPanel?.Redraw();
-        Debug.Log($"Government coalition set to: {p1.partyName}{(p2 != null ? "+" + p2.partyName : "")}");
     }
 
     public void RequestPartySelection(List<Party> candidates, int count, Action<List<Party>> onChosen)
@@ -119,9 +76,9 @@ public class GameManager : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]);
         }
     }
-    public List<MainParty> GetCurrentRoundPartyOrder()
+    public List<Party> GetCurrentRoundPartyOrder()
     {
-        var order = new List<MainParty>();
+        var order = new List<Party>();
         int count = gameState.partyTurnOrder.Count;
         for (int i = 0; i < count; i++)
         {
@@ -129,6 +86,11 @@ public class GameManager : MonoBehaviour
             order.Add(gameState.partyTurnOrder[index]);
         }
         return order;
+    }
+    
+    public Party GetParty(FactionType faction)
+    {
+        return gameState.allParties.FirstOrDefault(p => p.Data.factionType == faction);
     }
 
     #endregion

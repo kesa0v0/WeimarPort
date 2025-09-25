@@ -8,7 +8,7 @@ public class UnitData : ScriptableObject
     public Texture2D unitIcon; // UI에 표시될 아이콘
     public Material unitMaterial; // 유닛의 외형을 나타내는 머티리얼
     public int combatStrength; // 전투력
-    public Faction initialAffiliation;
+    public Faction initialAffiliation;  
 
     [Header("시각 정보")]
     public Sprite unitSprite; // 유닛의 기본 이미지

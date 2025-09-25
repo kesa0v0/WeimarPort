@@ -8,14 +8,14 @@ public class UIPartyStatusManager : MonoBehaviour
     [SerializeField] private Transform partyStatusParent; // UI에서 배치할 부모 오브젝트
 
     private Dictionary<Party, UIPartyStatusView> partyViews = new();
-    private Dictionary<Party, MainParty> partyModels = new();
+    private Dictionary<Party, Party> partyModels = new();
 
     // 현재 진행 중인 선택 세션을 안정적으로 관리하기 위한 상태
     private Dictionary<Party, System.Action> _activeOriginalOnClicked = new();
     private bool _selectionActive = false;
 
 
-    public void Initialize(List<MainParty> parties)
+    public void Initialize(List<Party> parties)
     {
         foreach (var party in parties)
         {
@@ -30,16 +30,16 @@ public class UIPartyStatusManager : MonoBehaviour
         UpdatePartyOrderUI(GameManager.Instance.GetCurrentRoundPartyOrder());
     }
 
-    public void UpdatePartyStatusView(MainParty party)
+    public void UpdatePartyStatusView(Party party)
     {
         if (partyViews.TryGetValue(party, out var view))
         {
-            view.SetPartyName(party.partyName);
+            view.SetPartyName(party.Data.factionName);
             view.SetPartyStatus($"Opposition");
             view.SetPartyAgenda(party.currentPartyAgenda);
 
             // 보유한 하위 정당 목록 표시
-            var subPartyNames = party.heldSubParties.Count > 0 ? string.Join(", ", party.heldSubParties.ConvertAll(sp => sp.partyName)) : "None";
+            var subPartyNames = party.ControlledMinorParties.Count > 0 ? string.Join(", ", party.ControlledMinorParties.ConvertAll(sp => sp.partyName)) : "None";
             view.SetPartySubParties(subPartyNames);
 
             // 보유 군대 표시
@@ -47,7 +47,7 @@ public class UIPartyStatusManager : MonoBehaviour
         }
     }
 
-    public void UpdatePartyOrderUI(List<MainParty> newOrder)
+    public void UpdatePartyOrderUI(List<Party> newOrder)
     {
         for (int i = 0; i < newOrder.Count; i++)
         {
