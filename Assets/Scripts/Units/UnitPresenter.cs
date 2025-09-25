@@ -31,12 +31,6 @@ public class UnitPresenter
         currentContainerCache = newContainer;
     }
 
-    
-    public void ShowAsSelected(bool isSelected)
-    {
-        view?.ShowAsSelected(isSelected);
-    }
-
     // 런타임 중 View를 생성/교체할 때 사용
     public void BindView(BaseUnitView newView)
     {
