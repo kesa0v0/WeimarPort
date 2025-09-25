@@ -15,3 +15,14 @@ public class PlayerState : MonoBehaviour
     }
 }
 
+
+
+public enum PlayerActionState
+{
+    IdleState,
+    CardSelectedState,
+    AwaitingCitySelectionState,
+    AwaitingUnitSelectionState,
+    AwaitingIssueSelectionState,
+    ActionExecutionState
+}

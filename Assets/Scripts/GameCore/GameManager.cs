@@ -6,6 +6,10 @@ using IngameDebugConsole;
 public class GameManager : MonoBehaviour
 {
     public GameState gameState;
+    private PlayerActionState currentState = PlayerActionState.IdleState;
+
+    private UnitPresenter selectedUnit; // 현재 선택된 유닛
+    private Action<CityPresenter> onCitySelectedCallback; 
     
     public static GameManager Instance { get; private set; }
     
@@ -98,11 +102,10 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Government coalition set to: {p1.partyName}{(p2 != null ? "+" + p2.partyName : "")}");
     }
 
-
-
-
-
-
+    public void RequestPartySelection(List<Party> candidates, int count, Action<List<Party>> onChosen)
+    {
+        UIManager.Instance.partyStatusManager.RequestPartySelection(candidates, count, onChosen);
+    }
 
 
     #region Helper Methods

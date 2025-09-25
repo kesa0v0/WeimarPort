@@ -63,6 +63,14 @@ public class CityManager : MonoBehaviour
         // CityFactory에서 등록까지 처리함
         CityFactory.SpawnCity(parameters);
     }
+    internal void RegisterCity(string cityName, CityModel model, CityView view)
+    {
+        // 이미 등록된 경우 덮어쓰지 않음
+        if (cities.ContainsKey(cityName)) return;
+        var presenter = new CityPresenter(model, view);
+        cityPresenters[cityName] = presenter;
+        cities[cityName] = view;
+    }
 
     public void RemoveCity(string cityName)
     {
@@ -80,6 +88,11 @@ public class CityManager : MonoBehaviour
             Debug.LogWarning($"City '{cityName}' not found.");
         }
     }
+    public void UnregisterCity(string cityName)
+    {
+        cityPresenters.Remove(cityName);
+        cities.Remove(cityName);
+    }
 
     public void CreateCities()
     {
@@ -96,20 +109,6 @@ public class CityManager : MonoBehaviour
         Instance.CreateCity("Munchen", new Vector2(1, -4), 3);
     }
 
-    internal void RegisterCity(string cityName, CityModel model, CityView view)
-    {
-        // 이미 등록된 경우 덮어쓰지 않음
-        if (cities.ContainsKey(cityName)) return;
-        var presenter = new CityPresenter(model, view);
-        cityPresenters[cityName] = presenter;
-        cities[cityName] = view;
-    }
-
-    public void UnregisterCity(string cityName)
-    {
-        cityPresenters.Remove(cityName);
-        cities.Remove(cityName);
-    }
 
     public CityPresenter GetCity(string cityName)
     {
@@ -159,7 +158,7 @@ public class CityManager : MonoBehaviour
 
     private void RegisterDebugCommands()
     {
-        DebugLogConsole.AddCommandInstance("debug.addCitySeat", "Add seats to a city. Usage: debug.addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCity", this);
-        DebugLogConsole.AddCommandInstance("debug.removeCitySeat", "Remove seats from a city. Usage: debug.removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCity", this);
+        DebugLogConsole.AddCommandInstance("addCitySeat", "Add seats to a city. Usage: addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCity", this);
+        DebugLogConsole.AddCommandInstance("removeCitySeat", "Remove seats from a city. Usage: removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCity", this);
     }
 }
