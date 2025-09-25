@@ -4,7 +4,7 @@ public class UnitFactory
 {
     // Resources/Prefabs/UnitUIView_Default 프리팹을 로드해 UI 뷰를 만든다고 가정
     // 필요 시 프로젝트 사양에 맞게 교체하세요.
-    internal static UnitView SpawnUnitView(UnitPresenter presenter)
+    internal static UnitView SpawnUnitView(Unit presenter)
     {
         var prefab = Resources.Load<GameObject>("Prefabs/unitObj");
         if (prefab == null)
@@ -24,7 +24,7 @@ public class UnitFactory
     }
 
     // 컨테이너 타입에 따라 적절한 뷰(UI/World)를 생성
-    internal static UnitView SpawnUnitViewForContainer(UnitPresenter presenter, IUnitContainer container)
+    internal static UnitView SpawnUnitViewForContainer(Unit presenter, IUnitContainer container)
     {
         if (container is UnitView)
         {
@@ -36,7 +36,7 @@ public class UnitFactory
             // 정부 보유 유닛도 별도 핸드/패널에서 그리거나 논-월드이므로 뷰 생성 안 함
             return null;
         }
-        else if (container is CityPresenter city)
+        else if (container is City city)
         {
             // 보드용 3D 뷰 생성
             var worldPrefab = Resources.Load<GameObject>("Prefabs/World/UnitGameView");

@@ -10,7 +10,7 @@ public class Party: IUnitContainer
     public string currentPartyAgenda;
     public List<MinorPartyData> ControlledMinorParties { get; private set; }
 
-    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; }
+    public Dictionary<Unit, int> ContainedUnits { get; private set; }
 
     // public List<Card> hand;
 
@@ -19,16 +19,16 @@ public class Party: IUnitContainer
     {
         Data = data;
         ControlledMinorParties = new List<MinorPartyData>();
-        ContainedUnits = new Dictionary<UnitPresenter, int>();
+        ContainedUnits = new Dictionary<Unit, int>();
     }
 
-    public void AddUnit(UnitPresenter unit)
+    public void AddUnit(Unit unit)
     {
         if (!ContainedUnits.ContainsKey(unit))
             ContainedUnits[unit] = 0;
     }
 
-    public void RemoveUnit(UnitPresenter unit)
+    public void RemoveUnit(Unit unit)
     {
         if (ContainedUnits.ContainsKey(unit))
             ContainedUnits.Remove(unit);

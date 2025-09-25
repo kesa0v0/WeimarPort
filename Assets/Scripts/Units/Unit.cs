@@ -1,10 +1,10 @@
-public class UnitPresenter
+public class Unit
 {
     public UnitModel Model { get; private set; }
     private UnitView view;
     private IUnitContainer currentContainerCache;
 
-    public UnitPresenter(UnitModel model, UnitView view)
+    public Unit(UnitModel model, UnitView view)
     {
         Model = model;
         this.view = view;

@@ -6,7 +6,7 @@ public class Government : IUnitContainer
     public List<Party> GoverningParties { get; private set; }
     public Party Chancellor { get; private set; }
 
-    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new();
+    public Dictionary<Unit, int> ContainedUnits { get; private set; } = new();
 
     public string Name => "Government";
     public Color Color => Color.white;
@@ -34,7 +34,7 @@ public class Government : IUnitContainer
         return GoverningParties.Contains(party);
     }
 
-    public void AddUnit(UnitPresenter unit)
+    public void AddUnit(Unit unit)
     {
         if (ContainedUnits.ContainsKey(unit))
             ContainedUnits[unit]++;
@@ -44,7 +44,7 @@ public class Government : IUnitContainer
         UIManager.Instance?.governmentPanel?.Redraw();
     }
 
-    public void RemoveUnit(UnitPresenter unit)
+    public void RemoveUnit(Unit unit)
     {
         if (ContainedUnits.ContainsKey(unit))
         {

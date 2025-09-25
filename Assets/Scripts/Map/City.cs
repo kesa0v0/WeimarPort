@@ -3,13 +3,13 @@ using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 
-public class CityPresenter : IUnitContainer
+public class City : IUnitContainer
 {
     public CityModel model { get; }
     public ICityView view;
 
 
-    public CityPresenter(CityModel model, ICityView view)
+    public City(CityModel model, ICityView view)
     {
         this.model = model;
         this.view = view;
@@ -91,9 +91,9 @@ public class CityPresenter : IUnitContainer
 
     #region Unit Management
 
-    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new Dictionary<UnitPresenter, int>();
+    public Dictionary<Unit, int> ContainedUnits { get; private set; } = new Dictionary<Unit, int>();
 
-    public void AddUnit(UnitPresenter unit)
+    public void AddUnit(Unit unit)
     {
         if (ContainedUnits.ContainsKey(unit))
             ContainedUnits[unit]++;
@@ -101,7 +101,7 @@ public class CityPresenter : IUnitContainer
             ContainedUnits[unit] = 1;
     }
 
-    public void RemoveUnit(UnitPresenter unit)
+    public void RemoveUnit(Unit unit)
     {
         if (ContainedUnits.ContainsKey(unit))
         {

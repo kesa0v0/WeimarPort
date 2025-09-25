@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
     private PlayerActionState currentState = PlayerActionState.IdleState;
 
-    private UnitPresenter selectedUnit; // 현재 선택된 유닛
-    private Action<CityPresenter> onCitySelectedCallback;
+    private Unit selectedUnit; // 현재 선택된 유닛
+    private Action<City> onCitySelectedCallback;
 
     public static GameManager Instance { get; private set; }
 

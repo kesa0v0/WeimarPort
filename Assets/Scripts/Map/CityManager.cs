@@ -30,7 +30,7 @@ public class CityManager : MonoBehaviour
     public Transform cityParent;  // 도시들이 생성될 부모 Transform
     
     private Dictionary<string, CityView> cities = new();
-    private Dictionary<string, CityPresenter> cityPresenters = new();
+    private Dictionary<string, City> Citys = new();
 
     private void Awake()
     {
@@ -68,8 +68,8 @@ public class CityManager : MonoBehaviour
     {
         // 이미 등록된 경우 덮어쓰지 않음
         if (cities.ContainsKey(cityName)) return;
-        var presenter = new CityPresenter(model, view);
-        cityPresenters[cityName] = presenter;
+        var presenter = new City(model, view);
+        Citys[cityName] = presenter;
         cities[cityName] = view;
     }
 
@@ -78,7 +78,7 @@ public class CityManager : MonoBehaviour
         if (cities.TryGetValue(cityName, out var cityView))
         {
             cities.Remove(cityName);
-            cityPresenters.Remove(cityName);
+            Citys.Remove(cityName);
 
             Destroy(cityView.gameObject);
             UnregisterCity(cityName);
@@ -91,7 +91,7 @@ public class CityManager : MonoBehaviour
     }
     public void UnregisterCity(string cityName)
     {
-        cityPresenters.Remove(cityName);
+        Citys.Remove(cityName);
         cities.Remove(cityName);
     }
 
@@ -111,9 +111,9 @@ public class CityManager : MonoBehaviour
     }
 
 
-    public CityPresenter GetCity(string cityName)
+    public City GetCity(string cityName)
     {
-        if (cityPresenters.TryGetValue(cityName, out var presenter))
+        if (Citys.TryGetValue(cityName, out var presenter))
         {
             return presenter;
         }
@@ -125,7 +125,7 @@ public class CityManager : MonoBehaviour
 
     public void AddSeatToCity(string cityName, string partyName, int count)
     {
-        if (!cityPresenters.TryGetValue(cityName, out var presenter))
+        if (!Citys.TryGetValue(cityName, out var presenter))
         {
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
@@ -142,7 +142,7 @@ public class CityManager : MonoBehaviour
 
     public void RemoveSeatFromCity(string cityName, string partyName, int count)
     {
-        if (!cityPresenters.TryGetValue(cityName, out var presenter))
+        if (!Citys.TryGetValue(cityName, out var presenter))
         {
             Debug.LogWarning($"City '{cityName}' not found.");
             return;

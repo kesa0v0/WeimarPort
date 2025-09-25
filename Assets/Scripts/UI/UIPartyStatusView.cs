@@ -51,7 +51,7 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
         partyHeldCardsCountText.text = $"T {timelineCards} : {policyCards} P";
     }
 
-    public void SetInSupplyUnits(Dictionary<UnitPresenter, int> units)
+    public void SetInSupplyUnits(Dictionary<Unit, int> units)
     {
         // Clear existing items
         foreach (Transform child in partyInSupplyUnitsContent)
@@ -87,5 +87,5 @@ public interface IUIOtherPartyStatusView
     void SetPartyName(string name, Color color);
     void SetPartyStatus(string status);
     void SetPartyAgenda(string agenda, Color color);
-    void SetInSupplyUnits(Dictionary<UnitPresenter, int> units);
+    void SetInSupplyUnits(Dictionary<Unit, int> units);
 }

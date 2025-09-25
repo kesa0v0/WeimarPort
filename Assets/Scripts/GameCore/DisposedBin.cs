@@ -7,15 +7,15 @@ public class DisposedBin : IUnitContainer
     private static DisposedBin _instance;
     public static DisposedBin Instance => _instance ??= new DisposedBin();
 
-    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new();
+    public Dictionary<Unit, int> ContainedUnits { get; private set; } = new();
 
-    public void AddUnit(UnitPresenter unit)
+    public void AddUnit(Unit unit)
     {
         if (ContainedUnits.ContainsKey(unit)) ContainedUnits[unit]++;
         else ContainedUnits[unit] = 1;
     }
 
-    public void RemoveUnit(UnitPresenter unit)
+    public void RemoveUnit(Unit unit)
     {
         if (!ContainedUnits.ContainsKey(unit)) return;
         ContainedUnits[unit]--;

@@ -13,7 +13,7 @@ public class UnitManager : MonoBehaviour
 
     // Runtime caches
     public Dictionary<string, UnitModel> spawnedUnits = new Dictionary<string, UnitModel>();
-    public Dictionary<string, UnitPresenter> spawnedPresenter = new Dictionary<string, UnitPresenter>();
+    public Dictionary<string, Unit> spawnedPresenter = new Dictionary<string, Unit>();
 
     // View instances (key = UnitModel.uniqueId)
     public Dictionary<string, UnitView> spawnedUnitViews = new Dictionary<string, UnitView>();
@@ -27,20 +27,6 @@ public class UnitManager : MonoBehaviour
     }
     #endregion
 
-    #region View Helpers
-    private void EnsureViewForContainer(UnitPresenter presenter, IUnitContainer container)
-    {
-        if (presenter == null) return;
-        if (spawnedUnitViews.ContainsKey(presenter.Model.uniqueId)) return;
-
-        var newView = UnitFactory.SpawnUnitViewForContainer(presenter, container);
-        if (newView != null)
-        {
-            spawnedUnitViews[presenter.Model.uniqueId] = newView;
-        }
-    }
-
-    #endregion
 
     #region Initialization / Scenario Loading
 
@@ -84,7 +70,7 @@ public class UnitManager : MonoBehaviour
             suffix++;
             candidate = $"{desired}-{suffix}";
         }
-        Debug.LogWarning($"Duplicate unit id '{desired}' detected. Using '{candidate}' instead.");
+        Debug.Log($"Duplicate unit id '{desired}' detected. Using '{candidate}' instead.");
         return candidate;
     }
 
@@ -142,7 +128,7 @@ public class UnitManager : MonoBehaviour
 
     #region Public API - Creation
 
-    private UnitPresenter CreateUnitFromSpec(UnitSpawnSpec spec, string instanceId = null)
+    private Unit CreateUnitFromSpec(UnitSpawnSpec spec, string instanceId = null)
     {
         var data = GetUnitDataByName(spec.unitName);
         if (data == null)
@@ -152,7 +138,7 @@ public class UnitManager : MonoBehaviour
         }
         var model = new UnitModel(data, instanceId, spec.membership, spec.position, spec.locationId);
         spawnedUnits.Add(model.uniqueId, model);
-        var presenter = new UnitPresenter(model, null);
+        var presenter = new Unit(model, null);
         spawnedPresenter[model.uniqueId] = presenter;
 
         switch (model.position)
@@ -193,7 +179,7 @@ public class UnitManager : MonoBehaviour
     #endregion
 
     #region Presenter / Lookup
-    public UnitPresenter GetPresenterById(string unitId)
+    public Unit GetPresenterById(string unitId)
     {
         if (spawnedPresenter.TryGetValue(unitId, out var presenter))
             return presenter;
@@ -205,12 +191,12 @@ public class UnitManager : MonoBehaviour
         return null;
     }
 
-    public UnitPresenter GetPresenterByModel(UnitModel unitModel)
+    public Unit GetPresenterByModel(UnitModel unitModel)
     {
         if (spawnedPresenter.TryGetValue(unitModel.uniqueId, out var presenter))
             return presenter;
 
-        presenter = new UnitPresenter(unitModel, null);
+        presenter = new Unit(unitModel, null);
         if (spawnedUnitViews.TryGetValue(unitModel.uniqueId, out UnitView view))
         {
             presenter.BindView(view);
@@ -234,7 +220,8 @@ public class UnitManager : MonoBehaviour
 
 public interface IUnitContainer
 {
-    Dictionary<UnitPresenter, int> ContainedUnits { get; }
-    void AddUnit(UnitPresenter unit);
-    void RemoveUnit(UnitPresenter unit);
+    void AddUnit(Unit unit);
+    void RemoveUnit(Unit unit);
+    List<Unit> GetUnits();
+    string GetContainerName();
 }

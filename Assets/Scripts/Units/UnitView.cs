@@ -8,12 +8,12 @@ public class UnitView : MonoBehaviour
     [SerializeField] private Image unitIcon;
     [SerializeField] private Material unitMaterial;
     [SerializeField] private MeshRenderer highlightRenderer;
-    protected UnitPresenter presenter;
+    protected Unit presenter;
 
     /// <summary>
     /// Factory나 Manager가 이 View를 생성한 직후 호출하여 초기화합니다.
     /// </summary>
-    public void Initialize(UnitPresenter presenter)
+    public void Initialize(Unit presenter)
     {
         this.presenter = presenter;
 
@@ -34,8 +34,8 @@ public class UnitView : MonoBehaviour
     /// 도시로 부착(부모 설정 등).
     /// </summary>
 
-    public UnitPresenter Presenter => presenter;
-    public void AttachToCity(CityPresenter city)
+    public Unit Presenter => presenter;
+    public void AttachToCity(City city)
     {
         // CityView의 cityIndicator를 기준 부모로 사용
         Transform anchor = city.view.GetCityIndicator().transform;
