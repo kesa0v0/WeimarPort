@@ -3,46 +3,34 @@ using UnityEngine;
 
 public class Government : IUnitContainer
 {
-    // Coalition can have 1-2 parties
-    public List<MainParty> CoalitionParties { get; private set; } = new List<MainParty>(2);
-
-    // Backward-compat convenience: primary party if any
-    public MainParty RulingParty => CoalitionParties.Count > 0 ? CoalitionParties[0] : null;
+    public List<Party> GoverningParties { get; private set; }
+    public Party Chancellor { get; private set; }
 
     public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new();
 
     public string Name => "Government";
-    // Government symbol color is always white (per spec)
     public Color Color => Color.white;
 
-    public void SetRulingParty(MainParty party)
+    public Government()
     {
-        SetRulingCoalition(party, null);
-        UIManager.Instance?.governmentPanel?.Redraw();
+        GoverningParties = new List<Party>();
+        Chancellor = null;
     }
 
-    public void SetRulingCoalition(MainParty primary, MainParty secondary = null)
+    // 정부를 새로 구성하는 함수
+    public void FormNewGovernment(List<Party> newGoverningParties, Party newChancellor)
     {
-        CoalitionParties.Clear();
-        if (primary != null)
-            CoalitionParties.Add(primary);
-        if (secondary != null && secondary != primary)
-            CoalitionParties.Add(secondary);
-        UIManager.Instance?.governmentPanel?.Redraw();
+        GoverningParties.Clear();
+        GoverningParties.AddRange(newGoverningParties);
+        Chancellor = newChancellor;
+        
+        Debug.Log($"{newChancellor.Data.factionName}을 총리로 하는 새로운 정부가 구성되었습니다.");
     }
-
-    public void SetRulingCoalition(List<MainParty> parties)
+    
+    // 특정 정당이 현재 정부에 속해 있는지 확인하는 함수
+    public bool IsInGovernment(Party party)
     {
-        CoalitionParties.Clear();
-        if (parties == null) return;
-        foreach (var p in parties)
-        {
-            if (p == null) continue;
-            if (CoalitionParties.Count == 2) break;
-            if (!CoalitionParties.Contains(p))
-                CoalitionParties.Add(p);
-        }
-        UIManager.Instance?.governmentPanel?.Redraw();
+        return GoverningParties.Contains(party);
     }
 
     public void AddUnit(UnitPresenter unit)
