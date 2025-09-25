@@ -8,7 +8,6 @@ public class UIPartyStatusManager : MonoBehaviour
     [SerializeField] private Transform partyStatusParent; // UI에서 배치할 부모 오브젝트
 
     private Dictionary<Party, UIPartyStatusView> partyViews = new();
-    private Dictionary<Party, Party> partyModels = new();
 
     // 현재 진행 중인 선택 세션을 안정적으로 관리하기 위한 상태
     private Dictionary<Party, System.Action> _activeOriginalOnClicked = new();
@@ -22,7 +21,6 @@ public class UIPartyStatusManager : MonoBehaviour
             var viewObj = Instantiate(partyStatusPrefab, partyStatusParent);
             var view = viewObj.GetComponent<UIPartyStatusView>();
             partyViews.Add(party, view);
-            partyModels.Add(party, party);
 
             UpdatePartyStatusView(party);
         }
