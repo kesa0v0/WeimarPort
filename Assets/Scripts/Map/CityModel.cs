@@ -11,13 +11,7 @@ public class CityModel
 
     public int seatMaxCount;
     public int currentSeats => seats.Values.Sum();
-    public Dictionary<Party, int> seats = new()
-    {
-        { PartyRegistry.SPD, 0 },
-        { PartyRegistry.KPD, 0 },
-        { PartyRegistry.Zentrum, 0 },
-        { PartyRegistry.DNVP, 0 },
-    };
+    public Dictionary<Party, int> seats;
 
     public List<UnitModel> UnitContained { get; private set; } = new List<UnitModel>();
 
@@ -26,6 +20,7 @@ public class CityModel
         cityName = name;
         position = pos;
         this.seatMaxCount = seatMaxCount;
+        seats = new();
     }
 
     #region Seat Management
@@ -56,7 +51,7 @@ public class CityModel
         }
         else
         {
-            Debug.LogWarning($"No seats to remove for party {party.partyName}.");
+            Debug.LogWarning($"No seats to remove for party {party.Data.factionName}.");
         }
     }
 

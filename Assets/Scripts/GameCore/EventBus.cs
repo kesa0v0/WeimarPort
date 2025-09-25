@@ -23,19 +23,19 @@ public class EventBus : MonoBehaviour
 
     #region GameStateEvents
 
-    public event Action<MainParty> OnTurnStarted;
-    public event Action<MainParty> OnTurnEnded;
+    public event Action<Party> OnTurnStarted;
+    public event Action<Party> OnTurnEnded;
     public event Action<int> OnRoundStarted;
     public event Action<int> OnRoundEnded;
 
-    public void TurnStarted(MainParty party)
+    public void TurnStarted(Party party)
     {
-        Debug.Log($"TurnStarted: {party.partyName}");
+        Debug.Log($"TurnStarted: {party.Data.factionName}");
         OnTurnStarted?.Invoke(party);
     }
-    public void TurnEnded(MainParty party)
+    public void TurnEnded(Party party)
     {
-        Debug.Log($"TurnEnded: {party.partyName}");
+        Debug.Log($"TurnEnded: {party.Data.factionName}");
         OnTurnEnded?.Invoke(party);
     }
     public void RoundStarted(int roundNumber)
@@ -73,13 +73,13 @@ public class EventBus : MonoBehaviour
     }
 
     public void CitySeatAdded(string cityName, Party party, int count) {
-        Debug.Log($"CitySeatAdded: {cityName}, {party.partyName}, {count}");
+        Debug.Log($"CitySeatAdded: {cityName}, {party.Data.factionName}, {count}");
         OnCitySeatAdded?.Invoke(cityName, party, count);
     }
 
     public void CitySeatRemoved(string cityName, Party party, int count)
     {
-        Debug.Log($"CitySeatRemoved: {cityName}, {party.partyName}, {count}");
+        Debug.Log($"CitySeatRemoved: {cityName}, {party.Data.factionName}, {count}");
         OnCitySeatRemoved?.Invoke(cityName, party, count);
     }
 

@@ -55,14 +55,14 @@ public class CityView : MonoBehaviour, ICityView
     public void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy)
     {
         int seatIndex = 0;
-        foreach (var party in PartyRegistry.AllMainParties)
+        foreach (var party in GameManager.Instance.gameState.allParties)
         {
             int count = occupiedBy.TryGetValue(party, out int c) ? c : 0;
             for (int i = 0; i < count; i++)
             {
                 if (seatIndex < seats.Count)
                 {
-                    seats[seatIndex].SetColor(party.partyColor);
+                    seats[seatIndex].SetColor(party.Data.factionColor);
                     seatIndex++;
                 }
                 else

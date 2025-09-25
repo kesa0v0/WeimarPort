@@ -24,16 +24,16 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
         OnClicked?.Invoke();
     }
 
-    public void SetPartyName(string name)
+    public void SetPartyName(string name, Color color)
     {
         partyNameText.text = name;
-        partyNameText.color = PartyRegistry.GetPartyByName(name).partyColor;
+        partyNameText.color = color;
     }
 
-    public void SetPartyAgenda(string agenda)
+    public void SetPartyAgenda(string agenda, Color color)
     {
         partyAgendaText.text = agenda;
-        partyAgendaText.color = PartyRegistry.GetPartyByName(partyNameText.text).partyColor;
+        partyAgendaText.color = color;
     }
 
     public void SetPartySubParties(string subParties)
@@ -84,8 +84,8 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
 
 public interface IUIOtherPartyStatusView
 {
-    void SetPartyName(string name);
+    void SetPartyName(string name, Color color);
     void SetPartyStatus(string status);
-    void SetPartyAgenda(string agenda);
+    void SetPartyAgenda(string agenda, Color color);
     void SetInSupplyUnits(Dictionary<UnitPresenter, int> units);
 }

@@ -34,9 +34,9 @@ public class UIPartyStatusManager : MonoBehaviour
     {
         if (partyViews.TryGetValue(party, out var view))
         {
-            view.SetPartyName(party.Data.factionName);
+            view.SetPartyName(party.Data.factionName, party.Data.factionColor);
             view.SetPartyStatus($"Opposition");
-            view.SetPartyAgenda(party.currentPartyAgenda);
+            view.SetPartyAgenda(party.currentPartyAgenda, party.Data.factionColor);
 
             // 보유한 하위 정당 목록 표시
             var subPartyNames = party.ControlledMinorParties.Count > 0 ? string.Join(", ", party.ControlledMinorParties.ConvertAll(sp => sp.partyName)) : "None";

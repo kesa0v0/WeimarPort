@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using IngameDebugConsole;
 using UnityEngine;
@@ -129,7 +130,8 @@ public class CityManager : MonoBehaviour
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
         }
-        var party = PartyRegistry.GetPartyByName(partyName);
+        var party = GameManager.Instance.GetParty(Enum.TryParse<FactionType>(partyName, out var faction)
+        ? faction : throw new ArgumentException($"Invalid faction type: {partyName}"));
         if (party == null)
         {
             Debug.LogWarning($"Party '{partyName}' not found.");
@@ -145,7 +147,8 @@ public class CityManager : MonoBehaviour
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
         }
-        var party = PartyRegistry.GetPartyByName(partyName);
+        var party = GameManager.Instance.GetParty(Enum.TryParse<FactionType>(partyName, out var faction)
+        ? faction : throw new ArgumentException($"Invalid faction type: {partyName}"));
         if (party == null)
         {
             Debug.LogWarning($"Party '{partyName}' not found.");
