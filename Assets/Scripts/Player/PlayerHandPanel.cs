@@ -18,7 +18,7 @@ public class PlayerHandPanel : MonoBehaviour
         }
 
         // 2. 모델의 데이터를 기반으로 새 아이콘들을 생성합니다.
-        foreach (var entry in model.ContainedUnits)
+        foreach (var entry in model.GetUnits())
         {
             UnitData data = entry.Data;
 

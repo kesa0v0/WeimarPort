@@ -35,7 +35,6 @@ public class Government : IUnitContainer
     }
 
     #region Unit Container Implementation
-    IList<UnitModel> IUnitContainer.ContainedUnits => supplyUnits;
 
     public void AddUnit(UnitModel unit)
     {
@@ -52,6 +51,8 @@ public class Government : IUnitContainer
 
     public List<UnitModel> GetUnits()
     {
+        if (supplyUnits == null)
+            return new List<UnitModel>();
         return new List<UnitModel>(supplyUnits);
     }
 

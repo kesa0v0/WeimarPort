@@ -22,9 +22,6 @@ public class Party: IUnitContainer
         supplyUnits = new List<UnitModel>();
     }
 
-
-    IList<UnitModel> IUnitContainer.ContainedUnits => supplyUnits;
-
     public void AddUnit(UnitModel unit)
     {
         if (unit == null) return;
@@ -40,7 +37,8 @@ public class Party: IUnitContainer
 
     public List<UnitModel> GetUnits()
     {
-        return supplyUnits;
+        if (supplyUnits == null) return new List<UnitModel>();
+        return new List<UnitModel>(supplyUnits);
     }
 
     public string GetContainerName()

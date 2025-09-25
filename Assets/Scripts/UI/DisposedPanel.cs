@@ -19,17 +19,15 @@ public class DisposedPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (bin == null) return;
 
         // aggregate by UnitData
-        var byData = new Dictionary<UnitData, int>();
+        var byData = new Dictionary<UnitModel, int>();
         int total = 0;
-        foreach (var kv in bin.ContainedUnits)
+        foreach (UnitModel kv in bin.GetUnits())
         {
-            var presenter = kv.Key;
-            var count = kv.Value;
-            if (presenter == null || presenter.Model == null || presenter.Model.Data == null) continue;
-            total += count;
-            var data = presenter.Model.Data;
-            if (!byData.ContainsKey(data)) byData[data] = 0;
-            byData[data] += count;
+            if (byData.ContainsKey(kv))
+                byData[kv]++;
+            else
+                byData[kv] = 1;
+            total++;
         }
 
         if (totalCountText != null) totalCountText.text = total.ToString();
@@ -48,7 +46,7 @@ public class DisposedPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     var iconView = item.GetComponent<UnitIconView>();
                     if (iconView != null)
                     {
-                        iconView.Setup(entry.Key, UnitIconView.HorizontalPortion.LeftHalf, entry.Value);
+                        iconView.Setup(entry.Key.Data, UnitIconView.HorizontalPortion.LeftHalf, entry.Value);
                     }
                 }
             }

@@ -220,7 +220,6 @@ public class UnitManager : MonoBehaviour
 
 public interface IUnitContainer
 {
-    IList<UnitModel> ContainedUnits { get; }
     void AddUnit(UnitModel unit);
     void RemoveUnit(UnitModel unit);
     List<UnitModel> GetUnits();

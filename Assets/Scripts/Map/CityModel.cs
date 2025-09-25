@@ -57,10 +57,14 @@ public class CityModel: IUnitContainer
 
     #endregion
 
-    public IList<UnitModel> ContainedUnits => unitsInCity;
     public void AddUnit(UnitModel unitModel) { unitsInCity.Add(unitModel); }
     public void RemoveUnit(UnitModel unitModel) { unitsInCity.Remove(unitModel); }
-    public List<UnitModel> GetUnits() { return unitsInCity; }
+    public List<UnitModel> GetUnits()
+    { 
+        if (unitsInCity == null)
+            return new List<UnitModel>();
+        return new List<UnitModel>(unitsInCity);
+    }
     public string GetContainerName() { return cityName; }
 }
 

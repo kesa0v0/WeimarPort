@@ -22,10 +22,10 @@ public class Unit
     public void UpdateLocation(IUnitContainer newContainer)
     {
         // 이전 컨테이너에서 유닛 제거
-        currentContainerCache?.RemoveUnit(this);
+        currentContainerCache?.RemoveUnit(Model);
 
         // 새 컨테이너에 유닛 추가
-        newContainer?.AddUnit(this);
+        newContainer?.AddUnit(Model);
 
         // 캐시 업데이트
         currentContainerCache = newContainer;

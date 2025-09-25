@@ -9,7 +9,6 @@ public class DisposedBin : IUnitContainer
 
     public IList<UnitModel> DisposedUnits = new List<UnitModel>();
     
-    public IList<UnitModel> ContainedUnits => DisposedUnits;
 
     public void AddUnit(UnitModel unit)
     {
@@ -23,6 +22,7 @@ public class DisposedBin : IUnitContainer
 
     public List<UnitModel> GetUnits()
     {
+        if (DisposedUnits == null) return new List<UnitModel>();
         return new List<UnitModel>(DisposedUnits);
     }
 
