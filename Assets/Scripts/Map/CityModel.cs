@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public class CityModel
+public class CityModel: IUnitContainer
 {
     public string cityName;
     public Vector2 position;
@@ -13,7 +13,7 @@ public class CityModel
     public int currentSeats => seats.Values.Sum();
     public Dictionary<Party, int> seats;
 
-    public List<UnitModel> UnitContained { get; private set; } = new List<UnitModel>();
+    private List<UnitModel> unitsInCity = new List<UnitModel>();
 
     public CityModel(string name, Vector2 pos, int seatMaxCount)
     {
@@ -57,16 +57,11 @@ public class CityModel
 
     #endregion
 
-    internal void AddUnit(UnitModel model)
-    {
-        UnitContained.Add(model);
-    }
-
-    internal void RemoveUnit(UnitModel model)
-    {
-        UnitContained.Remove(model);
-    }
-
+    public IList<UnitModel> ContainedUnits => unitsInCity;
+    public void AddUnit(UnitModel unitModel) { unitsInCity.Add(unitModel); }
+    public void RemoveUnit(UnitModel unitModel) { unitsInCity.Remove(unitModel); }
+    public List<UnitModel> GetUnits() { return unitsInCity; }
+    public string GetContainerName() { return cityName; }
 }
 
 public struct CityParameters

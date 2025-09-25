@@ -9,8 +9,8 @@ public class Party: IUnitContainer
     public int victoryPoints;
     public string currentPartyAgenda;
     public List<MinorPartyData> ControlledMinorParties { get; private set; }
+    public List<UnitModel> supplyUnits;
 
-    public Dictionary<Unit, int> ContainedUnits { get; private set; }
 
     // public List<Card> hand;
 
@@ -19,18 +19,32 @@ public class Party: IUnitContainer
     {
         Data = data;
         ControlledMinorParties = new List<MinorPartyData>();
-        ContainedUnits = new Dictionary<Unit, int>();
+        supplyUnits = new List<UnitModel>();
     }
 
-    public void AddUnit(Unit unit)
+
+    IList<UnitModel> IUnitContainer.ContainedUnits => supplyUnits;
+
+    public void AddUnit(UnitModel unit)
     {
-        if (!ContainedUnits.ContainsKey(unit))
-            ContainedUnits[unit] = 0;
+        if (unit == null) return;
+        if (!supplyUnits.Contains(unit))
+            supplyUnits.Add(unit);
     }
 
-    public void RemoveUnit(Unit unit)
+    public void RemoveUnit(UnitModel unit)
     {
-        if (ContainedUnits.ContainsKey(unit))
-            ContainedUnits.Remove(unit);
+        if (unit == null) return;
+        supplyUnits.Remove(unit);
+    }
+
+    public List<UnitModel> GetUnits()
+    {
+        return supplyUnits;
+    }
+
+    public string GetContainerName()
+    {
+        return Data != null ? Data.factionName : "Unknown Party";
     }
 }

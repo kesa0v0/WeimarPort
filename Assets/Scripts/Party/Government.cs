@@ -6,7 +6,7 @@ public class Government : IUnitContainer
     public List<Party> GoverningParties { get; private set; }
     public Party Chancellor { get; private set; }
 
-    public Dictionary<Unit, int> ContainedUnits { get; private set; } = new();
+    public List<UnitModel> supplyUnits;
 
     public string Name => "Government";
     public Color Color => Color.white;
@@ -27,35 +27,38 @@ public class Government : IUnitContainer
         GoverningParties = newGoverningParties;
         Chancellor = newChancellor;
     }
-    
+
     // 특정 정당이 현재 정부에 속해 있는지 확인하는 함수
     public bool IsInGovernment(Party party)
     {
         return GoverningParties.Contains(party);
     }
 
-    public void AddUnit(Unit unit)
-    {
-        if (ContainedUnits.ContainsKey(unit))
-            ContainedUnits[unit]++;
-        else
-            ContainedUnits[unit] = 1;
+    #region Unit Container Implementation
+    IList<UnitModel> IUnitContainer.ContainedUnits => supplyUnits;
 
-        UIManager.Instance?.governmentPanel?.Redraw();
+    public void AddUnit(UnitModel unit)
+    {
+        if (unit == null) return;
+        if (!supplyUnits.Contains(unit))
+            supplyUnits.Add(unit);
     }
 
-    public void RemoveUnit(Unit unit)
+    public void RemoveUnit(UnitModel unit)
     {
-        if (ContainedUnits.ContainsKey(unit))
-        {
-            ContainedUnits[unit]--;
-            if (ContainedUnits[unit] <= 0)
-                ContainedUnits.Remove(unit);
-            UIManager.Instance?.governmentPanel?.Redraw();
-        }
-        else
-        {
-            Debug.LogWarning("Attempted to remove unit not in government's contained units.");
-        }
+        if (unit == null) return;
+        supplyUnits.Remove(unit);
     }
+
+    public List<UnitModel> GetUnits()
+    {
+        return new List<UnitModel>(supplyUnits);
+    }
+
+    public string GetContainerName()
+    {
+        return Name;
+    }
+
+    #endregion
 }

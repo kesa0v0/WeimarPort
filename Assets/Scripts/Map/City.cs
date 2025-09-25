@@ -3,7 +3,7 @@ using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 
-public class City : IUnitContainer
+public class City
 {
     public CityModel model { get; }
     public ICityView view;
@@ -89,38 +89,12 @@ public class City : IUnitContainer
 
     #endregion
 
-    #region Unit Management
-
-    public Dictionary<Unit, int> ContainedUnits { get; private set; } = new Dictionary<Unit, int>();
-
-    public void AddUnit(Unit unit)
-    {
-        if (ContainedUnits.ContainsKey(unit))
-            ContainedUnits[unit]++;
-        else
-            ContainedUnits[unit] = 1;
-    }
-
-    public void RemoveUnit(Unit unit)
-    {
-        if (ContainedUnits.ContainsKey(unit))
-        {
-            ContainedUnits[unit]--;
-            if (ContainedUnits[unit] <= 0)
-                ContainedUnits.Remove(unit);
-        }
-        else
-        {
-            Debug.LogWarning($"Attempted to remove unit '{unit.Model.uniqueId}' which is not contained in city '{model.cityName}'.");
-        }
-    }
-
-    #endregion
 
     #region Highlight
     public void ShowAsCandidate(bool isCandidate)
     {
         (view as CityView)?.ShowAsCandidate(isCandidate);
     }
+
     #endregion
 }

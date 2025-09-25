@@ -101,7 +101,7 @@ public class UnitManager : MonoBehaviour
                     if (int.TryParse(r.position, out int ival) && Enum.IsDefined(typeof(UnitPosition), ival))
                         pos = (UnitPosition)ival;
                     else
-                        pos = UnitPosition.InPool;
+                        pos = UnitPosition.Unavailable;
                 }
                 cooked.Add(new UnitSpawnSpec
                 {
@@ -143,7 +143,7 @@ public class UnitManager : MonoBehaviour
 
         switch (model.position)
         {
-            case UnitPosition.InPool:
+            case UnitPosition.Unavailable:
                 break;
             case UnitPosition.InReserved:
                 {
@@ -220,8 +220,9 @@ public class UnitManager : MonoBehaviour
 
 public interface IUnitContainer
 {
-    void AddUnit(Unit unit);
-    void RemoveUnit(Unit unit);
-    List<Unit> GetUnits();
+    IList<UnitModel> ContainedUnits { get; }
+    void AddUnit(UnitModel unit);
+    void RemoveUnit(UnitModel unit);
+    List<UnitModel> GetUnits();
     string GetContainerName();
 }

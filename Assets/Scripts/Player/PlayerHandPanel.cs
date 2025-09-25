@@ -20,12 +20,11 @@ public class PlayerHandPanel : MonoBehaviour
         // 2. 모델의 데이터를 기반으로 새 아이콘들을 생성합니다.
         foreach (var entry in model.ContainedUnits)
         {
-            UnitData data = entry.Key.Model.Data;
-            int count = entry.Value;
+            UnitData data = entry.Data;
 
             GameObject iconObj = Instantiate(unitIconPrefab, unitContainer);
             UnitIconView iconView = iconObj.GetComponent<UnitIconView>();
-            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, count);
+            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, 1);
         }
     }
 }

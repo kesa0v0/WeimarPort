@@ -7,18 +7,27 @@ public class DisposedBin : IUnitContainer
     private static DisposedBin _instance;
     public static DisposedBin Instance => _instance ??= new DisposedBin();
 
-    public Dictionary<Unit, int> ContainedUnits { get; private set; } = new();
+    public IList<UnitModel> DisposedUnits = new List<UnitModel>();
+    
+    public IList<UnitModel> ContainedUnits => DisposedUnits;
 
-    public void AddUnit(Unit unit)
+    public void AddUnit(UnitModel unit)
     {
-        if (ContainedUnits.ContainsKey(unit)) ContainedUnits[unit]++;
-        else ContainedUnits[unit] = 1;
+        DisposedUnits.Add(unit);
     }
 
-    public void RemoveUnit(Unit unit)
+    public string GetContainerName()
     {
-        if (!ContainedUnits.ContainsKey(unit)) return;
-        ContainedUnits[unit]--;
-        if (ContainedUnits[unit] <= 0) ContainedUnits.Remove(unit);
+        return "Disposed Bin";
+    }
+
+    public List<UnitModel> GetUnits()
+    {
+        return new List<UnitModel>(DisposedUnits);
+    }
+
+    public void RemoveUnit(UnitModel unit)
+    {
+        DisposedUnits.Remove(unit);
     }
 }

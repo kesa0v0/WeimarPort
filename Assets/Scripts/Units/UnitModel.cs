@@ -2,9 +2,9 @@ using System;
 
 public enum UnitPosition
 {
-    OnBoard,
+    Unavailable,
     InReserved,
-    InPool,
+    OnBoard,
     Disposed
 }
 
