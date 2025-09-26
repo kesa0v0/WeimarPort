@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-using IngameDebugConsole; 
+using IngameDebugConsole;
+using System.Collections.Generic;
 
 
 public class EventBus : MonoBehaviour
@@ -60,6 +61,20 @@ public class EventBus : MonoBehaviour
     public event Action<string> OnCityRemoved;
     public event Action<string, Party, int> OnCitySeatAdded;
     public event Action<string, Party, int> OnCitySeatRemoved;
+
+    // UI-related requests
+    public event Action<List<Party>, int, Action<List<Party>>> OnPartySelectionRequested;
+    public event Action OnGovernmentChanged;
+
+    public void RequestPartySelection(List<Party> candidates, int count, Action<List<Party>> onChosen)
+    {
+        OnPartySelectionRequested?.Invoke(candidates, count, onChosen);
+    }
+
+    public void NotifyGovernmentChanged()
+    {
+        OnGovernmentChanged?.Invoke();
+    }
 
     public void CityAdded(string cityName, float x, float y, int seatCount)
     {

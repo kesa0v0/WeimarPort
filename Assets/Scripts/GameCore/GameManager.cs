@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
         gameState = new GameState();
 
         LoadPartyDatas();
+        UIManager.Instance.partyStatusManager.Initialize(gameState.allParties); // 임시로 일단 이렇게 해 놓음. EventBus에서 Initialize(GameData) 호출하도록 변경 예정
 
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         gameState.playerParty = GetParty(FactionType.SPD);
@@ -39,14 +40,9 @@ public class GameManager : MonoBehaviour
         // 최초 집권연정은 SPD와 Zentrum으로 설정 < 나중에 불러오기나 UI로 선택 가능하게 변경 예정
         gameState.government.FormNewGovernment(GetParty(FactionType.SPD), GetParty(FactionType.Z));
 
-        UIManager.Instance.partyStatusManager.Initialize(gameState.allParties);
-
-
         CityManager.Instance.CreateCities();
         // 유닛 초기화: 데이터 리스트를 기반으로 초기 배치
         
-        // 정부 패널 초기 렌더
-        UIManager.Instance?.governmentPanel?.Redraw();
         AddDebugCommands();
         TestScript();
     }
@@ -63,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     public void RequestPartySelection(List<Party> candidates, int count, Action<List<Party>> onChosen)
     {
-        UIManager.Instance.partyStatusManager.RequestPartySelection(candidates, count, onChosen);
+        EventBus.Instance.RequestPartySelection(candidates, count, onChosen);
     }
 
 
