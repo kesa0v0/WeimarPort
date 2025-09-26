@@ -13,6 +13,16 @@ public class UIPartyStatusManager : MonoBehaviour
     private Dictionary<Party, System.Action> _activeOriginalOnClicked = new();
     private bool _selectionActive = false;
 
+    public void Start()
+    {
+        EventBus.Instance.OnPartySelectionRequested += RequestPartySelection;
+    }
+
+    public void OnDestroy()
+    {
+        CancelActiveSelection();
+        EventBus.Instance.OnPartySelectionRequested -= RequestPartySelection;
+    }
 
     public void Initialize(List<Party> parties)
     {

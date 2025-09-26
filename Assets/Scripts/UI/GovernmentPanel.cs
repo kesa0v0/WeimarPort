@@ -6,6 +6,18 @@ public class GovernmentPanel : MonoBehaviour
     [SerializeField] private GameObject unitIconPrefab;
     [SerializeField] private Transform unitContainer;
 
+    public void Start()
+    {
+        EventBus.Instance.OnGovernmentChanged += Redraw;
+        Redraw();
+    }
+
+    public void OnDisable()
+    {
+        if (EventBus.Instance != null)
+            EventBus.Instance.OnGovernmentChanged -= Redraw;
+    }
+
     public void Redraw()
     {
         var gov = GameManager.Instance?.gameState?.government;

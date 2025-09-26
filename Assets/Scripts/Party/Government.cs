@@ -26,6 +26,8 @@ public class Government : IUnitContainer
 
         GoverningParties = newGoverningParties;
         Chancellor = newChancellor;
+
+        EventBus.Instance.NotifyGovernmentChanged();
     }
 
     // 특정 정당이 현재 정부에 속해 있는지 확인하는 함수
