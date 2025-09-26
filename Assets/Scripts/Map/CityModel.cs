@@ -4,28 +4,23 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public class CityModel
+public class CityModel: IUnitContainer
 {
     public string cityName;
     public Vector2 position;
 
     public int seatMaxCount;
     public int currentSeats => seats.Values.Sum();
-    public Dictionary<Party, int> seats = new()
-    {
-        { PartyRegistry.SPD, 0 },
-        { PartyRegistry.KPD, 0 },
-        { PartyRegistry.Zentrum, 0 },
-        { PartyRegistry.DNVP, 0 },
-    };
+    public Dictionary<Party, int> seats;
 
-    public List<UnitModel> UnitContained { get; private set; } = new List<UnitModel>();
+    private List<UnitModel> unitsInCity = new List<UnitModel>();
 
     public CityModel(string name, Vector2 pos, int seatMaxCount)
     {
         cityName = name;
         position = pos;
         this.seatMaxCount = seatMaxCount;
+        seats = new();
     }
 
     #region Seat Management
@@ -56,22 +51,21 @@ public class CityModel
         }
         else
         {
-            Debug.LogWarning($"No seats to remove for party {party.partyName}.");
+            Debug.LogWarning($"No seats to remove for party {party.Data.factionName}.");
         }
     }
 
     #endregion
 
-    internal void AddUnit(UnitModel model)
-    {
-        UnitContained.Add(model);
+    public void AddUnit(UnitModel unitModel) { unitsInCity.Add(unitModel); }
+    public void RemoveUnit(UnitModel unitModel) { unitsInCity.Remove(unitModel); }
+    public List<UnitModel> GetUnits()
+    { 
+        if (unitsInCity == null)
+            return new List<UnitModel>();
+        return new List<UnitModel>(unitsInCity);
     }
-
-    internal void RemoveUnit(UnitModel model)
-    {
-        UnitContained.Remove(model);
-    }
-
+    public string GetContainerName() { return cityName; }
 }
 
 public struct CityParameters

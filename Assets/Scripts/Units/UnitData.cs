@@ -5,15 +5,15 @@ public class UnitData : ScriptableObject
 {
     [Header("기본 정보")]
     public string unitName; // "자유군단", "국가방위군" 등
-    public Texture2D unitIcon; // UI에 표시될 아이콘
     public Material unitMaterial; // 유닛의 외형을 나타내는 머티리얼
-    [Tooltip("이 유닛은 보드 위에서만 소속 변경이 가능하다.")]
-    public bool membershipMutableOnBoard = false;
-    // Deprecated: 런타임 초기화는 시나리오/불러오기 데이터(UnitSpawnSpec)로 처리합니다.
-    public UnitPosition defaultSpawnPosition; // (Deprecated) 기본 생성 위치
-    public string defaultLocationId; // (Deprecated) 기본 생성 위치 ID (도시 이름 또는 플레이어 ID)
-    public string spawnMembership; // (Deprecated) 생성시 소속 (KPD, SPD 등)
-
-    [Header("게임 능력치")]
     public int combatStrength; // 전투력
+    public FactionType initialAffiliation;  
+
+    [Header("시각 정보")]
+    public Sprite unitSprite; // 유닛의 기본 이미지
+    public Sprite flippedSprite; // DNVP가 장악한 Reichswehr 유닛 이미지
+
+    [Header("게임 규칙")]
+    public bool isGovernmentUnit = false; // 정부 유닛 여부
+    public bool canBeFlipped = false; // DNVP가 장악 가능한 Reichswehr 유닛인지 여부
 }

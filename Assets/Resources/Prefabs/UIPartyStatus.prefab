@@ -878,7 +878,7 @@ MonoBehaviour:
   partyHeldCardsCountText: {fileID: 5609765722727772306}
   partyInSupplyUnitsScrollView: {fileID: 4264545867931352696}
   partyInSupplyUnitsContent: {fileID: 6927930046328070845}
-  inSupplyUnitItemPrefab: {fileID: 1103965201852120305, guid: 92ddb2ee5efcff64196fb21b31740727, type: 3}
+  inSupplyUnitItemPrefab: {fileID: 1938203077702903999, guid: 73e6291d6b1c03b4d99d0539e909cb75, type: 3}
 --- !u!114 &1760488442542048690
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,70 +3,63 @@ using UnityEngine;
 
 public class Government : IUnitContainer
 {
-    // Coalition can have 1-2 parties
-    public List<MainParty> CoalitionParties { get; private set; } = new List<MainParty>(2);
+    public List<Party> GoverningParties { get; private set; }
+    public Party Chancellor { get; private set; }
 
-    // Backward-compat convenience: primary party if any
-    public MainParty RulingParty => CoalitionParties.Count > 0 ? CoalitionParties[0] : null;
-
-    public Dictionary<UnitPresenter, int> ContainedUnits { get; private set; } = new();
+    public List<UnitModel> supplyUnits;
 
     public string Name => "Government";
-    // Government symbol color is always white (per spec)
     public Color Color => Color.white;
 
-    public void SetRulingParty(MainParty party)
+    public Government()
     {
-        SetRulingCoalition(party, null);
-        UIManager.Instance?.governmentPanel?.Redraw();
+        GoverningParties = new List<Party>();
+        Chancellor = null;
     }
 
-    public void SetRulingCoalition(MainParty primary, MainParty secondary = null)
+    // 정부를 새로 구성하는 함수
+    public void FormNewGovernment(Party newChancellor, Party newCoalitionPartner = null)
     {
-        CoalitionParties.Clear();
-        if (primary != null)
-            CoalitionParties.Add(primary);
-        if (secondary != null && secondary != primary)
-            CoalitionParties.Add(secondary);
-        UIManager.Instance?.governmentPanel?.Redraw();
+        var newGoverningParties = new List<Party> { newChancellor };
+        if (newCoalitionPartner != null)
+            newGoverningParties.Add(newCoalitionPartner);
+
+        GoverningParties = newGoverningParties;
+        Chancellor = newChancellor;
     }
 
-    public void SetRulingCoalition(List<MainParty> parties)
+    // 특정 정당이 현재 정부에 속해 있는지 확인하는 함수
+    public bool IsInGovernment(Party party)
     {
-        CoalitionParties.Clear();
-        if (parties == null) return;
-        foreach (var p in parties)
-        {
-            if (p == null) continue;
-            if (CoalitionParties.Count == 2) break;
-            if (!CoalitionParties.Contains(p))
-                CoalitionParties.Add(p);
-        }
-        UIManager.Instance?.governmentPanel?.Redraw();
+        return GoverningParties.Contains(party);
     }
 
-    public void AddUnit(UnitPresenter unit)
-    {
-        if (ContainedUnits.ContainsKey(unit))
-            ContainedUnits[unit]++;
-        else
-            ContainedUnits[unit] = 1;
+    #region Unit Container Implementation
 
-        UIManager.Instance?.governmentPanel?.Redraw();
+    public void AddUnit(UnitModel unit)
+    {
+        if (unit == null) return;
+        if (!supplyUnits.Contains(unit))
+            supplyUnits.Add(unit);
     }
 
-    public void RemoveUnit(UnitPresenter unit)
+    public void RemoveUnit(UnitModel unit)
     {
-        if (ContainedUnits.ContainsKey(unit))
-        {
-            ContainedUnits[unit]--;
-            if (ContainedUnits[unit] <= 0)
-                ContainedUnits.Remove(unit);
-            UIManager.Instance?.governmentPanel?.Redraw();
-        }
-        else
-        {
-            Debug.LogWarning("Attempted to remove unit not in government's contained units.");
-        }
+        if (unit == null) return;
+        supplyUnits.Remove(unit);
     }
+
+    public List<UnitModel> GetUnits()
+    {
+        if (supplyUnits == null)
+            return new List<UnitModel>();
+        return new List<UnitModel>(supplyUnits);
+    }
+
+    public string GetContainerName()
+    {
+        return Name;
+    }
+
+    #endregion
 }

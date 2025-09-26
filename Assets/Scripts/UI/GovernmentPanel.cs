@@ -14,13 +14,11 @@ public class GovernmentPanel : MonoBehaviour
         foreach (Transform child in unitContainer)
             Destroy(child.gameObject);
 
-        foreach (var entry in gov.ContainedUnits)
+        foreach (var unit in gov.GetUnits())
         {
-            var data = entry.Key.Model.Data;
-            int count = entry.Value;
+            var data = unit.Data;
             var iconObj = Instantiate(unitIconPrefab, unitContainer);
-            var iconView = iconObj.GetComponent<UnitIconView>();
-            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, count);
+            var iconView = iconObj.GetComponent<UnitView>();
         }
     }
 }

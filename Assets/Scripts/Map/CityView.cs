@@ -55,14 +55,14 @@ public class CityView : MonoBehaviour, ICityView
     public void UpdateSeatOccupancy(Dictionary<Party, int> occupiedBy)
     {
         int seatIndex = 0;
-        foreach (var party in PartyRegistry.AllMainParties)
+        foreach (var party in GameManager.Instance.gameState.allParties)
         {
             int count = occupiedBy.TryGetValue(party, out int c) ? c : 0;
             for (int i = 0; i < count; i++)
             {
                 if (seatIndex < seats.Count)
                 {
-                    seats[seatIndex].SetColor(party.partyColor);
+                    seats[seatIndex].SetColor(party.Data.factionColor);
                     seatIndex++;
                 }
                 else
@@ -93,6 +93,7 @@ public class CityView : MonoBehaviour, ICityView
         // 추가로 머터리얼 색을 바꾸는 등의 연출을 여기에 추가 가능
     }
 
+    /*
     // 간단한 클릭 전달: collider + raycast 또는 EventSystem 환경에서 동작
     private void OnMouseDown()
     {
@@ -102,7 +103,7 @@ public class CityView : MonoBehaviour, ICityView
             GameManager.Instance?.OnCityClicked(presenter);
         }
     }
-}
+    */}
 
 
 public interface ICityView

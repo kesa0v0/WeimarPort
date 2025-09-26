@@ -2009,7 +2009,7 @@ MonoBehaviour:
   totalCountText: {fileID: 1015751022}
   popupRoot: {fileID: 340407058}
   popupUnitContainer: {fileID: 340407059}
-  unitIconPrefab: {fileID: 0}
+  unitIconPrefab: {fileID: 1938203077702903999, guid: 73e6291d6b1c03b4d99d0539e909cb75, type: 3}
 --- !u!1 &1709344883
 GameObject:
   m_ObjectHideFlags: 0
@@ -2196,7 +2196,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b5bc1a56aac8364cbb8b60ee141cdfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
 --- !u!1 &2057562939
 GameObject:
   m_ObjectHideFlags: 0
@@ -2342,7 +2341,6 @@ MonoBehaviour:
   partyStatusManager: {fileID: 2057562944}
   playerHandPanel: {fileID: 305828122}
   disposedPanel: {fileID: 1672700381}
-  actionPrompt: {fileID: 1786640958}
   governmentPanel: {fileID: 657758466}
 --- !u!1001 &2065676918
 PrefabInstance:

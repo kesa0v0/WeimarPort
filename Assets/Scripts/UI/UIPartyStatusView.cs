@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointerClickHandler
+public class UIPartyStatusView : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private TextMeshProUGUI partyNameText;
     [SerializeField] private TextMeshProUGUI partyStatusText;
@@ -24,16 +24,16 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
         OnClicked?.Invoke();
     }
 
-    public void SetPartyName(string name)
+    public void SetPartyName(string name, Color color)
     {
         partyNameText.text = name;
-        partyNameText.color = PartyRegistry.GetPartyByName(name).partyColor;
+        partyNameText.color = color;
     }
 
-    public void SetPartyAgenda(string agenda)
+    public void SetPartyAgenda(string agenda, Color color)
     {
         partyAgendaText.text = agenda;
-        partyAgendaText.color = PartyRegistry.GetPartyByName(partyNameText.text).partyColor;
+        partyAgendaText.color = color;
     }
 
     public void SetPartySubParties(string subParties)
@@ -51,7 +51,7 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
         partyHeldCardsCountText.text = $"T {timelineCards} : {policyCards} P";
     }
 
-    public void SetInSupplyUnits(Dictionary<UnitPresenter, int> units)
+    public void SetInSupplyUnits(List<UnitModel> units)
     {
         // Clear existing items
         foreach (Transform child in partyInSupplyUnitsContent)
@@ -63,10 +63,11 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
         foreach (var unit in units)
         {
             var item = Instantiate(inSupplyUnitItemPrefab, partyInSupplyUnitsContent);
-            var unitImage = item.transform.Find("UnitImage").GetComponent<Image>();
-            var unitInfoText = item.transform.Find("UnitText").GetComponent<TextMeshProUGUI>();
+            var unitImage = item.transform.Find("UnitIcon").GetComponent<Image>();
+            var unitInfoText = item.transform.Find("UnitCountText").GetComponent<TextMeshProUGUI>();
 
-            unitInfoText.text = $"{unit.Key}: {unit.Value}";
+            unitImage.sprite = unit.Data.unitSprite;
+            unitInfoText.text = $"";
         }
     }
     
@@ -79,13 +80,4 @@ public class UIPartyStatusView : MonoBehaviour, IUIOtherPartyStatusView, IPointe
             image.color = highlight ? Color.yellow : Color.white; // Example: yellow highlight
         }
     }
-}
-
-
-public interface IUIOtherPartyStatusView
-{
-    void SetPartyName(string name);
-    void SetPartyStatus(string status);
-    void SetPartyAgenda(string agenda);
-    void SetInSupplyUnits(Dictionary<UnitPresenter, int> units);
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using IngameDebugConsole;
 using UnityEngine;
@@ -29,7 +30,7 @@ public class CityManager : MonoBehaviour
     public Transform cityParent;  // 도시들이 생성될 부모 Transform
     
     private Dictionary<string, CityView> cities = new();
-    private Dictionary<string, CityPresenter> cityPresenters = new();
+    private Dictionary<string, City> Citys = new();
 
     private void Awake()
     {
@@ -63,13 +64,21 @@ public class CityManager : MonoBehaviour
         // CityFactory에서 등록까지 처리함
         CityFactory.SpawnCity(parameters);
     }
+    internal void RegisterCity(string cityName, CityModel model, CityView view)
+    {
+        // 이미 등록된 경우 덮어쓰지 않음
+        if (cities.ContainsKey(cityName)) return;
+        var presenter = new City(model, view);
+        Citys[cityName] = presenter;
+        cities[cityName] = view;
+    }
 
     public void RemoveCity(string cityName)
     {
         if (cities.TryGetValue(cityName, out var cityView))
         {
             cities.Remove(cityName);
-            cityPresenters.Remove(cityName);
+            Citys.Remove(cityName);
 
             Destroy(cityView.gameObject);
             UnregisterCity(cityName);
@@ -79,6 +88,11 @@ public class CityManager : MonoBehaviour
         {
             Debug.LogWarning($"City '{cityName}' not found.");
         }
+    }
+    public void UnregisterCity(string cityName)
+    {
+        Citys.Remove(cityName);
+        cities.Remove(cityName);
     }
 
     public void CreateCities()
@@ -96,24 +110,10 @@ public class CityManager : MonoBehaviour
         Instance.CreateCity("Munchen", new Vector2(1, -4), 3);
     }
 
-    internal void RegisterCity(string cityName, CityModel model, CityView view)
-    {
-        // 이미 등록된 경우 덮어쓰지 않음
-        if (cities.ContainsKey(cityName)) return;
-        var presenter = new CityPresenter(model, view);
-        cityPresenters[cityName] = presenter;
-        cities[cityName] = view;
-    }
 
-    public void UnregisterCity(string cityName)
+    public City GetCity(string cityName)
     {
-        cityPresenters.Remove(cityName);
-        cities.Remove(cityName);
-    }
-
-    public CityPresenter GetCity(string cityName)
-    {
-        if (cityPresenters.TryGetValue(cityName, out var presenter))
+        if (Citys.TryGetValue(cityName, out var presenter))
         {
             return presenter;
         }
@@ -125,12 +125,13 @@ public class CityManager : MonoBehaviour
 
     public void AddSeatToCity(string cityName, string partyName, int count)
     {
-        if (!cityPresenters.TryGetValue(cityName, out var presenter))
+        if (!Citys.TryGetValue(cityName, out var presenter))
         {
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
         }
-        var party = PartyRegistry.GetPartyByName(partyName);
+        var party = GameManager.Instance.GetParty(Enum.TryParse<FactionType>(partyName, out var faction)
+        ? faction : throw new ArgumentException($"Invalid faction type: {partyName}"));
         if (party == null)
         {
             Debug.LogWarning($"Party '{partyName}' not found.");
@@ -141,12 +142,13 @@ public class CityManager : MonoBehaviour
 
     public void RemoveSeatFromCity(string cityName, string partyName, int count)
     {
-        if (!cityPresenters.TryGetValue(cityName, out var presenter))
+        if (!Citys.TryGetValue(cityName, out var presenter))
         {
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
         }
-        var party = PartyRegistry.GetPartyByName(partyName);
+        var party = GameManager.Instance.GetParty(Enum.TryParse<FactionType>(partyName, out var faction)
+        ? faction : throw new ArgumentException($"Invalid faction type: {partyName}"));
         if (party == null)
         {
             Debug.LogWarning($"Party '{partyName}' not found.");
@@ -159,7 +161,7 @@ public class CityManager : MonoBehaviour
 
     private void RegisterDebugCommands()
     {
-        DebugLogConsole.AddCommandInstance("debug.addCitySeat", "Add seats to a city. Usage: debug.addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCity", this);
-        DebugLogConsole.AddCommandInstance("debug.removeCitySeat", "Remove seats from a city. Usage: debug.removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCity", this);
+        DebugLogConsole.AddCommandInstance("addCitySeat", "Add seats to a city. Usage: addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCity", this);
+        DebugLogConsole.AddCommandInstance("removeCitySeat", "Remove seats from a city. Usage: removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCity", this);
     }
 }
