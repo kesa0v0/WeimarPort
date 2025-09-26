@@ -121,6 +121,22 @@ public class CityManager : MonoBehaviour
         return null;
     }
 
+    internal City GetRandomCity(List<City> exclude)
+    {
+        var availableCities = new List<City>(Citys.Values);
+        if (exclude != null)
+        {
+            availableCities.RemoveAll(c => exclude.Contains(c));
+        }
+        if (availableCities.Count == 0)
+        {
+            Debug.LogWarning("No available cities to select from.");
+            return null;
+        }
+        int index = UnityEngine.Random.Range(0, availableCities.Count);
+        return availableCities[index];
+    }
+
     #region Seat Management
 
     public void AddSeatToCity(string cityName, string partyName, int count)
@@ -164,4 +180,5 @@ public class CityManager : MonoBehaviour
         DebugLogConsole.AddCommandInstance("addCitySeat", "Add seats to a city. Usage: addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCity", this);
         DebugLogConsole.AddCommandInstance("removeCitySeat", "Remove seats from a city. Usage: removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCity", this);
     }
+
 }

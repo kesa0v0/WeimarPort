@@ -1,0 +1,134 @@
+{
+  "scenarioName": "Test Scenario: Weimar Republic Initial Setup",
+  "setupScript": [
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_poverty",
+        "count": 3,
+        "location": {
+          "type": "RandomCity",
+          "params": {
+            "unique": true
+          }
+        }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_blockade",
+        "location": {
+          "type": "DR_Box"
+        }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_inflation",
+        "location": {
+          "type": "DR_Box"
+        }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_councils",
+        "location": {
+          "type": "SpecificCity",
+          "name": "Munchen"
+        }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_unrest",
+        "location": { "type": "SpecificCity", "name": "Berlin" }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_unrest",
+        "location": { "type": "SpecificCity", "name": "Munchen" }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_unrest",
+        "location": { "type": "SpecificCity", "name": "Essen" }
+      }
+    },
+    {
+      "command": "PlaceThreatMarker",
+      "args": {
+        "dataId": "threat_unrest",
+        "location": { "type": "SpecificCity", "name": "Hamburg" }
+      }
+    },
+    {
+      "command": "PlacePartyBases",
+      "args": {
+        "partyId": "SPD",
+        "count": 6,
+        "location": { "type": "PlayerChoice_City", "params": { "unique": true } }
+      }
+    },
+    {
+      "command": "PlaceParliamentSeats",
+      "args": {
+        "partyId": "SPD",
+        "count": 7
+      }
+    },
+    {
+      "command": "PlacePartyBases",
+      "args": {
+        "partyId": "Zentrum",
+        "count": 5,
+        "location": { "type": "PlayerChoice_City", "params": { "unique": true } }
+      }
+    },
+    {
+      "command": "PlaceParliamentSeats",
+      "args": {
+        "partyId": "Zentrum",
+        "count": 5
+      }
+    },
+    {
+      "command": "PlacePartyBases",
+      "args": {
+        "partyId": "KPD",
+        "count": 4,
+        "location": { "type": "PlayerChoice_City", "params": { "unique": true } }
+      }
+    },
+    {
+      "command": "PlaceParliamentSeats",
+      "args": {
+        "partyId": "KPD",
+        "count": 4
+      }
+    },
+    {
+      "command": "PlacePartyBases",
+      "args": {
+        "partyId": "DNVP",
+        "count": 3,
+        "location": { "type": "PlayerChoice_City", "params": { "unique": true } }
+      }
+    },
+    {
+      "command": "PlaceParliamentSeats",
+      "args": {
+        "partyId": "DNVP",
+        "count": 3
+      }
+    }
+  ]
+}
