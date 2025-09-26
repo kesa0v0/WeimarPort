@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     {
         gameState = new GameState();
 
+        LoadPartyDatas();
+
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         gameState.playerParty = GetParty(FactionType.SPD);
 
@@ -51,7 +53,7 @@ public class GameManager : MonoBehaviour
 
     void AddDebugCommands()
     {
-        
+
     }
 
     void TestScript()
@@ -87,10 +89,21 @@ public class GameManager : MonoBehaviour
         }
         return order;
     }
-    
+
     public Party GetParty(FactionType faction)
     {
         return gameState.allParties.FirstOrDefault(p => p.Data.factionType == faction);
+    }
+
+    public void LoadPartyDatas()
+    {
+        var partyDatas = Resources.LoadAll<FactionData>("ScriptableObjects/Party").ToList();
+        foreach (var data in partyDatas)
+        {
+            if (gameState.allParties.Any(p => p.Data.factionType == data.factionType)) continue;
+            var party = new Party(data);
+            gameState.allParties.Add(party);
+        }
     }
 
     #endregion
