@@ -28,14 +28,13 @@ public class GameManager : MonoBehaviour
         gameState = new GameState();
 
         LoadPartyDatas();
-        UIManager.Instance.partyStatusManager.Initialize(gameState.allParties); // 임시로 일단 이렇게 해 놓음. EventBus에서 Initialize(GameData) 호출하도록 변경 예정
+        UIManager.Instance.partyStatusManager.Initialize(gameState.Parties); // 임시로 일단 이렇게 해 놓음. EventBus에서 Initialize(GameData) 호출하도록 변경 예정
 
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
-        gameState.playerParty = GetParty(FactionType.SPD);
+        gameState.GameInfo.CurrentPlayerPartyId = GetParty(FactionType.SPD).Data.factionType;
 
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
-        // 그리고 파티 턴 순서도 설정
-        gameState.firstPlayerParty = GetParty(FactionType.SPD);
+        gameState.GameInfo.RoundStartPlayerPartyId = GetParty(FactionType.SPD).Data.factionType;
 
         // 최초 집권연정은 SPD와 Zentrum으로 설정 < 나중에 불러오기나 UI로 선택 가능하게 변경 예정
         gameState.government.FormNewGovernment(GetParty(FactionType.SPD), GetParty(FactionType.Z));
@@ -57,7 +56,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void RequestPartySelection(List<Party> candidates, int count, Action<List<Party>> onChosen)
+    public void RequestPartySelection(List<PartyModel> candidates, int count, Action<List<PartyModel>> onChosen)
     {
         EventBus.Instance.RequestPartySelection(candidates, count, onChosen);
     }
@@ -74,21 +73,21 @@ public class GameManager : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]);
         }
     }
-    public List<Party> GetCurrentRoundPartyOrder()
+    public List<PartyModel> GetCurrentRoundPartyOrder()
     {
-        var order = new List<Party>();
+        var order = new List<PartyModel>();
         int count = gameState.partyTurnOrder.Count;
         for (int i = 0; i < count; i++)
         {
-            int index = (gameState.partyTurnOrder.IndexOf(gameState.firstPlayerParty) + i) % count;
+            int index = (gameState.partyTurnOrder.IndexOf(GetParty(gameState.GameInfo.RoundStartPlayerPartyId)) + i) % count; // TODO: 이부분 조금 더 최적화할 수 있을 듯
             order.Add(gameState.partyTurnOrder[index]);
         }
         return order;
     }
 
-    public Party GetParty(FactionType faction)
+    public PartyModel GetParty(FactionType faction)
     {
-        return gameState.allParties.FirstOrDefault(p => p.Data.factionType == faction);
+        return gameState.Parties.FirstOrDefault(p => p.Data.factionType == faction);
     }
 
     public void LoadPartyDatas()
@@ -96,9 +95,9 @@ public class GameManager : MonoBehaviour
         var partyDatas = Resources.LoadAll<FactionData>("ScriptableObjects/Party").ToList();
         foreach (var data in partyDatas)
         {
-            if (gameState.allParties.Any(p => p.Data.factionType == data.factionType)) continue;
-            var party = new Party(data);
-            gameState.allParties.Add(party);
+            if (gameState.Parties.Any(p => p.Data.factionType == data.factionType)) continue;
+            var party = new PartyModel(data);
+            gameState.Parties.Add(party);
         }
     }
 

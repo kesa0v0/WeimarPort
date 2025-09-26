@@ -7,10 +7,10 @@ public class UIPartyStatusManager : MonoBehaviour
     [SerializeField] private GameObject partyStatusPrefab;
     [SerializeField] private Transform partyStatusParent; // UI에서 배치할 부모 오브젝트
 
-    private Dictionary<Party, UIPartyStatusView> partyViews = new();
+    private Dictionary<PartyModel, UIPartyStatusView> partyViews = new();
 
     // 현재 진행 중인 선택 세션을 안정적으로 관리하기 위한 상태
-    private Dictionary<Party, System.Action> _activeOriginalOnClicked = new();
+    private Dictionary<PartyModel, System.Action> _activeOriginalOnClicked = new();
     private bool _selectionActive = false;
 
     public void Start()
@@ -24,7 +24,7 @@ public class UIPartyStatusManager : MonoBehaviour
         EventBus.Instance.OnPartySelectionRequested -= RequestPartySelection;
     }
 
-    public void Initialize(List<Party> parties)
+    public void Initialize(List<PartyModel> parties)
     {
         foreach (var party in parties)
         {
@@ -38,7 +38,7 @@ public class UIPartyStatusManager : MonoBehaviour
         UpdatePartyOrderUI(GameManager.Instance.GetCurrentRoundPartyOrder());
     }
 
-    public void UpdatePartyStatusView(Party party)
+    public void UpdatePartyStatusView(PartyModel party)
     {
         if (partyViews.TryGetValue(party, out var view))
         {
@@ -55,7 +55,7 @@ public class UIPartyStatusManager : MonoBehaviour
         }
     }
 
-    public void UpdatePartyOrderUI(List<Party> newOrder)
+    public void UpdatePartyOrderUI(List<PartyModel> newOrder)
     {
         for (int i = 0; i < newOrder.Count; i++)
         {
@@ -66,7 +66,7 @@ public class UIPartyStatusManager : MonoBehaviour
         }
     }
 
-    public void RequestPartySelection(List<Party> candidates, int count, System.Action<List<Party>> onChosen)
+    public void RequestPartySelection(List<PartyModel> candidates, int count, System.Action<List<PartyModel>> onChosen)
     {
         // 이전에 진행 중이던 선택 세션이 있으면 안전하게 정리
         CancelActiveSelection();
@@ -95,7 +95,7 @@ public class UIPartyStatusManager : MonoBehaviour
                     CancelActiveSelection();
 
                     // 콜백 호출 (한 파티만 리스트로)
-                    onChosen?.Invoke(new List<Party> { party });
+                    onChosen?.Invoke(new List<PartyModel> { party });
                 };
             }
         }

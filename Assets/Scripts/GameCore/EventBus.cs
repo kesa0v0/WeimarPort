@@ -24,17 +24,17 @@ public class EventBus : MonoBehaviour
 
     #region GameStateEvents
 
-    public event Action<Party> OnTurnStarted;
-    public event Action<Party> OnTurnEnded;
+    public event Action<PartyModel> OnTurnStarted;
+    public event Action<PartyModel> OnTurnEnded;
     public event Action<int> OnRoundStarted;
     public event Action<int> OnRoundEnded;
 
-    public void TurnStarted(Party party)
+    public void TurnStarted(PartyModel party)
     {
         Debug.Log($"TurnStarted: {party.Data.factionName}");
         OnTurnStarted?.Invoke(party);
     }
-    public void TurnEnded(Party party)
+    public void TurnEnded(PartyModel party)
     {
         Debug.Log($"TurnEnded: {party.Data.factionName}");
         OnTurnEnded?.Invoke(party);
@@ -59,14 +59,14 @@ public class EventBus : MonoBehaviour
     // 상태 변화 알림만 남김
     public event Action<string, Vector2, int> OnCityAdded;
     public event Action<string> OnCityRemoved;
-    public event Action<string, Party, int> OnCitySeatAdded;
-    public event Action<string, Party, int> OnCitySeatRemoved;
+    public event Action<string, PartyModel, int> OnCitySeatAdded;
+    public event Action<string, PartyModel, int> OnCitySeatRemoved;
 
     // UI-related requests
-    public event Action<List<Party>, int, Action<List<Party>>> OnPartySelectionRequested;
+    public event Action<List<PartyModel>, int, Action<List<PartyModel>>> OnPartySelectionRequested;
     public event Action OnGovernmentChanged;
 
-    public void RequestPartySelection(List<Party> candidates, int count, Action<List<Party>> onChosen)
+    public void RequestPartySelection(List<PartyModel> candidates, int count, Action<List<PartyModel>> onChosen)
     {
         OnPartySelectionRequested?.Invoke(candidates, count, onChosen);
     }
@@ -87,12 +87,12 @@ public class EventBus : MonoBehaviour
         OnCityRemoved?.Invoke(cityName);
     }
 
-    public void CitySeatAdded(string cityName, Party party, int count) {
+    public void CitySeatAdded(string cityName, PartyModel party, int count) {
         Debug.Log($"CitySeatAdded: {cityName}, {party.Data.factionName}, {count}");
         OnCitySeatAdded?.Invoke(cityName, party, count);
     }
 
-    public void CitySeatRemoved(string cityName, Party party, int count)
+    public void CitySeatRemoved(string cityName, PartyModel party, int count)
     {
         Debug.Log($"CitySeatRemoved: {cityName}, {party.Data.factionName}, {count}");
         OnCitySeatRemoved?.Invoke(cityName, party, count);

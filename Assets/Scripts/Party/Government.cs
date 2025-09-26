@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Government : IUnitContainer
 {
-    public List<Party> GoverningParties { get; private set; }
-    public Party Chancellor { get; private set; }
+    public List<PartyModel> GoverningParties { get; private set; }
+    public PartyModel Chancellor { get; private set; }
 
     public List<UnitModel> supplyUnits;
 
@@ -13,14 +13,14 @@ public class Government : IUnitContainer
 
     public Government()
     {
-        GoverningParties = new List<Party>();
+        GoverningParties = new List<PartyModel>();
         Chancellor = null;
     }
 
     // 정부를 새로 구성하는 함수
-    public void FormNewGovernment(Party newChancellor, Party newCoalitionPartner = null)
+    public void FormNewGovernment(PartyModel newChancellor, PartyModel newCoalitionPartner = null)
     {
-        var newGoverningParties = new List<Party> { newChancellor };
+        var newGoverningParties = new List<PartyModel> { newChancellor };
         if (newCoalitionPartner != null)
             newGoverningParties.Add(newCoalitionPartner);
 
@@ -31,7 +31,7 @@ public class Government : IUnitContainer
     }
 
     // 특정 정당이 현재 정부에 속해 있는지 확인하는 함수
-    public bool IsInGovernment(Party party)
+    public bool IsInGovernment(PartyModel party)
     {
         return GoverningParties.Contains(party);
     }

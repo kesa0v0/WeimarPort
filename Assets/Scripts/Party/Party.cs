@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Party: IUnitContainer
+public class PartyModel: IUnitContainer
 {
     public FactionData Data { get; private set; }
 
@@ -15,7 +15,7 @@ public class Party: IUnitContainer
     // public List<Card> hand;
 
 
-    public Party(FactionData data)
+    public PartyModel(FactionData data)
     {
         Data = data;
         ControlledMinorParties = new List<MinorPartyData>();

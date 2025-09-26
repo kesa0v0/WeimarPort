@@ -11,7 +11,7 @@ public class CityModel: IUnitContainer
 
     public int seatMaxCount;
     public int currentSeats => seats.Values.Sum();
-    public Dictionary<Party, int> seats;
+    public Dictionary<PartyModel, int> seats;
 
     private List<UnitModel> unitsInCity = new List<UnitModel>();
 
@@ -25,7 +25,7 @@ public class CityModel: IUnitContainer
 
     #region Seat Management
 
-    public void AddSeat(Party party)
+    public void AddSeat(PartyModel party)
     {
         if (currentSeats >= seatMaxCount)
         {
@@ -43,7 +43,7 @@ public class CityModel: IUnitContainer
         }
     }
 
-    public void RemoveSeat(Party party)
+    public void RemoveSeat(PartyModel party)
     {
         if (seats.ContainsKey(party) && seats[party] > 0)
         {
