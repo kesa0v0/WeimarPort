@@ -2,10 +2,12 @@ using UnityEngine;
 
 public enum FactionType
 {
+    None,
     KPD,
     SPD,
     Z,
-    DNVP
+    DNVP,
+    Government
 }
 
 [CreateAssetMenu(fileName = "NewFactionData", menuName = "Weimar/Faction Data")]

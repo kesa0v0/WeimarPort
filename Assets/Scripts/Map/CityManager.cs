@@ -81,18 +81,14 @@ public class CityManager : MonoBehaviour
             Citys.Remove(cityName);
 
             Destroy(cityView.gameObject);
-            UnregisterCity(cityName);
+        Citys.Remove(cityName);
+        cities.Remove(cityName);
             Debug.Log($"City '{cityName}' has been removed.");
         }
         else
         {
             Debug.LogWarning($"City '{cityName}' not found.");
         }
-    }
-    public void UnregisterCity(string cityName)
-    {
-        Citys.Remove(cityName);
-        cities.Remove(cityName);
     }
 
     public void CreateCities()
@@ -146,14 +142,13 @@ public class CityManager : MonoBehaviour
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
         }
-        var party = GameManager.Instance.GetParty(Enum.TryParse<FactionType>(partyName, out var faction)
-        ? faction : throw new ArgumentException($"Invalid faction type: {partyName}"));
-        if (party == null)
+        var result = Enum.TryParse<FactionType>(partyName, out var faction);
+        if (!result)
         {
             Debug.LogWarning($"Party '{partyName}' not found.");
             return;
         }
-        presenter.AddSeatToParty(party, count);
+        presenter.AddSeatToParty(faction, count);
     }
 
     public void RemoveSeatFromCity(string cityName, string partyName, int count)
@@ -163,14 +158,13 @@ public class CityManager : MonoBehaviour
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
         }
-        var party = GameManager.Instance.GetParty(Enum.TryParse<FactionType>(partyName, out var faction)
-        ? faction : throw new ArgumentException($"Invalid faction type: {partyName}"));
-        if (party == null)
+        var result = Enum.TryParse<FactionType>(partyName, out var faction);
+        if (!result)
         {
             Debug.LogWarning($"Party '{partyName}' not found.");
             return;
         }
-        presenter.RemoveSeatFromParty(party, count);
+        presenter.RemoveSeatFromParty(faction, count);
     }
 
     #endregion

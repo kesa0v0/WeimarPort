@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using IngameDebugConsole;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 
 public class EventBus : MonoBehaviour
@@ -59,14 +60,14 @@ public class EventBus : MonoBehaviour
     // 상태 변화 알림만 남김
     public event Action<string, Vector2, int> OnCityAdded;
     public event Action<string> OnCityRemoved;
-    public event Action<string, PartyModel, int> OnCitySeatAdded;
-    public event Action<string, PartyModel, int> OnCitySeatRemoved;
+    public event Action<string, FactionType, int> OnCitySeatAdded;
+    public event Action<string, FactionType, int> OnCitySeatRemoved;
 
     // UI-related requests
-    public event Action<List<PartyModel>, int, Action<List<PartyModel>>> OnPartySelectionRequested;
+    public event Action<List<FactionType>, int, Action<List<FactionType>>> OnPartySelectionRequested;
     public event Action OnGovernmentChanged;
 
-    public void RequestPartySelection(List<PartyModel> candidates, int count, Action<List<PartyModel>> onChosen)
+    public void RequestPartySelection(List<FactionType> candidates, int count, Action<List<FactionType>> onChosen)
     {
         OnPartySelectionRequested?.Invoke(candidates, count, onChosen);
     }
@@ -87,14 +88,14 @@ public class EventBus : MonoBehaviour
         OnCityRemoved?.Invoke(cityName);
     }
 
-    public void CitySeatAdded(string cityName, PartyModel party, int count) {
-        Debug.Log($"CitySeatAdded: {cityName}, {party.Data.factionName}, {count}");
+    public void CitySeatAdded(string cityName, FactionType party, int count) {
+        Debug.Log($"CitySeatAdded: {cityName}, {party.HumanName()}, {count}");
         OnCitySeatAdded?.Invoke(cityName, party, count);
     }
 
-    public void CitySeatRemoved(string cityName, PartyModel party, int count)
+    public void CitySeatRemoved(string cityName, FactionType party, int count)
     {
-        Debug.Log($"CitySeatRemoved: {cityName}, {party.Data.factionName}, {count}");
+        Debug.Log($"CitySeatRemoved: {cityName}, {party.HumanName()}, {count}");
         OnCitySeatRemoved?.Invoke(cityName, party, count);
     }
 
