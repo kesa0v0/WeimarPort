@@ -43,10 +43,10 @@ public class DisposedPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 foreach (var entry in byData)
                 {
                     var item = Instantiate(unitIconPrefab, popupUnitContainer);
-                    var iconView = item.GetComponent<UnitIconView>();
+                    var iconView = item.GetComponent<UnitView>();
                     if (iconView != null)
                     {
-                        iconView.Setup(entry.Key.Data, UnitIconView.HorizontalPortion.LeftHalf, entry.Value);
+                        
                     }
                 }
             }

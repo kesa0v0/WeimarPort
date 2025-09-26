@@ -18,8 +18,7 @@ public class GovernmentPanel : MonoBehaviour
         {
             var data = unit.Data;
             var iconObj = Instantiate(unitIconPrefab, unitContainer);
-            var iconView = iconObj.GetComponent<UnitIconView>();
-            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, 1);
+            var iconView = iconObj.GetComponent<UnitView>();
         }
     }
 }

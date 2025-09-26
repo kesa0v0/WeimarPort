@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerHandPanel : MonoBehaviour
 {
     [Header("프리팹과 부모")]
-    [SerializeField] private GameObject unitIconPrefab; // 2단계에서 만든 UnitIconView 프리팹
+    [SerializeField] private GameObject unitIconPrefab;
     [SerializeField] private Transform unitContainer;  // 아이콘들이 생성될 부모 Transform (Horizontal Layout Group이 붙어있음)
 
     /// <summary>
@@ -23,8 +23,8 @@ public class PlayerHandPanel : MonoBehaviour
             UnitData data = entry.Data;
 
             GameObject iconObj = Instantiate(unitIconPrefab, unitContainer);
-            UnitIconView iconView = iconObj.GetComponent<UnitIconView>();
-            iconView.Setup(data, UnitIconView.HorizontalPortion.LeftHalf, 1);
+            UnitView iconView = iconObj.GetComponent<UnitView>();
+            
         }
     }
 }

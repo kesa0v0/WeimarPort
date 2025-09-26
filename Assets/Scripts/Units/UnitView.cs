@@ -26,8 +26,6 @@ public class UnitView : MonoBehaviour
         {
             Debug.LogWarning("UnitView: Unit icon or presenter model icon is null.");
         }
-
-        // 
     }
 
     /// <summary>
