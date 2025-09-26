@@ -1,9 +1,9 @@
 using System;
 
-public enum UnitPosition
+public enum UnitLocationState
 {
     Unavailable,
-    InReserved,
+    InSupply,
     OnBoard,
     Disposed
 }
@@ -13,30 +13,38 @@ public class UnitModel
 {
     public UnitData Data { get; private set; }
 
-    public readonly string uniqueId;       // 모든 유닛을 구분할 고유 ID
-    public string membership;        // 이 유닛을 소유한 플레이어 또는 정부
-    public UnitPosition position;
-    public string locationId;            // 위치에 대한 구체적인 정보 (도시 이름 또는 플레이어 ID)
+    public string InstanceId;       // 유닛의 고유 인스턴스 ID (e.g., "kpd_s_1")
+    public string DataId;           // 원본 데이터 ID (e.g., "UnitData_KPD_Soldiers")
+    
+    public UnitLocationState CurrentState;
+    public LocationData CurrentLocation;        // 현재 유닛의 정확한 위치 정보
+    
+    public FactionType ControllerPartyId;
+
 
     public UnitModel(UnitData data)
     {
         Data = data; // 원본 데이터 참조 연결
         // 자동 생성되는 인스턴스 고유 ID
-        uniqueId = Guid.NewGuid().ToString("N");
+        InstanceId = Guid.NewGuid().ToString("N");
     }
 
-    public UnitModel(UnitData data, string membership, UnitPosition position, string locationId)
+    public UnitModel(UnitData data, FactionType controllerPartyId, UnitLocationState position, LocationData location)
     {
         Data = data;
-        uniqueId = Guid.NewGuid().ToString("N");
-        this.position = position;
+        InstanceId = Guid.NewGuid().ToString("N");
+        this.CurrentState = position;
+        this.CurrentLocation = location;
+        this.ControllerPartyId = controllerPartyId;
     }
 
     // 저장/시나리오에서 고정 인스턴스 ID를 지정하고 싶을 때 사용하는 생성자
-    public UnitModel(UnitData data, string instanceId, string membership, UnitPosition position, string locationId)
+    public UnitModel(UnitData data, string instanceId, FactionType controllerPartyId, UnitLocationState position, LocationData location)
     {
         Data = data;
-        uniqueId = string.IsNullOrEmpty(instanceId) ? Guid.NewGuid().ToString("N") : instanceId;
-        this.position = position;
+        InstanceId = string.IsNullOrEmpty(instanceId) ? Guid.NewGuid().ToString("N") : instanceId;
+        this.CurrentState = position;
+        this.CurrentLocation = location;
+        this.ControllerPartyId = controllerPartyId;
     }
 }

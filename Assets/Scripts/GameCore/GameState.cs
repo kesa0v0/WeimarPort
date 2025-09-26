@@ -19,7 +19,7 @@ public class GameState
     public List<PartyModel> Parties = new();
     public List<PartyModel> partyTurnOrder = new(); // ?
     
-    /*
+    
     // 게임에 존재하는 모든 유닛의 '마스터 목록' (Source of Truth)
     public List<UnitModel> AllUnits = new List<UnitModel>();
     
@@ -29,7 +29,6 @@ public class GameState
     // 타임라인 카드 덱 (룰북 p.13)
     public CardDeckModel TimelineDeck = new CardDeckModel();
     public CardDeckModel TimelineDiscard = new CardDeckModel();
-    */
 
     public Government government = new();
 }

@@ -52,12 +52,12 @@ public class CityView : MonoBehaviour, ICityView
         cityIndicator.transform.localScale = new Vector3(size, currentScale.y, currentScale.z);
     }
 
-    public void UpdateSeatOccupancy(Dictionary<PartyModel, int> occupiedBy)
+    public void UpdateSeatOccupancy(Dictionary<FactionType, int> occupiedBy)
     {
         int seatIndex = 0;
         foreach (var party in GameManager.Instance.gameState.Parties)
         {
-            int count = occupiedBy.TryGetValue(party, out int c) ? c : 0;
+            int count = occupiedBy.TryGetValue(party.Data.factionType, out int c) ? c : 0;
             for (int i = 0; i < count; i++)
             {
                 if (seatIndex < seats.Count)
@@ -111,6 +111,6 @@ public interface ICityView
     void SetCityName(string cityName);
     void SetPosition(Vector2 position);
     void SetSeatsByCount(int seatCount);
-    void UpdateSeatOccupancy(Dictionary<PartyModel, int> occupiedBy);
+    void UpdateSeatOccupancy(Dictionary<FactionType, int> occupiedBy);
     GameObject GetCityIndicator();
 }

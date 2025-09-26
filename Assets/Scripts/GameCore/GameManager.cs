@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void RequestPartySelection(List<PartyModel> candidates, int count, Action<List<PartyModel>> onChosen)
+    public void RequestPartySelection(List<FactionType> candidates, int count, Action<List<FactionType>> onChosen)
     {
         EventBus.Instance.RequestPartySelection(candidates, count, onChosen);
     }
@@ -73,14 +73,15 @@ public class GameManager : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]);
         }
     }
-    public List<PartyModel> GetCurrentRoundPartyOrder()
+    public List<FactionType> GetCurrentRoundPartyOrder()
     {
-        var order = new List<PartyModel>();
+        var order = new List<FactionType>();
         int count = gameState.partyTurnOrder.Count;
+        int startIndex = gameState.partyTurnOrder.FindIndex(p => p.Data.factionType == gameState.GameInfo.RoundStartPlayerPartyId);
         for (int i = 0; i < count; i++)
         {
-            int index = (gameState.partyTurnOrder.IndexOf(GetParty(gameState.GameInfo.RoundStartPlayerPartyId)) + i) % count; // TODO: 이부분 조금 더 최적화할 수 있을 듯
-            order.Add(gameState.partyTurnOrder[index]);
+            int index = (startIndex + i) % count;
+            order.Add(gameState.partyTurnOrder[index].Data.factionType);
         }
         return order;
     }

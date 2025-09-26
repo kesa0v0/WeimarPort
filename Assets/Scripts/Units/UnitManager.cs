@@ -57,7 +57,7 @@ public class UnitManager : MonoBehaviour
         foreach (var kv in units)
         {
             var m = kv.Value;
-            Debug.Log($"{m.uniqueId} | {m.Data.unitName} | {m.position} | {m.locationId} | owner={m.membership}");
+            Debug.Log($"{m.InstanceId} | {m.Data.unitName} | {m.CurrentState} | {m.CurrentLocation.Name} | owner={m.ControllerPartyId}");
         }
     }
 

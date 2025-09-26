@@ -1,31 +1,34 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
-public class CityModel: IUnitContainer
+public class CityModel
 {
     public string cityName;
     public Vector2 position;
 
     public int seatMaxCount;
-    public int currentSeats => seats.Values.Sum();
-    public Dictionary<PartyModel, int> seats;
-
-    private List<UnitModel> unitsInCity = new List<UnitModel>();
+    public int currentSeats => PartyBases.Values.Sum();
+    public Dictionary<FactionType, int> PartyBases { get; private set; }
+    
+    // 도시에 존재하는 유닛 및 마커의 '인스턴스 ID' 목록
+    public List<string> UnitInstanceIds { get; private set; } = new List<string>();
+    public List<string> ThreatMarkerInstanceIds { get; private set; } = new List<string>();
 
     public CityModel(string name, Vector2 pos, int seatMaxCount)
     {
         cityName = name;
         position = pos;
         this.seatMaxCount = seatMaxCount;
-        seats = new();
+        PartyBases = new Dictionary<FactionType, int>();
     }
 
     #region Seat Management
 
-    public void AddSeat(PartyModel party)
+    public void AddSeat(FactionType party)
     {
         if (currentSeats >= seatMaxCount)
         {
@@ -33,39 +36,29 @@ public class CityModel: IUnitContainer
             return;
         }
 
-        if (seats.ContainsKey(party))
+        if (PartyBases.ContainsKey(party))
         {
-            seats[party]++;
+            PartyBases[party]++;
         }
         else
         {
-            seats[party] = 1;
+            PartyBases[party] = 1;
         }
     }
 
-    public void RemoveSeat(PartyModel party)
+    public void RemoveSeat(FactionType party)
     {
-        if (seats.ContainsKey(party) && seats[party] > 0)
+        if (PartyBases.ContainsKey(party) && PartyBases[party] > 0)
         {
-            seats[party]--;
+            PartyBases[party]--;
         }
         else
         {
-            Debug.LogWarning($"No seats to remove for party {party.Data.factionName}.");
+            Debug.LogWarning($"No seats to remove for party {party.HumanName()}.");
         }
     }
 
     #endregion
-
-    public void AddUnit(UnitModel unitModel) { unitsInCity.Add(unitModel); }
-    public void RemoveUnit(UnitModel unitModel) { unitsInCity.Remove(unitModel); }
-    public List<UnitModel> GetUnits()
-    { 
-        if (unitsInCity == null)
-            return new List<UnitModel>();
-        return new List<UnitModel>(unitsInCity);
-    }
-    public string GetContainerName() { return cityName; }
 }
 
 public struct CityParameters

@@ -7,10 +7,10 @@ public class UIPartyStatusManager : MonoBehaviour
     [SerializeField] private GameObject partyStatusPrefab;
     [SerializeField] private Transform partyStatusParent; // UI에서 배치할 부모 오브젝트
 
-    private Dictionary<PartyModel, UIPartyStatusView> partyViews = new();
+    private Dictionary<FactionType, UIPartyStatusView> partyViews = new();
 
     // 현재 진행 중인 선택 세션을 안정적으로 관리하기 위한 상태
-    private Dictionary<PartyModel, System.Action> _activeOriginalOnClicked = new();
+    private Dictionary<FactionType, System.Action> _activeOriginalOnClicked = new();
     private bool _selectionActive = false;
 
     public void Start()
@@ -30,7 +30,7 @@ public class UIPartyStatusManager : MonoBehaviour
         {
             var viewObj = Instantiate(partyStatusPrefab, partyStatusParent);
             var view = viewObj.GetComponent<UIPartyStatusView>();
-            partyViews.Add(party, view);
+            partyViews.Add(party.Data.factionType, view);
 
             UpdatePartyStatusView(party);
         }
@@ -40,22 +40,22 @@ public class UIPartyStatusManager : MonoBehaviour
 
     public void UpdatePartyStatusView(PartyModel party)
     {
-        if (partyViews.TryGetValue(party, out var view))
+        if (partyViews.TryGetValue(party.Data.factionType, out var view))
         {
             view.SetPartyName(party.Data.factionName, party.Data.factionColor);
             view.SetPartyStatus($"Opposition");
-            view.SetPartyAgenda(party.currentPartyAgenda, party.Data.factionColor);
+            view.SetPartyAgenda(party.ChosenAgendaCardId, party.Data.factionColor);
 
             // 보유한 하위 정당 목록 표시
             var subPartyNames = party.ControlledMinorParties.Count > 0 ? string.Join(", ", party.ControlledMinorParties.ConvertAll(sp => sp.partyName)) : "None";
             view.SetPartySubParties(subPartyNames);
 
             // 보유 군대 표시
-            view.SetInSupplyUnits(party.GetUnits());
+            // view.SetInSupplyUnits(party.GetUnits());
         }
     }
 
-    public void UpdatePartyOrderUI(List<PartyModel> newOrder)
+    public void UpdatePartyOrderUI(List<FactionType> newOrder)
     {
         for (int i = 0; i < newOrder.Count; i++)
         {
@@ -66,7 +66,7 @@ public class UIPartyStatusManager : MonoBehaviour
         }
     }
 
-    public void RequestPartySelection(List<PartyModel> candidates, int count, System.Action<List<PartyModel>> onChosen)
+    public void RequestPartySelection(List<FactionType> candidates, int count, System.Action<List<FactionType>> onChosen)
     {
         // 이전에 진행 중이던 선택 세션이 있으면 안전하게 정리
         CancelActiveSelection();
@@ -95,7 +95,7 @@ public class UIPartyStatusManager : MonoBehaviour
                     CancelActiveSelection();
 
                     // 콜백 호출 (한 파티만 리스트로)
-                    onChosen?.Invoke(new List<PartyModel> { party });
+                    onChosen?.Invoke(new List<FactionType> { party });
                 };
             }
         }

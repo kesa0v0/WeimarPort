@@ -21,31 +21,31 @@ public class City
         view.SetCityName(model.cityName);
         view.SetPosition(model.position);
         view.SetSeatsByCount(model.seatMaxCount);
-        view.UpdateSeatOccupancy(model.seats);
+        view.UpdateSeatOccupancy(model.PartyBases);
     }
 
     #region Seat Management
 
-    public void AddSeatToParty(PartyModel party, int count = 1)
+    public void AddSeatToParty(FactionType party, int count = 1)
     {
         // 동기적 처리: 한 번에 하나의 선택만 진행되도록 재귀/체이닝
         ProcessAddSeatSequentially(party, count); // Commented out as the method is removed.
     }
 
-    public void RemoveSeatFromParty(PartyModel party, int count = 1)
+    public void RemoveSeatFromParty(FactionType party, int count = 1)
     {
         count = Mathf.Min(count, model.currentSeats);
         for (int i = 0; i < count; i++)
             model.RemoveSeat(party);
 
-        view.UpdateSeatOccupancy(model.seats);
+        view.UpdateSeatOccupancy(model.PartyBases);
     }
 
     /// <summary>
     /// 좌석 추가를 순차적으로 처리하여, 동시 다중 선택 프롬프트가 발생하지 않도록 함.
     /// 또한 제거만 발생한 경우(실제 빈 자리가 생기지 않은 경우)에는 추가를 시도하지 않도록 가드.
     /// </summary>
-    private void ProcessAddSeatSequentially(PartyModel targetParty, int remaining)
+    private void ProcessAddSeatSequentially(FactionType targetParty, int remaining)
     {
         if (remaining <= 0)
             return;
@@ -54,14 +54,14 @@ public class City
         if (model.currentSeats < model.seatMaxCount)
         {
             model.AddSeat(targetParty);
-            view.UpdateSeatOccupancy(model.seats);
+            view.UpdateSeatOccupancy(model.PartyBases);
             ProcessAddSeatSequentially(targetParty, remaining - 1);
             return;
         }
 
         // 가득 찼으면 제거 후보 수집(본인 정당 제외, 1석 이상 보유)
-        var removableParties = new List<PartyModel>();
-        foreach (var kv in model.seats)
+        var removableParties = new List<FactionType>();
+        foreach (var kv in model.PartyBases)
         {
             if (kv.Key != targetParty && kv.Value > 0)
                 removableParties.Add(kv.Key);
@@ -82,7 +82,7 @@ public class City
                 model.RemoveSeat(toRemove);
             }
 
-            view.UpdateSeatOccupancy(model.seats);
+            view.UpdateSeatOccupancy(model.PartyBases);
             ProcessAddSeatSequentially(targetParty, remaining - 1);
         });
     }
