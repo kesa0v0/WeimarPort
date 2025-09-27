@@ -24,7 +24,7 @@ public class GameState
     public List<UnitModel> AllUnits = new List<UnitModel>();
     
     // 게임에 존재하는 모든 마커의 '마스터 목록'
-    public List<MarkerModel> AllMarkers = new List<MarkerModel>();
+    public List<ThreatMarkerModel> AllMarkers = new List<ThreatMarkerModel>();
     
     // 타임라인 카드 덱 (룰북 p.13)
     public CardDeckModel TimelineDeck = new CardDeckModel();
