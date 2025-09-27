@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Workers
   m_EditorClassIdentifier: 
   unitName: Workers
-  unitIcon: {fileID: 2800000, guid: 578d9ccc17427104fb0e4288d526a469, type: 3}
   unitMaterial: {fileID: 2100000, guid: f8649ffc493a3ce4fb9751352ab0b128, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 2
-  defaultLocationId: KPD
-  spawnMembership: KPD
   combatStrength: 1
+  initialAffiliation: 1
+  unitSprite: {fileID: 373815195, guid: 578d9ccc17427104fb0e4288d526a469, type: 3}
+  flippedSprite: {fileID: 0}
+  isGovernmentUnit: 0
+  canBeFlipped: 0

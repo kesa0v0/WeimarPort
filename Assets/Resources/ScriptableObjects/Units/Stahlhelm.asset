@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Stahlhelm
   m_EditorClassIdentifier: 
   unitName: Stahlhelm
-  unitIcon: {fileID: 2800000, guid: 96ed09eb53b77a34bb919224ae970e7b, type: 3}
   unitMaterial: {fileID: 2100000, guid: 80357cc8b7b58b14cbeacf55f942c518, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 2
-  defaultLocationId: DNVP
-  spawnMembership: DNVP
   combatStrength: 1
+  initialAffiliation: 4
+  unitSprite: {fileID: 1842149979, guid: 96ed09eb53b77a34bb919224ae970e7b, type: 3}
+  flippedSprite: {fileID: 0}
+  isGovernmentUnit: 0
+  canBeFlipped: 0

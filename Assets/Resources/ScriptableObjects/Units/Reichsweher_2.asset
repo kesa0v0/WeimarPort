@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Reichsweher_2
   m_EditorClassIdentifier: 
   unitName: Reichsweher_2
-  unitIcon: {fileID: 2800000, guid: b36340e588e0456439f6eda176172703, type: 3}
   unitMaterial: {fileID: 2100000, guid: 18abdbbfba5db4643ad71770e05b41c7, type: 2}
-  membershipMutableOnBoard: 1
-  defaultSpawnPosition: 2
-  defaultLocationId: Government
-  spawnMembership: Government
   combatStrength: 2
+  initialAffiliation: 5
+  unitSprite: {fileID: 319539956, guid: b36340e588e0456439f6eda176172703, type: 3}
+  flippedSprite: {fileID: -1478950145, guid: b36340e588e0456439f6eda176172703, type: 3}
+  isGovernmentUnit: 1
+  canBeFlipped: 1

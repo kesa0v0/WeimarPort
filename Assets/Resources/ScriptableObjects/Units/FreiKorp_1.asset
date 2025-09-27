@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: FreiKorp_1
   m_EditorClassIdentifier: 
   unitName: FreiKorp_1
-  unitIcon: {fileID: 2800000, guid: df0d3957e1bdba143b155317d7cb97af, type: 3}
   unitMaterial: {fileID: 2100000, guid: 0d2a664edced8224eaf7ae04e1f32d4f, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 2
-  defaultLocationId: DNVP
-  spawnMembership: DNVP
   combatStrength: 1
+  initialAffiliation: 4
+  unitSprite: {fileID: 491566380, guid: df0d3957e1bdba143b155317d7cb97af, type: 3}
+  flippedSprite: {fileID: 0}
+  isGovernmentUnit: 0
+  canBeFlipped: 0

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Police
   m_EditorClassIdentifier: 
   unitName: Police
-  unitIcon: {fileID: 2800000, guid: d21dcde10eb38df47b99f434a9aef90f, type: 3}
   unitMaterial: {fileID: 2100000, guid: dce97687ffae17d4bb62e3ef1da34a31, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 1
-  defaultLocationId: Government
-  spawnMembership: Government
   combatStrength: 1
+  initialAffiliation: 5
+  unitSprite: {fileID: -553607983, guid: d21dcde10eb38df47b99f434a9aef90f, type: 3}
+  flippedSprite: {fileID: 0}
+  isGovernmentUnit: 1
+  canBeFlipped: 0

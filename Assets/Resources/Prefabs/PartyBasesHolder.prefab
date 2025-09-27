@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8631388585850996320}
   - component: {fileID: -8495336237027534273}
   m_Layer: 0
-  m_Name: PartySeatHolder
+  m_Name: PartyBasesHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

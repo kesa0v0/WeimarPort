@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class SeatView : MonoBehaviour
+public class PartyBaseView : MonoBehaviour
 {
     public void SetColor(Color partyColor)
     {

@@ -9,9 +9,9 @@ public class CityView : MonoBehaviour, ICityView
 {
     [SerializeField] private TextMeshProUGUI cityName;
     [SerializeField] private GameObject cityIndicator;
-    [SerializeField] private GameObject seatGameObject;
-    [SerializeField] private Transform seatParent;
-    private readonly List<SeatView> seats = new();
+    [SerializeField] private GameObject baseGameObject;
+    [SerializeField] private Transform baseParent;
+    private readonly List<PartyBaseView> partyBases = new();
 
     public void SetCityName(string cityName)
     {
@@ -27,18 +27,18 @@ public class CityView : MonoBehaviour, ICityView
     public void SetSeatsByCount(int seatCount)
     {
         // If exists, destroy old seats
-        foreach (SeatView child in seats)
+        foreach (PartyBaseView child in partyBases)
         {
             Destroy(child.gameObject);
         }
-        seats.Clear();
+        partyBases.Clear();
 
         // Create new seats
         for (int i = 0; i < seatCount; i++)
         {
-            SeatView seat = Instantiate(seatGameObject, seatParent).GetComponent<SeatView>();
+            PartyBaseView seat = Instantiate(baseGameObject, baseParent).GetComponent<PartyBaseView>();
             seat.transform.localPosition = new Vector2((i - (seatCount - 1) / 2.0f) * 0.5f, 0);
-            seats.Add(seat);
+            partyBases.Add(seat);
         }
 
         // 좌석 개수에 따라 인디케이터 크기 자동 조절 (예: 최소 1, seatCount 1당 0.3씩 증가)
@@ -60,9 +60,9 @@ public class CityView : MonoBehaviour, ICityView
             int count = occupiedBy.TryGetValue(party.Data.factionType, out int c) ? c : 0;
             for (int i = 0; i < count; i++)
             {
-                if (seatIndex < seats.Count)
+                if (seatIndex < partyBases.Count)
                 {
-                    seats[seatIndex].SetColor(party.Data.factionColor);
+                    partyBases[seatIndex].SetColor(party.Data.factionColor);
                     seatIndex++;
                 }
                 else
@@ -74,9 +74,9 @@ public class CityView : MonoBehaviour, ICityView
         }
 
         // Clear remaining seats
-        for (int i = seatIndex; i < seats.Count; i++)
+        for (int i = seatIndex; i < partyBases.Count; i++)
         {
-            seats[i].SetColor(Color.gray); // Default color for unoccupied seats
+            partyBases[i].SetColor(Color.gray); // Default color for unoccupied seats
         }
     }
 

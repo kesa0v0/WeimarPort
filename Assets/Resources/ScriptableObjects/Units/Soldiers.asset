@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Soldiers
   m_EditorClassIdentifier: 
   unitName: Soldiers
-  unitIcon: {fileID: 2800000, guid: 8a23010a2cf644d47bed4cea9dde9529, type: 3}
   unitMaterial: {fileID: 2100000, guid: a14f61b4b4433c54a8512fad5834f274, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 2
-  defaultLocationId: KPD
-  spawnMembership: KPD
   combatStrength: 1
+  initialAffiliation: 1
+  unitSprite: {fileID: 812107946, guid: 8a23010a2cf644d47bed4cea9dde9529, type: 3}
+  flippedSprite: {fileID: 0}
+  isGovernmentUnit: 0
+  canBeFlipped: 0

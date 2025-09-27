@@ -1,0 +1,55 @@
+{
+  "cards": [
+    {
+      "cardId": "timeline_a01",
+      "affiliation": "None",
+      "cardName": "Returning Soldiers",
+      "largeValue": 3,
+      "smallValue": 2,
+      "removeFromGame": true,
+      "eventScript": [
+        { "comment": "Zentrum gets 1 VP", "command": "ModifyVp", "args": { "partyId": "Zentrum", "value": 1 } },
+        { "comment": "DNVP gets 1 Freikorps unit in their supply", "command": "ReinforceUnit", "args": { "partyId": "DNVP", "dataId": "UnitData_Freikorps_S1" } }
+      ]
+    },
+    {
+      "cardId": "spd_s22",
+      "affiliation": "SPD",
+      "cardName": "Iron Front",
+      "largeValue": 5,
+      "smallValue": 0,
+      "removeFromGame": true,
+      "eventScript": [
+        {
+          "command": "PlayerChoice",
+          "args": {
+            "choicePrompt": "어느 정당의 의석을 1개 제거하시겠습니까?",
+            "options": [
+              { "buttonText": "Zentrum", "effects": [ { "command": "ModifyParliamentSeat", "args": { "partyId": "Zentrum", "value": -1 } } ] },
+              { "buttonText": "DNVP", "effects": [ { "command": "ModifyParliamentSeat", "args": { "partyId": "DNVP", "value": -1 } } ] }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "kpd_k_example_conditional",
+      "affiliation": "KPD",
+      "cardName": "Conditional Uprising",
+      "largeValue": 3,
+      "smallValue": 1,
+      "removeFromGame": false,
+      "eventScript": [
+        {
+          "command": "ConditionalEffect",
+          "args": {
+            "condition": { "type": "IsInGovernment", "partyId": "KPD" },
+            "onSuccess": [ { "command": "ModifyVp", "args": { "partyId": "KPD", "value": 2 } } ],
+            "onFailure": [ { "command": "PlaceThreatMarker", "args": { "dataId": "threat_unrest", "location": { "type": "SpecificCity", "name": "Berlin" } } } ]
+          }
+        }
+      ]
+    }
+  ]
+}
+

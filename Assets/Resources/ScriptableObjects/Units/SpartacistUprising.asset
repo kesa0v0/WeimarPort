@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SpartacistUprising
   m_EditorClassIdentifier: 
   unitName: SpartacistUprising
-  unitIcon: {fileID: 2800000, guid: 84ef03ef1046ece47b2744a7d1f4f7b6, type: 3}
   unitMaterial: {fileID: 2100000, guid: b5f27a6e0b9eeda4781bc18bac02af5c, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 2
-  defaultLocationId: KPD
-  spawnMembership: KPD
   combatStrength: 1
+  initialAffiliation: 1
+  unitSprite: {fileID: 1606221513, guid: 84ef03ef1046ece47b2744a7d1f4f7b6, type: 3}
+  flippedSprite: {fileID: 0}
+  isGovernmentUnit: 0
+  canBeFlipped: 0

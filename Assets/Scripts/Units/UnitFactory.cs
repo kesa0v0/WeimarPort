@@ -69,7 +69,7 @@ public class UnitFactory
             }
             presenter.BindView(viewComponent);
             // 도시 앵커에 부착
-            viewComponent.AttachToCity(city);
+            // viewComponent.AttachToCity(city);
             return viewComponent;
         }
 

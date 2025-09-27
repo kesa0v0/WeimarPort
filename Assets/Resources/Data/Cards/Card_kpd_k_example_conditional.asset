@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a367f53a4e35ac4da1f7e27e02432e3, type: 3}
+  m_Name: Card_kpd_k_example_conditional
+  m_EditorClassIdentifier: 
+  CardId: kpd_k_example_conditional
+  Affiliation: 1
+  CardName: Conditional Uprising
+  EventText: 
+  CardImage: {fileID: 0}
+  LargeCircleValue: 3
+  SmallCircleValue: 1
+  RemoveFromGameOnPlay: 0
+  EventScriptJson: "[\r\n  {\r\n    \"comment\": null,\r\n    \"command\": \"ConditionalEffect\",\r\n   
+    \"args\": {\r\n      \"partyId\": null,\r\n      \"targetPartyId\": null,\r\n     
+    \"instanceId\": null,\r\n      \"dataId\": null,\r\n      \"count\": 0,\r\n     
+    \"value\": 0,\r\n      \"location\": null,\r\n      \"condition\": {\r\n       
+    \"type\": \"IsInGovernment\",\r\n        \"partyId\": \"KPD\",\r\n        \"markerId\":
+    null,\r\n        \"location\": null\r\n      },\r\n      \"onSuccess\": [\r\n       
+    {\r\n          \"comment\": null,\r\n          \"command\": \"ModifyVp\",\r\n         
+    \"args\": {\r\n            \"partyId\": \"KPD\",\r\n            \"targetPartyId\":
+    null,\r\n            \"instanceId\": null,\r\n            \"dataId\": null,\r\n           
+    \"count\": 0,\r\n            \"value\": 2,\r\n            \"location\": null,\r\n           
+    \"condition\": null,\r\n            \"onSuccess\": null,\r\n            \"onFailure\":
+    null,\r\n            \"choicePrompt\": null,\r\n            \"options\": null\r\n         
+    }\r\n        }\r\n      ],\r\n      \"onFailure\": [\r\n        {\r\n         
+    \"comment\": null,\r\n          \"command\": \"PlaceThreatMarker\",\r\n         
+    \"args\": {\r\n            \"partyId\": null,\r\n            \"targetPartyId\":
+    null,\r\n            \"instanceId\": null,\r\n            \"dataId\": \"threat_unrest\",\r\n           
+    \"count\": 0,\r\n            \"value\": 0,\r\n            \"location\": {\r\n             
+    \"type\": \"SpecificCity\",\r\n              \"name\": \"Berlin\",\r\n             
+    \"params\": null\r\n            },\r\n            \"condition\": null,\r\n           
+    \"onSuccess\": null,\r\n            \"onFailure\": null,\r\n            \"choicePrompt\":
+    null,\r\n            \"options\": null\r\n          }\r\n        }\r\n      ],\r\n     
+    \"choicePrompt\": null,\r\n      \"options\": null\r\n    }\r\n  }\r\n]"

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: RoterFrontkampferbund
   m_EditorClassIdentifier: 
   unitName: RoterFrontkampferbund
-  unitIcon: {fileID: 2800000, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}
   unitMaterial: {fileID: 2100000, guid: 3de7500c1cfaa1a4784cae2b57c164fd, type: 2}
-  membershipMutableOnBoard: 0
-  defaultSpawnPosition: 2
-  defaultLocationId: KPD
-  spawnMembership: KPD
   combatStrength: 1
+  initialAffiliation: 1
+  unitSprite: {fileID: 1215182723, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}
+  flippedSprite: {fileID: -1454647864, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}
+  isGovernmentUnit: 0
+  canBeFlipped: 0
