@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: RoteRuhrarmee
   m_EditorClassIdentifier: 
-  unitName: RoteRuhrarmee
-  unitMaterial: {fileID: 2100000, guid: f4b1b2613d6e71e45bac4ff78bc1435c, type: 2}
-  combatStrength: 2
-  initialAffiliation: 1
-  unitSprite: {fileID: -989646205, guid: 5c6dba5a1503b2241a3f25f7363323e6, type: 3}
-  flippedSprite: {fileID: 0}
-  isGovernmentUnit: 0
-  canBeFlipped: 0
+  DataId: RoteRuhrarmee
+  UnitName: Rote Ruhrarmee
+  Description: 
+  Affiliation: 1
+  Strength: 2
+  IsGovernmentUnit: 0
+  IsFlippableReichswehr: 0
+  ModelPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  DefaultMaterial: {fileID: 2100000, guid: f4b1b2613d6e71e45bac4ff78bc1435c, type: 2}
+  FlippedMaterial: {fileID: 0}
+  Icon: {fileID: -989646205, guid: 5c6dba5a1503b2241a3f25f7363323e6, type: 3}

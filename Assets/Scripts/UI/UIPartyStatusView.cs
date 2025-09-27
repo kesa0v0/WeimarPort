@@ -66,7 +66,7 @@ public class UIPartyStatusView : MonoBehaviour, IPointerClickHandler
             var unitImage = item.transform.Find("UnitIcon").GetComponent<Image>();
             var unitInfoText = item.transform.Find("UnitCountText").GetComponent<TextMeshProUGUI>();
 
-            unitImage.sprite = unit.Data.unitSprite;
+            unitImage.sprite = unit.Data.Icon;
             unitInfoText.text = $"";
         }
     }

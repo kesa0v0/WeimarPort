@@ -16,7 +16,7 @@ public class UnitView : MonoBehaviour
     /// <summary>
     /// 이 View를 초기화하고, 모델 데이터에 따라 외형을 설정합니다.
     /// </summary>
-    public void Initialize(string instanceId, UnitData unitData, FactionData initialControllerData)
+    public void Initialize(string instanceId, UnitData unitData, FactionType initialControllerData)
     {
         this.InstanceId = instanceId;
         this.unitData = unitData; // 원본 데이터 저장
@@ -56,10 +56,10 @@ public class UnitView : MonoBehaviour
     /// 유닛의 제어권자 변경에 따라 외형을 업데이트합니다. (예: Reichswehr)
     /// 이 메서드는 이제 이벤트에 의해 내부적으로 호출됩니다.
     /// </summary>
-    private void UpdateAppearance(FactionData controllerData)
+    private void UpdateAppearance(FactionType factionType)
     {
         // TODO: DNVP가 제어하는 Reichswehr일 경우 다른 머티리얼/텍스처로 변경하는 로직
-        // 예: if (unitData.isReichswehr && controllerData.FactionType == FactionType.DNVP) { ... }
+        // 예: if (unitData.isReichswehr && factionType == FactionType.DNVP) { ... }
     }
 
     // 유저가 이 유닛을 클릭했을 때의 처리

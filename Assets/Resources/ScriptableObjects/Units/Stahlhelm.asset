@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: Stahlhelm
   m_EditorClassIdentifier: 
-  unitName: Stahlhelm
-  unitMaterial: {fileID: 2100000, guid: 80357cc8b7b58b14cbeacf55f942c518, type: 2}
-  combatStrength: 1
-  initialAffiliation: 4
-  unitSprite: {fileID: 1842149979, guid: 96ed09eb53b77a34bb919224ae970e7b, type: 3}
-  flippedSprite: {fileID: 0}
-  isGovernmentUnit: 0
-  canBeFlipped: 0
+  DataId: Stahlhelm
+  UnitName: Stahlhelm
+  Description: 
+  Affiliation: 4
+  Strength: 1
+  IsGovernmentUnit: 0
+  IsFlippableReichswehr: 0
+  ModelPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  DefaultMaterial: {fileID: 2100000, guid: 80357cc8b7b58b14cbeacf55f942c518, type: 2}
+  FlippedMaterial: {fileID: 0}
+  Icon: {fileID: 1842149979, guid: 96ed09eb53b77a34bb919224ae970e7b, type: 3}

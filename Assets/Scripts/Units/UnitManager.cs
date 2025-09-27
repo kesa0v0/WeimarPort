@@ -45,7 +45,7 @@ public class UnitManager : MonoBehaviour
 
     public UnitData GetUnitDataByName(string unitName)
     {
-        return unitDataList.Find(unit => unit.unitName == unitName);
+        return unitDataList.Find(unit => unit.UnitName == unitName);
     }
 
     #endregion
@@ -57,7 +57,7 @@ public class UnitManager : MonoBehaviour
         foreach (var kv in units)
         {
             var m = kv.Value;
-            Debug.Log($"{m.InstanceId} | {m.Data.unitName} | {m.CurrentState} | {m.CurrentLocation.Name} | owner={m.ControllerPartyId}");
+            Debug.Log($"{m.InstanceId} | {m.Data.UnitName} | {m.CurrentState} | {m.CurrentLocation.Name} | owner={m.ControllerPartyId}");
         }
     }
 

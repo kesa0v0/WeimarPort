@@ -15,7 +15,7 @@ public class Unit
         }
 
         // View에게 자신을 알려주고 초기화하도록 지시
-        view.Initialize(this);
+        view.Initialize(model.InstanceId, model.Data, model.ControllerPartyId);
     }
 
     // UnitManager 등이 유닛을 이동시킬 때 이 메소드를 호출해준다.
@@ -37,7 +37,7 @@ public class Unit
         this.view = newView;
         if (this.view != null)
         {
-            this.view.Initialize(this);
+            this.view.Initialize(Model.InstanceId, Model.Data, Model.ControllerPartyId);
         }
     }
 }

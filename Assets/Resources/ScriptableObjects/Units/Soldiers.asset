@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: Soldiers
   m_EditorClassIdentifier: 
-  unitName: Soldiers
-  unitMaterial: {fileID: 2100000, guid: a14f61b4b4433c54a8512fad5834f274, type: 2}
-  combatStrength: 1
-  initialAffiliation: 1
-  unitSprite: {fileID: 812107946, guid: 8a23010a2cf644d47bed4cea9dde9529, type: 3}
-  flippedSprite: {fileID: 0}
-  isGovernmentUnit: 0
-  canBeFlipped: 0
+  DataId: Soldiers
+  UnitName: Soldiers
+  Description: 
+  Affiliation: 1
+  Strength: 1
+  IsGovernmentUnit: 0
+  IsFlippableReichswehr: 0
+  ModelPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  DefaultMaterial: {fileID: 2100000, guid: a14f61b4b4433c54a8512fad5834f274, type: 2}
+  FlippedMaterial: {fileID: 0}
+  Icon: {fileID: 812107946, guid: 8a23010a2cf644d47bed4cea9dde9529, type: 3}

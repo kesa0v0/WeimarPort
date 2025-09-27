@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: RoterFrontkampferbund
   m_EditorClassIdentifier: 
-  unitName: RoterFrontkampferbund
-  unitMaterial: {fileID: 2100000, guid: 3de7500c1cfaa1a4784cae2b57c164fd, type: 2}
-  combatStrength: 1
-  initialAffiliation: 1
-  unitSprite: {fileID: 1215182723, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}
-  flippedSprite: {fileID: -1454647864, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}
-  isGovernmentUnit: 0
-  canBeFlipped: 0
+  DataId: RoterFrontkampferbund
+  UnitName: "Roter Frontk\xE4mpferbund"
+  Description: 
+  Affiliation: 1
+  Strength: 1
+  IsGovernmentUnit: 0
+  IsFlippableReichswehr: 0
+  ModelPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  DefaultMaterial: {fileID: 2100000, guid: 3de7500c1cfaa1a4784cae2b57c164fd, type: 2}
+  FlippedMaterial: {fileID: 0}
+  Icon: {fileID: 1215182723, guid: 58d04da8d7140c743aedb0a3d15d5c19, type: 3}

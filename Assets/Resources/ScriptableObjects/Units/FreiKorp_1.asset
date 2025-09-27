@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: FreiKorp_1
   m_EditorClassIdentifier: 
-  unitName: FreiKorp_1
-  unitMaterial: {fileID: 2100000, guid: 0d2a664edced8224eaf7ae04e1f32d4f, type: 2}
-  combatStrength: 1
-  initialAffiliation: 4
-  unitSprite: {fileID: 491566380, guid: df0d3957e1bdba143b155317d7cb97af, type: 3}
-  flippedSprite: {fileID: 0}
-  isGovernmentUnit: 0
-  canBeFlipped: 0
+  DataId: Freikorps_1
+  UnitName: Freikorps, Strength 1
+  Description: 
+  Affiliation: 4
+  Strength: 1
+  IsGovernmentUnit: 0
+  IsFlippableReichswehr: 0
+  ModelPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  DefaultMaterial: {fileID: 2100000, guid: 0d2a664edced8224eaf7ae04e1f32d4f, type: 2}
+  FlippedMaterial: {fileID: 0}
+  Icon: {fileID: 491566380, guid: df0d3957e1bdba143b155317d7cb97af, type: 3}

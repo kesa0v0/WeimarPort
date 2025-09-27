@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: Reichsweher_1
   m_EditorClassIdentifier: 
-  unitName: Reichsweher_1
-  unitMaterial: {fileID: 2100000, guid: 2885e0d1e318feb40b494595b507c09d, type: 2}
-  combatStrength: 1
-  initialAffiliation: 5
-  unitSprite: {fileID: -1457028398, guid: 44d0faff9fb049042a6d13876a1a9bcc, type: 3}
-  flippedSprite: {fileID: 28433680, guid: 44d0faff9fb049042a6d13876a1a9bcc, type: 3}
-  isGovernmentUnit: 1
-  canBeFlipped: 1
+  DataId: Reichswehr_1
+  UnitName: Reichswehr, Strength 1
+  Description: 
+  Affiliation: 5
+  Strength: 1
+  IsGovernmentUnit: 1
+  IsFlippableReichswehr: 1
+  ModelPrefab: {fileID: 5636494676175591316, guid: c0bc4f8e0e3cd8f41ac599edc8140618, type: 3}
+  DefaultMaterial: {fileID: 2100000, guid: 2885e0d1e318feb40b494595b507c09d, type: 2}
+  FlippedMaterial: {fileID: 2100000, guid: 2885e0d1e318feb40b494595b507c09d, type: 2}
+  Icon: {fileID: -1457028398, guid: 44d0faff9fb049042a6d13876a1a9bcc, type: 3}

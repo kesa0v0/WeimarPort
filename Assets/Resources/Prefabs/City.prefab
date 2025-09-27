@@ -459,5 +459,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cityName: {fileID: 5020618487718623274}
   cityIndicator: {fileID: 5963194251054673717}
-  seatGameObject: {fileID: 4898862922035715412, guid: 4ee9ff1913f659e4c98b2d034f87cf1d, type: 3}
-  seatParent: {fileID: 784170805586312292}
+  baseGameObject: {fileID: 4898862922035715412, guid: 4ee9ff1913f659e4c98b2d034f87cf1d, type: 3}
+  baseParent: {fileID: 784170805586312292}
