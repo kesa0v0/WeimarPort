@@ -148,7 +148,7 @@ public class CityManager : MonoBehaviour
             Debug.LogWarning($"Party '{partyName}' not found.");
             return;
         }
-        presenter.AddSeatToParty(faction, count);
+        presenter.AddPartyBase(faction, count);
     }
 
     public void RemoveSeatFromCity(string cityName, string partyName, int count)

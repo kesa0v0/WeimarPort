@@ -130,7 +130,7 @@ public class ScenarioExecutor
                 CityPresenter targetCity = cityManager.GetRandomCity(exclude: unique ? usedCities : null);
 
                 // threatManager.PlaceMarker(args.markerId, targetCity);
-                Debug.Log($"{targetCity.model.cityName}에 '{args.instanceId}' 배치 (실제 로직 호출 필요)");
+                Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}' 배치 (실제 로직 호출 필요)");
 
                 if (unique)
                 {
@@ -159,7 +159,7 @@ public class ScenarioExecutor
             {
                 CityPresenter targetCity = cityManager.GetRandomCity(exclude: null);
                 // unitManager.PlaceUnit(party, targetCity);
-                Debug.Log($"{targetCity.model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
+                Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
             }
             // ... SpecificCity 등 다른 location.type에 대한 처리 ...
         }

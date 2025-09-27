@@ -5,13 +5,16 @@ using TMPro;
 using UnityEngine;
 
 [Serializable]
-public class CityView : MonoBehaviour, ICityView
+public class CityView : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI cityName;
+    [SerializeField] private List<Transform> placementSlots;
     [SerializeField] private GameObject cityIndicator;
     [SerializeField] private GameObject baseGameObject;
     [SerializeField] private Transform baseParent;
     private readonly List<PartyBaseView> partyBases = new();
+
+    private int nextSlotIndex = 0;
 
     public void SetCityName(string cityName)
     {
@@ -23,7 +26,7 @@ public class CityView : MonoBehaviour, ICityView
     {
         transform.position = new Vector3(position.x, 0, position.y);
     }
-
+    
     public void SetSeatsByCount(int seatCount)
     {
         // If exists, destroy old seats
@@ -79,11 +82,39 @@ public class CityView : MonoBehaviour, ICityView
             partyBases[i].SetColor(Color.gray); // Default color for unoccupied seats
         }
     }
+    
 
-    public GameObject GetCityIndicator()
+    #region Object Placement
+
+
+    /// <summary>
+    /// 특정 게임 오브젝트(View)를 이 도시의 자식으로 만들고 위치를 지정합니다.
+    /// </summary>
+    public void AddObjectToCity(Transform objectTransform)
     {
-        return cityIndicator;
+        objectTransform.SetParent(this.transform, true);
+
+        if (placementSlots != null && placementSlots.Count > 0)
+        {
+            objectTransform.position = placementSlots[nextSlotIndex].position;
+            nextSlotIndex = (nextSlotIndex + 1) % placementSlots.Count;
+        }
+        else
+        {
+            objectTransform.position = this.transform.position + (Vector3)(UnityEngine.Random.insideUnitCircle * 0.5f);
+        }
     }
+    
+    
+    /// <summary>
+    /// 도시에서 객체를 제거하고 부모를 null로 설정합니다.
+    /// </summary>
+    public void RemoveObjectFromCity(Transform objectTransform)
+    {
+        objectTransform.SetParent(null);
+    }
+
+    #endregion
 
     public void ShowAsCandidate(bool isCandidate)
     {
@@ -104,13 +135,3 @@ public class CityView : MonoBehaviour, ICityView
         }
     }
     */}
-
-
-public interface ICityView
-{
-    void SetCityName(string cityName);
-    void SetPosition(Vector2 position);
-    void SetSeatsByCount(int seatCount);
-    void UpdateSeatOccupancy(Dictionary<FactionType, int> occupiedBy);
-    GameObject GetCityIndicator();
-}

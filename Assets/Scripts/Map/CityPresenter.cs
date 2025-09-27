@@ -5,28 +5,62 @@ using UnityEngine;
 
 public class CityPresenter
 {
-    public CityModel model { get; }
-    public ICityView view;
+    public CityModel Model { get; private set; }
+    private readonly CityView View;
 
 
-    public CityPresenter(CityModel model, ICityView view)
+    public CityPresenter(CityModel model, CityView view)
     {
-        this.model = model;
-        this.view = view;
-        InitView();
+        this.Model = model;
+        this.View = view;
+        Initialize();
     }
 
-    private void InitView()
+    public void Initialize()
     {
-        view.SetCityName(model.cityName);
-        view.SetPosition(model.position);
-        view.SetSeatsByCount(model.seatMaxCount);
-        view.UpdateSeatOccupancy(model.PartyBases);
+        View.SetCityName(Model.cityName);
+        View.SetPosition(Model.position);
+        View.SetSeatsByCount(Model.seatMaxCount);
     }
 
-    #region Seat Management
+    #region 객체 배치 및 제거
+    /// <summary>
+    /// 이 도시에 유닛을 배치합니다.
+    /// </summary>
+    public void AddUnit(UnitPresenter unitPresenter)
+    {
+        if (!Model.UnitInstanceIds.Contains(unitPresenter.Model.InstanceId))
+        {
+            Model.UnitInstanceIds.Add(unitPresenter.Model.InstanceId);
+            View.AddObjectToCity(unitPresenter.View.transform);
+        }
+    }
 
-    public void AddSeatToParty(FactionType party, int count = 1)
+    /// <summary>
+    /// 이 도시에서 유닛을 제거합니다.
+    /// </summary>
+    public void RemoveUnit(UnitPresenter unitPresenter)
+    {
+        if (Model.UnitInstanceIds.Contains(unitPresenter.Model.InstanceId))
+        {
+            Model.UnitInstanceIds.Remove(unitPresenter.Model.InstanceId);
+            View.RemoveObjectFromCity(unitPresenter.View.transform);
+        }
+    }
+
+    /// <summary>
+    /// 이 도시에 위협 마커를 배치합니다. (룰북 p.24 참고)
+    /// </summary>
+    public void AddThreatMarker(ThreatMarkerPresenter markerPresenter)
+    {
+        if (!Model.ThreatMarkerInstanceIds.Contains(markerPresenter.Model.InstanceId))
+        {
+            Model.ThreatMarkerInstanceIds.Add(markerPresenter.Model.InstanceId);
+            View.AddObjectToCity(markerPresenter.View.transform);
+        }
+    }
+    
+    public void AddPartyBase(FactionType party, int count = 1)
     {
         // 동기적 처리: 한 번에 하나의 선택만 진행되도록 재귀/체이닝
         ProcessAddSeatSequentially(party, count); // Commented out as the method is removed.
@@ -34,11 +68,11 @@ public class CityPresenter
 
     public void RemoveSeatFromParty(FactionType party, int count = 1)
     {
-        count = Mathf.Min(count, model.currentSeats);
+        count = Mathf.Min(count, Model.currentSeats);
         for (int i = 0; i < count; i++)
-            model.RemoveSeat(party);
+            Model.RemoveSeat(party);
 
-        view.UpdateSeatOccupancy(model.PartyBases);
+        View.UpdateSeatOccupancy(Model.PartyBases);
     }
 
     /// <summary>
@@ -51,17 +85,17 @@ public class CityPresenter
             return;
 
         // 자리 여유가 있으면 바로 추가
-        if (model.currentSeats < model.seatMaxCount)
+        if (Model.currentSeats < Model.seatMaxCount)
         {
-            model.AddSeat(targetParty);
-            view.UpdateSeatOccupancy(model.PartyBases);
+            Model.AddSeat(targetParty);
+            View.UpdateSeatOccupancy(Model.PartyBases);
             ProcessAddSeatSequentially(targetParty, remaining - 1);
             return;
         }
 
         // 가득 찼으면 제거 후보 수집(본인 정당 제외, 1석 이상 보유)
         var removableParties = new List<FactionType>();
-        foreach (var kv in model.PartyBases)
+        foreach (var kv in Model.PartyBases)
         {
             if (kv.Key != targetParty && kv.Value > 0)
                 removableParties.Add(kv.Key);
@@ -79,10 +113,10 @@ public class CityPresenter
             // 현재가 꽉 찬 상태이므로, 이번 스텝에서는 '제거만' 수행
             foreach (var toRemove in chosenParties)
             {
-                model.RemoveSeat(toRemove);
+                Model.RemoveSeat(toRemove);
             }
 
-            view.UpdateSeatOccupancy(model.PartyBases);
+            View.UpdateSeatOccupancy(Model.PartyBases);
             ProcessAddSeatSequentially(targetParty, remaining - 1);
         });
     }
@@ -93,7 +127,7 @@ public class CityPresenter
     #region Highlight
     public void ShowAsCandidate(bool isCandidate)
     {
-        (view as CityView)?.ShowAsCandidate(isCandidate);
+        (View as CityView)?.ShowAsCandidate(isCandidate);
     }
 
     #endregion

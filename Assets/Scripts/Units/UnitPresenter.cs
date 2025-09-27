@@ -1,13 +1,13 @@
 public class UnitPresenter
 {
     public UnitModel Model { get; private set; }
-    private UnitView view;
+    public UnitView View;
     private IUnitContainer currentContainerCache;
 
     public UnitPresenter(UnitModel model, UnitView view)
     {
         Model = model;
-        this.view = view;
+        this.View = view;
 
         if (view == null)
         {
@@ -34,10 +34,10 @@ public class UnitPresenter
     // 런타임 중 View를 생성/교체할 때 사용
     public void BindView(UnitView newView)
     {
-        this.view = newView;
-        if (this.view != null)
+        this.View = newView;
+        if (this.View != null)
         {
-            this.view.Initialize(Model.InstanceId, Model.Data, Model.ControllerPartyId);
+            this.View.Initialize(Model.InstanceId, Model.Data, Model.ControllerPartyId);
         }
     }
 }
