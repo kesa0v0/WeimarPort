@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 117777341}
   - component: {fileID: 117777337}
   - component: {fileID: 117777340}
+  - component: {fileID: 117777342}
   m_Layer: 0
   m_Name: SystemHelpers
   m_TagString: Untagged
@@ -338,19 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29083f4585f1e98449c3c229a772a5f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitDataList:
-  - {fileID: 11400000, guid: cfdfb47598b48e6408c12a84c4f831b9, type: 2}
-  - {fileID: 11400000, guid: e471fa6ca528a8d41938017c82a7df83, type: 2}
-  - {fileID: 11400000, guid: 8a2d5ce4025af5847a8a0ecff10e9976, type: 2}
-  - {fileID: 11400000, guid: 3b90a40f3b013b147961c647b48e5adf, type: 2}
-  - {fileID: 11400000, guid: eeb7147d4bc11df408a1ba50f9d89d01, type: 2}
-  - {fileID: 11400000, guid: 7272f1471d7976b4bbcb3ca6cec43904, type: 2}
-  - {fileID: 11400000, guid: c54ef0c30aacf4448b5931c655904fbe, type: 2}
-  - {fileID: 11400000, guid: a432f34c14841c9459c85bc90df91e56, type: 2}
-  - {fileID: 11400000, guid: fb707992484baa4459dedfd4287d5eb2, type: 2}
-  - {fileID: 11400000, guid: 9a97fff530aba814eacf4d83db35a2f9, type: 2}
-  - {fileID: 11400000, guid: 1dd445d47f9ce7d4280b8b38d64044d0, type: 2}
-  - {fileID: 11400000, guid: d7a5fe7353e2af245a96a10cc751881b, type: 2}
+  unitViewParent: {fileID: 0}
 --- !u!114 &117777341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,6 +354,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 117777337}
   cityManager: {fileID: 671373482}
+--- !u!114 &117777342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117777336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec50dbd74041f784e841c01b61af00fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapViewRoot: {fileID: 671373480}
+  politicsViewRoot: {fileID: 1020759787}
 --- !u!1 &305828119
 GameObject:
   m_ObjectHideFlags: 0
