@@ -24,4 +24,4 @@ MonoBehaviour:
   InactiveMaterial: {fileID: 2100000, guid: 65af926ed7e812c4bafa7691664e2e1a, type: 2}
   InactiveIcon: {fileID: 724987953, guid: 74c72d2c2f98bcc46b690c7962c68bde, type: 3}
   AssociatedParty: {fileID: 11400000, guid: 5ae12fe757f3073479e1375095ebdc16, type: 2}
-  ModelPrefab: {fileID: 0}
+  ModelPrefab: {fileID: 7078511634424028689, guid: 5f535e1497d4c994fab5b447380bcfb7, type: 3}

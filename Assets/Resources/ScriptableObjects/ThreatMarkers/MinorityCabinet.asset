@@ -20,5 +20,8 @@ MonoBehaviour:
   ProsperityName: 
   ProsperityMaterial: {fileID: 0}
   ProsperityIcon: {fileID: 0}
+  InactiveName: 
+  InactiveMaterial: {fileID: 0}
+  InactiveIcon: {fileID: 0}
   AssociatedParty: {fileID: 0}
-  ModelPrefab: {fileID: 0}
+  ModelPrefab: {fileID: 7078511634424028689, guid: 5f535e1497d4c994fab5b447380bcfb7, type: 3}

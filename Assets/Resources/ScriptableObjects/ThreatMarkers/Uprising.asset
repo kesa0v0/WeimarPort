@@ -15,13 +15,13 @@ MonoBehaviour:
   DataId: Uprising
   Category: 2
   ThreatName: Uprising
-  ThreatMaterial: {fileID: 2100000, guid: b5f27a6e0b9eeda4781bc18bac02af5c, type: 2}
-  ThreatIcon: {fileID: 0}
+  ThreatMaterial: {fileID: 2100000, guid: 185b2276ebfa06f4d87ebc06eb0f895d, type: 2}
+  ThreatIcon: {fileID: 76129458, guid: 9ce81c8c8cdf4f140be6606f31cc57eb, type: 3}
   ProsperityName: 
   ProsperityMaterial: {fileID: 0}
   ProsperityIcon: {fileID: 0}
   InactiveName: Inactive Uprising
-  InactiveMaterial: {fileID: 2100000, guid: b5f27a6e0b9eeda4781bc18bac02af5c, type: 2}
-  InactiveIcon: {fileID: 0}
-  AssociatedParty: {fileID: 0}
-  ModelPrefab: {fileID: 0}
+  InactiveMaterial: {fileID: 2100000, guid: 185b2276ebfa06f4d87ebc06eb0f895d, type: 2}
+  InactiveIcon: {fileID: 152507047, guid: 9ce81c8c8cdf4f140be6606f31cc57eb, type: 3}
+  AssociatedParty: {fileID: 11400000, guid: 5ae12fe757f3073479e1375095ebdc16, type: 2}
+  ModelPrefab: {fileID: 7078511634424028689, guid: 5f535e1497d4c994fab5b447380bcfb7, type: 3}

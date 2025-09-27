@@ -3,13 +3,13 @@ using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 
-public class City
+public class CityPresenter
 {
     public CityModel model { get; }
     public ICityView view;
 
 
-    public City(CityModel model, ICityView view)
+    public CityPresenter(CityModel model, ICityView view)
     {
         this.model = model;
         this.view = view;

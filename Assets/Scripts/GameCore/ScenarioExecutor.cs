@@ -20,7 +20,7 @@ public class ScenarioExecutor
     public void ExecuteScript(List<SetupInstruction> script)
     {
         Debug.Log("시나리오 스크립트 실행을 시작합니다...");
-        List<City> usedCitiesForUniqueness = new List<City>();
+        List<CityPresenter> usedCitiesForUniqueness = new List<CityPresenter>();
 
         foreach (var instruction in script)
         {
@@ -117,7 +117,7 @@ public class ScenarioExecutor
     }
 
     // 'PlaceThreatMarker' 명령어를 처리하는 메서드
-    private void ExecutePlaceThreatMarker(Arguments args, List<City> usedCities)
+    private void ExecutePlaceThreatMarker(Arguments args, List<CityPresenter> usedCities)
     {
         Debug.Log($"'{args.instanceId}' 마커를 배치합니다.");
         int count = args.count > 0 ? args.count : 1; // count가 없으면 1로 간주
@@ -127,7 +127,7 @@ public class ScenarioExecutor
             if (args.location.type == "RandomCity")
             {
                 bool unique = args.location.@params?.unique ?? false;
-                City targetCity = cityManager.GetRandomCity(exclude: unique ? usedCities : null);
+                CityPresenter targetCity = cityManager.GetRandomCity(exclude: unique ? usedCities : null);
 
                 // threatManager.PlaceMarker(args.markerId, targetCity);
                 Debug.Log($"{targetCity.model.cityName}에 '{args.instanceId}' 배치 (실제 로직 호출 필요)");
@@ -157,7 +157,7 @@ public class ScenarioExecutor
         {
             if (args.location.type == "RandomCity")
             {
-                City targetCity = cityManager.GetRandomCity(exclude: null);
+                CityPresenter targetCity = cityManager.GetRandomCity(exclude: null);
                 // unitManager.PlaceUnit(party, targetCity);
                 Debug.Log($"{targetCity.model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
             }

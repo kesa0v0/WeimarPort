@@ -30,7 +30,7 @@ public class CityManager : MonoBehaviour
     public Transform cityParent;  // 도시들이 생성될 부모 Transform
     
     private Dictionary<string, CityView> cities = new();
-    private Dictionary<string, City> Citys = new();
+    private Dictionary<string, CityPresenter> Citys = new();
 
     private void Awake()
     {
@@ -68,7 +68,7 @@ public class CityManager : MonoBehaviour
     {
         // 이미 등록된 경우 덮어쓰지 않음
         if (cities.ContainsKey(cityName)) return;
-        var presenter = new City(model, view);
+        var presenter = new CityPresenter(model, view);
         Citys[cityName] = presenter;
         cities[cityName] = view;
     }
@@ -107,7 +107,7 @@ public class CityManager : MonoBehaviour
     }
 
 
-    public City GetCity(string cityName)
+    public CityPresenter GetCity(string cityName)
     {
         if (Citys.TryGetValue(cityName, out var presenter))
         {
@@ -117,9 +117,9 @@ public class CityManager : MonoBehaviour
         return null;
     }
 
-    internal City GetRandomCity(List<City> exclude)
+    internal CityPresenter GetRandomCity(List<CityPresenter> exclude)
     {
-        var availableCities = new List<City>(Citys.Values);
+        var availableCities = new List<CityPresenter>(Citys.Values);
         if (exclude != null)
         {
             availableCities.RemoveAll(c => exclude.Contains(c));

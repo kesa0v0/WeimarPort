@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 위협 마커의 시각적 표현(3D 모델)을 제어합니다.
 /// </summary>
-public class MarkerView : MonoBehaviour
+public class ThreatMarkerView : MonoBehaviour
 {
     // Inspector에서 마커의 3D 모델 렌더러를 연결해주세요.
     [SerializeField] private Renderer markerRenderer;
