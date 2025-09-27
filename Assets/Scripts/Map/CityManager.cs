@@ -1,94 +1,58 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CityManager : MonoBehaviour
 {
-    private static CityManager _instance;
     private bool _initialized = false;
 
-    public static CityManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindFirstObjectByType<CityManager>(FindObjectsInactive.Include);
-                if (_instance != null)
-                    _instance.InitializeIfNeeded();
-            }
-            return _instance;
-        }
-        private set { _instance = value; }
-    }
+    public static CityManager Instance { get; private set; }
     
 
     [Header("Game Assets")]
     public GameObject cityPrefab; // 도시에 사용할 프리팹을 Inspector에서 직접 할당
     public Transform cityParent;  // 도시들이 생성될 부모 Transform
-    
-    private Dictionary<string, CityView> cities = new();
-    private Dictionary<string, CityPresenter> Citys = new();
+
+    private Dictionary<string, CityPresenter> presenterMap = new Dictionary<string, CityPresenter>();
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
         Instance = this;
-        InitializeIfNeeded();
     }
 
-    private void InitializeIfNeeded()
+    public void Initialize()
     {
-        if (_initialized) return;
-        RegisterDebugCommands();
-        _initialized = true;
+        CreateCities();
+
     }
 
-
-    // public API: 도시를 생성하는 유일한 창구
-    public void CreateCity(string cityName, Vector2 position, int seatCount)
+    private void CreateCity(string cityName, Vector2 position, int seatCount)
     {
-        if (cities.ContainsKey(cityName))
+        if (presenterMap.ContainsKey(cityName))
         {
             Debug.LogWarning($"City '{cityName}' already exists.");
             return;
         }
 
-        var parameters = new CityParameters(cityName, position, seatCount, cityPrefab, cityParent);
-        // CityFactory에서 등록까지 처리함
-        CityFactory.SpawnCity(parameters);
-    }
-    internal void RegisterCity(string cityName, CityModel model, CityView view)
-    {
-        // 이미 등록된 경우 덮어쓰지 않음
-        if (cities.ContainsKey(cityName)) return;
-        var presenter = new CityPresenter(model, view);
-        Citys[cityName] = presenter;
-        cities[cityName] = view;
-    }
+        // CityModel 생성
+        var model = new CityModel(cityName, position, seatCount);
 
-    public void RemoveCity(string cityName)
-    {
-        if (cities.TryGetValue(cityName, out var cityView))
-        {
-            cities.Remove(cityName);
-            Citys.Remove(cityName);
+        // CityView 생성
+        var viewObj = Instantiate(cityPrefab, position, Quaternion.identity, cityParent);
+        viewObj.transform.localRotation = Quaternion.identity; // 로컬 회전값 초기화
 
-            Destroy(cityView.gameObject);
-        Citys.Remove(cityName);
-        cities.Remove(cityName);
-            Debug.Log($"City '{cityName}' has been removed.");
-        }
-        else
-        {
-            Debug.LogWarning($"City '{cityName}' not found.");
-        }
+        CityPresenter presenter = new CityPresenter(model, viewObj.GetComponent<CityView>());
+
+        // 생성된 도시를 딕셔너리에 저장하여 관리합니다.
+        presenterMap.Add(cityName, presenter);
     }
 
     public void CreateCities()
@@ -107,9 +71,9 @@ public class CityManager : MonoBehaviour
     }
 
 
-    public CityPresenter GetCity(string cityName)
+    public CityPresenter GetPresenter(string cityName)
     {
-        if (Citys.TryGetValue(cityName, out var presenter))
+        if (presenterMap.TryGetValue(cityName, out var presenter))
         {
             return presenter;
         }
@@ -117,27 +81,24 @@ public class CityManager : MonoBehaviour
         return null;
     }
 
-    internal CityPresenter GetRandomCity(List<CityPresenter> exclude)
+    internal CityPresenter GetRandomCity(List<CityPresenter> exclude = null)
     {
-        var availableCities = new List<CityPresenter>(Citys.Values);
+        var availableCities = presenterMap.Values.AsEnumerable();
         if (exclude != null)
         {
-            availableCities.RemoveAll(c => exclude.Contains(c));
+            availableCities = availableCities.Except(exclude);
         }
-        if (availableCities.Count == 0)
-        {
-            Debug.LogWarning("No available cities to select from.");
-            return null;
-        }
-        int index = UnityEngine.Random.Range(0, availableCities.Count);
-        return availableCities[index];
+
+        if (!availableCities.Any()) return null;
+
+        return availableCities.ElementAt(UnityEngine.Random.Range(0, availableCities.Count()));
     }
 
     #region Seat Management
 
     public void AddSeatToCity(string cityName, string partyName, int count)
     {
-        if (!Citys.TryGetValue(cityName, out var presenter))
+        if (!presenterMap.TryGetValue(cityName, out var presenter))
         {
             Debug.LogWarning($"City '{cityName}' not found.");
             return;
@@ -153,7 +114,7 @@ public class CityManager : MonoBehaviour
 
     public void RemoveSeatFromCity(string cityName, string partyName, int count)
     {
-        if (!Citys.TryGetValue(cityName, out var presenter))
+        if (!presenterMap.TryGetValue(cityName, out var presenter))
         {
             Debug.LogWarning($"City '{cityName}' not found.");
             return;

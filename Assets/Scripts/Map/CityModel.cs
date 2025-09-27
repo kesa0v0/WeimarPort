@@ -60,21 +60,3 @@ public class CityModel
 
     #endregion
 }
-
-public struct CityParameters
-{
-    public string cityName;
-    public Vector2 position;
-    public int seatMaxCount;
-    public GameObject cityPrefab;
-    public Transform parent;
-
-    public CityParameters(string cityName, Vector2 position, int seatMaxCount, GameObject cityPrefab, Transform parent = null)
-    {
-        this.cityName = cityName;
-        this.position = position;
-        this.seatMaxCount = seatMaxCount;
-        this.cityPrefab = cityPrefab;
-        this.parent = parent;
-    }
-}
