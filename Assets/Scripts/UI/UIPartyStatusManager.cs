@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -47,7 +48,7 @@ public class UIPartyStatusManager : MonoBehaviour
             view.SetPartyAgenda(party.ChosenAgendaCardId, party.Data.factionColor);
 
             // 보유한 하위 정당 목록 표시
-            var subPartyNames = party.ControlledMinorParties.Count > 0 ? string.Join(", ", party.ControlledMinorParties.ConvertAll(sp => sp.partyName)) : "None";
+            var subPartyNames = string.Join(", ", party.ControlledMinorPartyIds);
             view.SetPartySubParties(subPartyNames);
 
             // 보유 군대 표시

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using System;
 
 /// <summary>
 /// 게임에 존재하는 모든 위협 마커의 생성, 생명주기, 상태 조회를 책임지는 중앙 관리자입니다.
@@ -10,6 +12,13 @@ public class ThreatManager : MonoBehaviour
 {
     // --- 싱글톤 구현 ---
     public static ThreatManager Instance { get; private set; }
+    
+    // --- 이벤트 정의 ---
+    /// <summary>
+    /// DR Box의 내용물이 변경될 때마다 호출되는 이벤트입니다.
+    /// 변경된 후의 전체 마커 ID 리스트를 전달합니다.
+    /// </summary>
+    public static event Action<List<string>> OnDRBoxChanged;
 
     void Awake()
     {
@@ -25,6 +34,9 @@ public class ThreatManager : MonoBehaviour
     [Header("프리팹 및 데이터 참조")]
     [Tooltip("모든 MarkerView 프리팹이 생성될 부모 Transform")]
     [SerializeField] private Transform markerViewParent;
+    
+    [Tooltip("DR Box에 얼마나 마커가 있는지 알려주는 Text")]
+    [SerializeField] private TextMeshProUGUI drBoxCountText;
 
     // --- 내부 데이터베이스 ---
     private Dictionary<string, ThreatMarkerData> threatDataRegistry = new Dictionary<string, ThreatMarkerData>();
@@ -46,7 +58,7 @@ public class ThreatManager : MonoBehaviour
 
     private void LoadAllThreatMarkerDataFromResources()
     {
-        ThreatMarkerData[] allMarkerData = Resources.LoadAll<ThreatMarkerData>("Data/ThreatMarkers");
+        ThreatMarkerData[] allMarkerData = Resources.LoadAll<ThreatMarkerData>("ScriptableObjects/ThreatMarkers");
         foreach (var data in allMarkerData)
         {
             if (!threatDataRegistry.ContainsKey(data.DataId))
@@ -93,7 +105,7 @@ public class ThreatManager : MonoBehaviour
             for (int i = 1; i <= count; i++)
             {
                 string instanceId = $"{data.DataId.ToLower()}_{i}";
-                
+
                 ThreatMarkerModel model = new ThreatMarkerModel
                 {
                     InstanceId = instanceId,
@@ -101,14 +113,14 @@ public class ThreatManager : MonoBehaviour
                     Data = data,
                     IsFlipped = false // 모든 마커는 기본(활성) 상태로 시작
                 };
-                
+
                 GameObject viewObject = Instantiate(data.ModelPrefab, markerViewParent);
                 ThreatMarkerView view = viewObject.GetComponent<ThreatMarkerView>();
                 view.gameObject.name = $"MarkerView_{instanceId}";
                 view.gameObject.SetActive(false);
 
                 ThreatMarkerPresenter presenter = new ThreatMarkerPresenter(model, view);
-                
+
                 modelIdMap.Add(instanceId, model);
                 presenterMap.Add(model, presenter);
             }
@@ -148,9 +160,55 @@ public class ThreatManager : MonoBehaviour
         {
             return presenterMap[availableModel];
         }
-        
+
         Debug.LogWarning($"사용 가능한 '{dataId}' 마커가 없습니다.");
         return null;
     }
+    
+    /// <summary>
+    /// 특정 종류의 마커를 찾아 DR Box에 배치합니다.
+    /// </summary>
+    public void CreateAndPlaceInDRBox(string dataId)
+    {
+        ThreatMarkerPresenter markerPresenter = GetAvailableMarkerPresenter(dataId);
+        if (markerPresenter == null) return;
+
+        // 1. Model 상태 업데이트
+        markerPresenter.Model.CurrentLocation = new LocationData { Type = LocationType.DR_Box, Name = "DR_Box" };
+        
+        // 2. GameStateModel의 DRBoxMarkerInstanceIds 리스트에 ID 추가
+        var drBoxList = GameManager.Instance.gameState.DRBoxMarkerInstanceIds;
+        drBoxList.Add(markerPresenter.Model.InstanceId);
+        
+        // 3. View는 보이지 않으므로 비활성화 상태 유지
+        markerPresenter.View.gameObject.SetActive(false);
+        
+        // 4. 이벤트 발생! UI에게 변경 사항을 알립니다.
+        OnDRBoxChanged?.Invoke(drBoxList);
+
+        Debug.Log($"{dataId} 마커가 DR Box 데이터에 추가되었습니다.");
+    }
+
+    /// <summary>
+    /// 특정 종류의 마커를 찾아 지정된 도시에 배치합니다.
+    /// </summary>
+    public void CreateAndPlaceInCity(string dataId, CityPresenter targetCity)
+    {
+        ThreatMarkerPresenter markerPresenter = GetAvailableMarkerPresenter(dataId);
+        if (markerPresenter == null || targetCity == null) return;
+        
+        // 1. Model 상태 업데이트
+        markerPresenter.Model.CurrentLocation = new LocationData { Type = LocationType.City, Name = targetCity.Model.cityName };
+        
+        // 2. 도시 Presenter에게 마커 추가를 요청 (이 요청을 받은 CityPresenter가 자신의 Model과 View를 업데이트함)
+        targetCity.AddThreatMarker(markerPresenter);
+
+        // 3. View 활성화 및 외형 업데이트
+        markerPresenter.View.gameObject.SetActive(true);
+        markerPresenter.UpdateView();
+
+        Debug.Log($"{dataId} 마커가 {targetCity.Model.cityName}에 배치되었습니다.");
+    }
+
     #endregion
 }

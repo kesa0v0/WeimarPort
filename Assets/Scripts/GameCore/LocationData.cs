@@ -3,7 +3,7 @@ public enum LocationType
     Supply,
     City,
     Parliament,
-    DRBox,
+    DR_Box,
     DissolvedArea,
     OpinionTrack,
     SocietyTrack

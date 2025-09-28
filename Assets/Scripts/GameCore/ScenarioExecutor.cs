@@ -35,8 +35,7 @@ public class ScenarioExecutor
                 // 특정 정당의 CitySeat를 도시에 배치합니다.
                 // partyId, count, location
                 case "PlacePartyBases":
-                    // TODO: ExecutePlacePartyBases 메서드 구현
-                    Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
+                    ExecutePlacePartyBases(instruction.args, usedCitiesForUniqueness);
                     break;
 
                 // 특정 정당의 의석을 의회에 추가합니다.
@@ -49,7 +48,7 @@ public class ScenarioExecutor
                 // 특정 종류의 유닛을 해당 정당의 공급처에 추가합니다.
                 // dataId, partyId, count
                 case "ReinforceUnit":
-                // TODO: ExecuteReinforceUnit 메서드 구현
+                    // TODO: ExecuteReinforceUnit 메서드 구현
                     Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
                     break;
 
@@ -83,7 +82,7 @@ public class ScenarioExecutor
                 // 특정 이슈 마커를 사회 트랙에 배치합니다.
                 // dataId, location
                 case "PlaceIssueMarker":
-                // TODO: ExecutePlaceIssueMarker 메서드 구현
+                    // TODO: ExecutePlaceIssueMarker 메서드 구현
                     Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
                     break;
 
@@ -104,7 +103,7 @@ public class ScenarioExecutor
                 // 특정 외교 관계 깃발을 보드에 배치합니다.	
                 // flagType, count
                 case "PlaceFlag":
-                // TODO: ExecutePlaceFlag 메서드 구현
+                    // TODO: ExecutePlaceFlag 메서드 구현
                     Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
                     break;
 
@@ -119,28 +118,42 @@ public class ScenarioExecutor
     // 'PlaceThreatMarker' 명령어를 처리하는 메서드
     private void ExecutePlaceThreatMarker(Arguments args, List<CityPresenter> usedCities)
     {
-        Debug.Log($"'{args.instanceId}' 마커를 배치합니다.");
-        int count = args.count > 0 ? args.count : 1; // count가 없으면 1로 간주
-
+        int count = args.count > 0 ? args.count : 1;
         for (int i = 0; i < count; i++)
         {
-            if (args.location.type == "RandomCity")
+            // location.type 문자열을 직접 사용하여 분기 처리합니다.
+            switch (args.location.type)
             {
-                bool unique = args.location.@params?.unique ?? false;
-                CityPresenter targetCity = cityManager.GetRandomCity(exclude: unique ? usedCities : null);
+                case "DR_Box":
+                    // DR_Box에 배치하는 로직 (ThreatManager에 구현 필요)
+                    ThreatManager.Instance.CreateAndPlaceInDRBox(args.dataId);
+                    break;
 
-                // threatManager.PlaceMarker(args.markerId, targetCity);
-                Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}' 배치 (실제 로직 호출 필요)");
+                case "SpecificCity":
+                    var targetCity = CityManager.Instance.GetPresenter(args.location.name);
+                    if (targetCity != null)
+                    {
+                        ThreatManager.Instance.CreateAndPlaceInCity(args.dataId, targetCity);
+                    }
+                    break;
 
-                if (unique)
-                {
-                    usedCities.Add(targetCity);
-                }
+                case "RandomCity":
+                    bool unique = args.location.@params?.unique ?? false;
+                    var randomCity = CityManager.Instance.GetRandomCity(exclude: unique ? usedCities : null);
+                    if (randomCity != null)
+                    {
+                        ThreatManager.Instance.CreateAndPlaceInCity(args.dataId, randomCity);
+                        if (unique) usedCities.Add(randomCity);
+                    }
+                    break;
+
+                default:
+                    Debug.LogWarning($"알 수 없는 위치 타입: '{args.location.type}'");
+                    break;
             }
-            // ... SpecificCity, DR_Box 등 다른 location.type에 대한 처리 ...
         }
     }
-    
+
     private void ExecutePlaceUnit(Arguments args)
     {
         Debug.Log($"'{args.partyId}' 유닛을 배치합니다.");
@@ -164,4 +177,48 @@ public class ScenarioExecutor
             // ... SpecificCity 등 다른 location.type에 대한 처리 ...
         }
     }
+
+    private void ExecutePlacePartyBases(Arguments args, List<CityPresenter> usedCities)
+    {
+        int count = args.count > 0 ? args.count : 1;
+        var party = gameManager.GetParty(Enum.TryParse<FactionType>(args.partyId, out var faction)
+            ? faction : throw new ArgumentException($"Invalid faction type: {args.partyId}"));
+        if (party == null)
+        {
+            Debug.LogWarning($"정당 '{args.partyId}'를 찾을 수 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            switch (args.location.type)
+            {
+                case "SpecificCity":
+                    var targetCity = CityManager.Instance.GetPresenter(args.location.name);
+                    if (targetCity != null)
+                    {
+                        // cityManager.PlacePartyBase(party, targetCity);
+                        Debug.Log($"{targetCity.Model.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
+                    }
+                    break;
+
+                case "RandomCity":
+                    bool unique = args.location.@params?.unique ?? false;
+                    var randomCity = CityManager.Instance.GetRandomCity(exclude: unique ? usedCities : null);
+                    if (randomCity != null)
+                    {
+                        // cityManager.PlacePartyBase(party, randomCity);
+                        Debug.Log($"{randomCity.Model.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
+                        if (unique) usedCities.Add(randomCity);
+                    }
+                    break;
+
+                default:
+                    Debug.LogWarning($"알 수 없는 위치 타입: '{args.location.type}'");
+                    break;
+            }
+        }
+    }
+
+
 }

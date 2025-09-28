@@ -15,9 +15,6 @@ public class PartyManager : MonoBehaviour
         Instance = this;
     }
 
-    [Header("프리팹 참조")]
-    [SerializeField] private Transform partyBaseViewParent;
-
     // 관리용 Dictionary
     private Dictionary<FactionType, PartyModel> partyModelMap = new Dictionary<FactionType, PartyModel>();
 

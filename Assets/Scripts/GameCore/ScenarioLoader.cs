@@ -8,7 +8,7 @@ public class ScenarioLoader : MonoBehaviour
     [Header("Manager 참조")]
     public GameManager gameManager;
     public CityManager cityManager;
-    // ... 다른 Manager들 ...
+    
 
     private ScenarioExecutor executor;
 

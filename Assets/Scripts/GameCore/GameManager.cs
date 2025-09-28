@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     {
         gameState = new GameState();
 
-        LoadPartyDatas();
+        PartyManager.Instance.Initialize();
         UIManager.Instance.partyStatusManager.Initialize(gameState.Parties); // 임시로 일단 이렇게 해 놓음. EventBus에서 Initialize(GameData) 호출하도록 변경 예정
 
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
@@ -89,10 +89,6 @@ public class GameManager : MonoBehaviour
     public PartyModel GetParty(FactionType faction)
     {
         return gameState.Parties.FirstOrDefault(p => p.Data.factionType == faction);
-    }
-
-    public void LoadPartyDatas()
-    {
     }
 
     #endregion
