@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: FreiKorp_1
   m_EditorClassIdentifier: 
-  DataId: Freikorps_1
+  DataId: UnitData_DNVP_Freikorps_S1
   UnitName: Freikorps, Strength 1
   Description: 
   Affiliation: 4

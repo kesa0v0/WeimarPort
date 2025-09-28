@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: ViolentPeace
   m_EditorClassIdentifier: 
-  DataId: threat_violentpeace
+  DataId: Threat_ViolentPeace
   Category: 0
   ThreatName: Violent Peace
   ThreatMaterial: {fileID: 2100000, guid: 72f4af9698840e643a65f9e744cd176c, type: 2}

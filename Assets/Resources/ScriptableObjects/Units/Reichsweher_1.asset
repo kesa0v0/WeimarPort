@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: Reichsweher_1
   m_EditorClassIdentifier: 
-  DataId: Reichswehr_1
+  DataId: UnitData_Govt_Reichswehr_S1
   UnitName: Reichswehr, Strength 1
   Description: 
   Affiliation: 5

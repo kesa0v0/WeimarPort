@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Regime
   m_EditorClassIdentifier: 
-  DataId: threat_regime
+  DataId: Threat_Regime
   Category: 2
   ThreatName: Regime
   ThreatMaterial: {fileID: 2100000, guid: 27b79f43872300b40ae96bf622ccfe3a, type: 2}

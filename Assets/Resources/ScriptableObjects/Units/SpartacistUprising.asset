@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: SpartacistUprising
   m_EditorClassIdentifier: 
-  DataId: SpartacistUprising
+  DataId: UnitData_KPD_Spartacist
   UnitName: Spartacist Uprising
   Description: 
   Affiliation: 1

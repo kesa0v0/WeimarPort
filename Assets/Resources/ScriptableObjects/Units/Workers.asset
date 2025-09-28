@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c626ecd8086a534c84f3a39990b8431, type: 3}
   m_Name: Workers
   m_EditorClassIdentifier: 
-  DataId: Workers
+  DataId: UnitData_KPD_Workers
   UnitName: Workers
   Description: 
   Affiliation: 1

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Blockade
   m_EditorClassIdentifier: 
-  DataId: threat_blockade
+  DataId: Threat_Blockade
   Category: 0
   ThreatName: Blockade
   ThreatMaterial: {fileID: 2100000, guid: 27f30d084eec5bd4688b45a454f79bfd, type: 2}

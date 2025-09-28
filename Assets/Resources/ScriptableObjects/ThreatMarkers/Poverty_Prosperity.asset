@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Poverty_Prosperity
   m_EditorClassIdentifier: 
-  DataId: threat_poverty
+  DataId: Threat_Poverty
   Category: 1
   ThreatName: Poverty
   ThreatMaterial: {fileID: 2100000, guid: 90a6b3613226cd5469c9319235098307, type: 2}

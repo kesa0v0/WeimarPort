@@ -25,7 +25,7 @@ public class ThreatMarkerPresenter
         bool isFlipped = Model.IsFlipped;
 
         // 2. 어떤 Material을 사용할지 'Presenter'가 결정합니다.
-        Material materialToUse = null;
+        Material materialToUse;
         if (data.Category == ThreatMarkerData.MarkerCategory.TwoSidedPoverty)
         {
             materialToUse = isFlipped ? data.ProsperityMaterial : data.ThreatMaterial;

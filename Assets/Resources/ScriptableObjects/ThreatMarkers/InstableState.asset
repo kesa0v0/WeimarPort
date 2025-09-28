@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: InstableState
   m_EditorClassIdentifier: 
-  DataId: threat_instablestate
+  DataId: Threat_InstableState
   Category: 0
   ThreatName: Instable State
   ThreatMaterial: {fileID: 2100000, guid: 47505272da18e6844881401c47b84165, type: 2}

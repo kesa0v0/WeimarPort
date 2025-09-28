@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Inflation
   m_EditorClassIdentifier: 
-  DataId: threat_inflation
+  DataId: Threat_Inflation
   Category: 0
   ThreatName: Inflation
   ThreatMaterial: {fileID: 2100000, guid: 964c5f809a63fdf4fa106d46ba5164bb, type: 2}

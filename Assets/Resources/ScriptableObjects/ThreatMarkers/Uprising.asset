@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Uprising
   m_EditorClassIdentifier: 
-  DataId: threat_uprising
+  DataId: Threat_Uprising
   Category: 2
   ThreatName: Uprising
   ThreatMaterial: {fileID: 2100000, guid: 185b2276ebfa06f4d87ebc06eb0f895d, type: 2}

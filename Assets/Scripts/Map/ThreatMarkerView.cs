@@ -4,15 +4,18 @@ using UnityEngine;
 /// 씬에 있는 실제 위협 마커 GameObject를 나타내는 View입니다.
 /// Presenter의 지시에 따라 외형을 변경하고, 사용자 입력을 Presenter에게 전달합니다.
 /// </summary>
-[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(MeshRenderer))]
 public class ThreatMarkerView : MonoBehaviour
 {
     private ThreatMarkerPresenter presenter;
-    private Renderer objectRenderer;
+    [SerializeField] private MeshRenderer objectRenderer;
 
     void Awake()
     {
-        objectRenderer = GetComponent<Renderer>();
+        if (objectRenderer == null)
+        {
+            objectRenderer = GetComponent<MeshRenderer>();
+        }
     }
 
     /// <summary>
@@ -28,9 +31,14 @@ public class ThreatMarkerView : MonoBehaviour
     /// </summary>
     public void SetMaterial(Material newMaterial)
     {
-        if (newMaterial != null)
+        Debug.Log($"SetMaterial 호출됨: {gameObject.name}, newMaterial: {(newMaterial != null ? newMaterial.name : "null")}");
+        if (newMaterial != null && objectRenderer != null)
         {
-            objectRenderer.material = newMaterial;
+            objectRenderer.sharedMaterial = newMaterial;
+        }
+        else
+        {
+            Debug.LogWarning("SetMaterial 호출 시 newMaterial이 null입니다.");
         }
     }
 

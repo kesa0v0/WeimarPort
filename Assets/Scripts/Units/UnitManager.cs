@@ -55,7 +55,7 @@ public class UnitManager : MonoBehaviour
     /// </summary>
     private void LoadAllUnitDataFromResources()
     {
-        UnitData[] allUnitData = Resources.LoadAll<UnitData>("Data/Units");
+        UnitData[] allUnitData = Resources.LoadAll<UnitData>("ScriptableObjects/Units");
         foreach (var data in allUnitData)
         {
             if (!unitDataRegistry.ContainsKey(data.DataId))
@@ -177,6 +177,11 @@ public class UnitManager : MonoBehaviour
     #region Debug Command Registration
     public void ListUnits()
     {
+        Debug.Log("=== Registered UnitData ===");
+        foreach (var data in unitDataRegistry.Values)
+        {
+            Debug.Log($"DataID: {data.DataId}, Affiliation: {data.Affiliation}, ModelPrefab: {data.ModelPrefab}");
+        }
         Debug.Log("=== Spawned Units ===");
         foreach (var pair in modelIdMap)
         {
