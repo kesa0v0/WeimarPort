@@ -72,7 +72,7 @@ public class CityPresenter
         for (int i = 0; i < count; i++)
             Model.RemoveSeat(party);
 
-        View.UpdateSeatOccupancy(Model.PartyBases);
+        View.UpdateSeatOccupancy(Model.PartyBasesCounts);
     }
 
     /// <summary>
@@ -88,14 +88,14 @@ public class CityPresenter
         if (Model.currentSeats < Model.seatMaxCount)
         {
             Model.AddSeat(targetParty);
-            View.UpdateSeatOccupancy(Model.PartyBases);
+            View.UpdateSeatOccupancy(Model.PartyBasesCounts);
             ProcessAddSeatSequentially(targetParty, remaining - 1);
             return;
         }
 
         // 가득 찼으면 제거 후보 수집(본인 정당 제외, 1석 이상 보유)
         var removableParties = new List<FactionType>();
-        foreach (var kv in Model.PartyBases)
+        foreach (var kv in Model.PartyBasesCounts)
         {
             if (kv.Key != targetParty && kv.Value > 0)
                 removableParties.Add(kv.Key);
@@ -116,7 +116,7 @@ public class CityPresenter
                 Model.RemoveSeat(toRemove);
             }
 
-            View.UpdateSeatOccupancy(Model.PartyBases);
+            View.UpdateSeatOccupancy(Model.PartyBasesCounts);
             ProcessAddSeatSequentially(targetParty, remaining - 1);
         });
     }

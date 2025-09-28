@@ -11,8 +11,8 @@ public class CityModel
     public Vector2 position;
 
     public int seatMaxCount;
-    public int currentSeats => PartyBases.Values.Sum();
-    public Dictionary<FactionType, int> PartyBases { get; private set; }
+    public int currentSeats => PartyBasesCounts.Values.Sum();
+    public Dictionary<FactionType, int> PartyBasesCounts { get; private set; }
     
     // 도시에 존재하는 유닛 및 마커의 '인스턴스 ID' 목록
     public List<string> UnitInstanceIds { get; private set; } = new List<string>();
@@ -23,7 +23,7 @@ public class CityModel
         cityName = name;
         position = pos;
         this.seatMaxCount = seatMaxCount;
-        PartyBases = new Dictionary<FactionType, int>();
+        PartyBasesCounts = new Dictionary<FactionType, int>();
     }
 
     #region Seat Management
@@ -36,21 +36,21 @@ public class CityModel
             return;
         }
 
-        if (PartyBases.ContainsKey(party))
+        if (PartyBasesCounts.ContainsKey(party))
         {
-            PartyBases[party]++;
+            PartyBasesCounts[party]++;
         }
         else
         {
-            PartyBases[party] = 1;
+            PartyBasesCounts[party] = 1;
         }
     }
 
     public void RemoveSeat(FactionType party)
     {
-        if (PartyBases.ContainsKey(party) && PartyBases[party] > 0)
+        if (PartyBasesCounts.ContainsKey(party) && PartyBasesCounts[party] > 0)
         {
-            PartyBases[party]--;
+            PartyBasesCounts[party]--;
         }
         else
         {

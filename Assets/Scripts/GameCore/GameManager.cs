@@ -93,13 +93,6 @@ public class GameManager : MonoBehaviour
 
     public void LoadPartyDatas()
     {
-        var partyDatas = Resources.LoadAll<FactionData>("ScriptableObjects/Party").ToList();
-        foreach (var data in partyDatas)
-        {
-            if (gameState.Parties.Any(p => p.Data.factionType == data.factionType)) continue;
-            var party = new PartyModel(data);
-            gameState.Parties.Add(party);
-        }
     }
 
     #endregion
