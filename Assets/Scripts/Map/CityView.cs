@@ -13,6 +13,7 @@ public class CityView : MonoBehaviour
     [SerializeField] private GameObject baseGameObject;
     [SerializeField] private Transform baseParent;
     private readonly List<PartyBaseView> partyBases = new();
+    [SerializeField] List<TextMeshProUGUI> unitPowerTexts;
 
     private int nextSlotIndex = 0;
 
