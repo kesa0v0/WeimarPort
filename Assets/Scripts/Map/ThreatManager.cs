@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using System;
+using IngameDebugConsole;
 
 /// <summary>
 /// 게임에 존재하는 모든 위협 마커의 생성, 생명주기, 상태 조회를 책임지는 중앙 관리자입니다.
@@ -12,7 +13,7 @@ public class ThreatManager : MonoBehaviour
 {
     // --- 싱글톤 구현 ---
     public static ThreatManager Instance { get; private set; }
-    
+
     // --- 이벤트 정의 ---
     /// <summary>
     /// DR Box의 내용물이 변경될 때마다 호출되는 이벤트입니다.
@@ -34,7 +35,7 @@ public class ThreatManager : MonoBehaviour
     [Header("프리팹 및 데이터 참조")]
     [Tooltip("모든 MarkerView 프리팹이 생성될 부모 Transform")]
     [SerializeField] private Transform markerViewParent;
-    
+
     [Tooltip("DR Box에 얼마나 마커가 있는지 알려주는 Text")]
     [SerializeField] private TextMeshProUGUI drBoxCountText;
 
@@ -53,6 +54,7 @@ public class ThreatManager : MonoBehaviour
         Debug.Log("ThreatManager 초기화 시작...");
         LoadAllThreatMarkerDataFromResources();
         CreateAllMarkerInstances();
+        AddDebugCommands();
         Debug.Log("ThreatManager 초기화 완료. 총 " + modelIdMap.Count + "개의 마커 인스턴스 생성됨.");
     }
 
@@ -164,7 +166,7 @@ public class ThreatManager : MonoBehaviour
         Debug.LogWarning($"사용 가능한 '{dataId}' 마커가 없습니다.");
         return null;
     }
-    
+
     /// <summary>
     /// 특정 종류의 마커를 찾아 DR Box에 배치합니다.
     /// </summary>
@@ -175,14 +177,14 @@ public class ThreatManager : MonoBehaviour
 
         // 1. Model 상태 업데이트
         markerPresenter.Model.CurrentLocation = new LocationData { Type = LocationType.DR_Box, Name = "DR_Box" };
-        
+
         // 2. GameStateModel의 DRBoxMarkerInstanceIds 리스트에 ID 추가
         var drBoxList = GameManager.Instance.gameState.DRBoxMarkerInstanceIds;
         drBoxList.Add(markerPresenter.Model.InstanceId);
-        
+
         // 3. View는 보이지 않으므로 비활성화 상태 유지
         markerPresenter.View.gameObject.SetActive(false);
-        
+
         // 4. 이벤트 발생! UI에게 변경 사항을 알립니다.
         OnDRBoxChanged?.Invoke(drBoxList);
 
@@ -194,21 +196,73 @@ public class ThreatManager : MonoBehaviour
     /// </summary>
     public void CreateAndPlaceInCity(string dataId, CityPresenter targetCity)
     {
+        PlaceMarkerInCity(dataId, targetCity, false);
+    }
+
+    /// <summary>
+    /// 지정된 도시에 번영(Prosperity) 마커를 배치합니다. 룰북의 상쇄 규칙을 처리합니다.
+    /// </summary>
+    public void PlaceProsperityMarkerInCity(CityPresenter targetCity)
+    {
+        if (targetCity == null) return;
+
+        // 1. 도시에 이미 Poverty/Prosperity 마커가 있는지 확인합니다.
+        var existingPovertyMarker = targetCity.Model.ThreatMarkerInstanceIds
+            .Select(id => GetPresenter(id))
+            .FirstOrDefault(p => p != null && p.Model.Data.Category == ThreatMarkerData.MarkerCategory.TwoSidedPoverty);
+
+        if (existingPovertyMarker != null)
+        {
+            // 2. 이미 있다면, 해당 마커를 뒤집어 번영 상태로 만듭니다.
+            if (existingPovertyMarker.Model.IsFlipped == false) // 이미 번영 상태가 아니라면
+            {
+                existingPovertyMarker.Model.IsFlipped = true;
+                existingPovertyMarker.UpdateView();
+                Debug.Log($"{targetCity.Model.cityName}의 빈곤 마커를 번영으로 뒤집습니다.");
+            }
+        }
+        else
+        {
+            // 3. 없다면, 새로운 빈곤 마커를 '번영 상태(뒤집힌 채)'로 놓습니다.
+            PlaceMarkerInCity("Threat_Poverty", targetCity, true);
+        }
+    }
+
+    // --- 내부 로직을 처리할 private 메서드를 추가합니다 ---
+    /// <summary>
+    /// 마커를 도시에 배치하는 내부 로직. 뒤집힌 상태로 놓을지 결정할 수 있습니다.
+    /// </summary>
+    private void PlaceMarkerInCity(string dataId, CityPresenter targetCity, bool startFlipped)
+    {
         ThreatMarkerPresenter markerPresenter = GetAvailableMarkerPresenter(dataId);
         if (markerPresenter == null || targetCity == null) return;
-        
-        // 1. Model 상태 업데이트
+
+        // 1. Model 상태 업데이트 (뒤집힘 상태 포함)
         markerPresenter.Model.CurrentLocation = new LocationData { Type = LocationType.City, Name = targetCity.Model.cityName };
-        
-        // 2. 도시 Presenter에게 마커 추가를 요청 (이 요청을 받은 CityPresenter가 자신의 Model과 View를 업데이트함)
+        markerPresenter.Model.IsFlipped = startFlipped;
+
+        // 2. 도시 Presenter에게 마커 추가 요청
         targetCity.AddThreatMarker(markerPresenter);
 
         // 3. View 활성화 및 외형 업데이트
         markerPresenter.View.gameObject.SetActive(true);
-        markerPresenter.UpdateView();
+        markerPresenter.UpdateView(); // 이 메서드가 IsFlipped 상태를 보고 올바른 Material을 적용합니다.
 
-        Debug.Log($"{dataId} 마커가 {targetCity.Model.cityName}에 배치되었습니다.");
+        Debug.Log($"{dataId} 마커가 {(startFlipped ? "(뒤집힌 상태)" : "")} (으)로 {targetCity.Model.cityName}에 배치되었습니다.");
     }
-
     #endregion
+    
+
+    private void AddDebugCommands()
+    {
+        DebugLogConsole.AddCommand("list_markers", "", () =>
+        {
+            Debug.Log("=== 현재 마커 목록 ===");
+            foreach (var model in modelIdMap.Values)
+            {
+                string location = model.CurrentLocation != null ? $"{model.CurrentLocation.Type}({model.CurrentLocation.Name})" : "None";
+                Debug.Log($"- {model.InstanceId}: {model.DataId}, Location: {location}, Flipped: {model.IsFlipped}");
+            }
+        });
+    }
 }

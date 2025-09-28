@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: MinorityCabinet
   m_EditorClassIdentifier: 
-  DataId: MinorityCabinet
+  DataId: threat_minorcabinet
   Category: 0
   ThreatName: Minority Cabinet
   ThreatMaterial: {fileID: 2100000, guid: 4ef5eaec4463cdb4eaae43a1cd18185f, type: 2}

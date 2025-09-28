@@ -7,8 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class CityManager : MonoBehaviour
 {
-    private bool _initialized = false;
-
     public static CityManager Instance { get; private set; }
     
 

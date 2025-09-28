@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef76862c15a1ce747a50fdc318e079d6, type: 3}
   m_Name: Z
   m_EditorClassIdentifier: 
-  factionType: 2
+  factionType: 3
   factionName: Z
   factionColor: {r: 0.16316223, g: 0, b: 1, a: 1}
   factionLogo: {fileID: -553607983, guid: d21dcde10eb38df47b99f434a9aef90f, type: 3}

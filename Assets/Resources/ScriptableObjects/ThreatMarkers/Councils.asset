@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Councils
   m_EditorClassIdentifier: 
-  DataId: Councils
+  DataId: therat_councils
   Category: 2
   ThreatName: Councils
   ThreatMaterial: {fileID: 2100000, guid: 65af926ed7e812c4bafa7691664e2e1a, type: 2}

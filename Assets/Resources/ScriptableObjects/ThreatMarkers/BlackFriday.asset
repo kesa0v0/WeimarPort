@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: BlackFriday
   m_EditorClassIdentifier: 
-  DataId: BlackFriday
+  DataId: threat_blackfriday
   Category: 0
   ThreatName: Black Friday
   ThreatMaterial: {fileID: 2100000, guid: b49110a8c17755e4fb459eb943be8fd1, type: 2}

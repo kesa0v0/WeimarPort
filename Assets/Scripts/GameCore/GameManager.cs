@@ -25,10 +25,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        gameState = new GameState();
-
+        Initialize();
         PartyManager.Instance.Initialize();
         UIManager.Instance.partyStatusManager.Initialize(gameState.Parties); // 임시로 일단 이렇게 해 놓음. EventBus에서 Initialize(GameData) 호출하도록 변경 예정
+        ThreatManager.Instance.Initialize();
+        CityManager.Instance.Initialize();
+        UnitManager.Instance.Initialize();
 
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         gameState.GameInfo.CurrentPlayerPartyId = GetParty(FactionType.SPD).Data.factionType;
@@ -39,17 +41,16 @@ public class GameManager : MonoBehaviour
         // 최초 집권연정은 SPD와 Zentrum으로 설정 < 나중에 불러오기나 UI로 선택 가능하게 변경 예정
         gameState.government.FormNewGovernment(GetParty(FactionType.SPD), GetParty(FactionType.Z));
 
-        CityManager.Instance.CreateCities();
-        // 유닛 초기화: 데이터 리스트를 기반으로 초기 배치
         
         AddDebugCommands();
         TestScript();
     }
 
-    void AddDebugCommands()
+    private void Initialize()
     {
-
+        gameState = new GameState();
     }
+
 
     void TestScript()
     {
@@ -89,6 +90,18 @@ public class GameManager : MonoBehaviour
     public PartyModel GetParty(FactionType faction)
     {
         return gameState.Parties.FirstOrDefault(p => p.Data.factionType == faction);
+    }
+
+    void AddDebugCommands()
+    {
+        DebugLogConsole.AddCommand("list_parties", "", () =>
+        {
+            Debug.Log("=== 현재 정당 목록 ===");
+            foreach (var party in gameState.Parties)
+            {
+                Debug.Log($"- {party.Data.factionType}");
+            }
+        });
     }
 
     #endregion

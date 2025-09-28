@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef76862c15a1ce747a50fdc318e079d6, type: 3}
   m_Name: KPD
   m_EditorClassIdentifier: 
-  factionType: 0
+  factionType: 1
   factionName: KPD
   factionColor: {r: 1, g: 0, b: 0.89736366, a: 1}
   factionLogo: {fileID: 0}

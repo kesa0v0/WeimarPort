@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1a590004c488d42aa13e38cdc3c85a, type: 3}
   m_Name: Unrest
   m_EditorClassIdentifier: 
-  DataId: Unrest
+  DataId: threat_unrest
   Category: 0
   ThreatName: Unrest
   ThreatMaterial: {fileID: 2100000, guid: 4c8d1d29add46d4428313ef10ed6e2fe, type: 2}

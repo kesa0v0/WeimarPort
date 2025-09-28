@@ -4,7 +4,7 @@
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_poverty",
+        "dataId": "Threat_Poverty",
         "count": 3,
         "location": {
           "type": "RandomCity",
@@ -17,7 +17,7 @@
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_blockade",
+        "dataId": "Threat_Blockade",
         "location": {
           "type": "DR_Box"
         }
@@ -26,7 +26,7 @@
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_inflation",
+        "dataId": "Threat_Inflation",
         "location": {
           "type": "DR_Box"
         }
@@ -35,7 +35,7 @@
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_councils",
+        "dataId": "Threat_Councils",
         "location": {
           "type": "SpecificCity",
           "name": "Munchen"
@@ -45,28 +45,28 @@
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_unrest",
+        "dataId": "Threat_Unrest",
         "location": { "type": "SpecificCity", "name": "Berlin" }
       }
     },
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_unrest",
+        "dataId": "Threat_Unrest",
         "location": { "type": "SpecificCity", "name": "Munchen" }
       }
     },
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_unrest",
+        "dataId": "Threat_Unrest",
         "location": { "type": "SpecificCity", "name": "Essen" }
       }
     },
     {
       "command": "PlaceThreatMarker",
       "args": {
-        "dataId": "threat_unrest",
+        "dataId": "Threat_Unrest",
         "location": { "type": "SpecificCity", "name": "Hamburg" }
       }
     },
