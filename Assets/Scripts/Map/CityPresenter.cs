@@ -58,6 +58,20 @@ public class CityPresenter
         {
             Model.ThreatMarkerInstanceIds.Add(markerPresenter.Model.InstanceId);
             View.UpdateSummaryView(Model);
+            View.AddThreatToCity(markerPresenter.View.transform, markerPresenter.Model);
+        }
+    }
+
+    /// <summary>
+    /// 이 도시에서 위협 마커를 제거합니다.
+    /// </summary>
+    public void RemoveThreatMarker(ThreatMarkerPresenter markerPresenter)
+    {
+        if (Model.ThreatMarkerInstanceIds.Contains(markerPresenter.Model.InstanceId))
+        {
+            Model.ThreatMarkerInstanceIds.Remove(markerPresenter.Model.InstanceId);
+            View.UpdateSummaryView(Model);
+            View.RemoveThreatFromCity(markerPresenter.Model);
         }
     }
 

@@ -171,6 +171,12 @@ public class UnitManager : MonoBehaviour
         // 해당 Presenter를 찾아 UpdateView()를 호출하는 로직 구현.
     }
 
+
+    public void MoveUnit()
+    {
+        
+    }
+
     #endregion
 
 

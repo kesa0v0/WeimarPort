@@ -110,25 +110,28 @@ public class CityView : MonoBehaviour
 
     public void AddThreatToCity(Transform threatTransform, ThreatMarkerModel threatModel)
     {
+        // GameObject 활성화
+        threatTransform.gameObject.SetActive(true);
+
         switch (threatModel.Data.Category)
         {
             case ThreatMarkerData.MarkerCategory.TwoSidedPoverty:
-                threatTransform.SetParent(UnrestThreatParent, false);
+                threatTransform.SetParent(UnrestThreatParent, true);
                 break;
             case ThreatMarkerData.MarkerCategory.OneSidedThreat:
-                threatTransform.SetParent(PovertyThreatParent, false);
+                threatTransform.SetParent(PovertyThreatParent, true);
                 break;
             case ThreatMarkerData.MarkerCategory.PartySpecificThreat:
                 if (threatModel.Data.AssociatedParty.factionType == FactionType.KPD)
-                    threatTransform.SetParent(KPDThreatParent, false);
+                    threatTransform.SetParent(KPDThreatParent, true);
                 else if (threatModel.Data.AssociatedParty.factionType == FactionType.DNVP)
-                    threatTransform.SetParent(DNVPThreatParent, false);
+                    threatTransform.SetParent(DNVPThreatParent, true);
                 else
                     Debug.LogWarning($"Unknown TargetParty for PartySpecificThreat: {threatModel.Data.AssociatedParty}, placing under City root.");
                 break;
             default:
                 Debug.LogWarning($"Unknown ThreatType: {threatModel.Data.Category}, placing under City root.");
-                threatTransform.SetParent(this.transform, false);
+                threatTransform.SetParent(transform, true);
                 break;
         }
         threatTransform.localPosition = Vector3.zero; // 부모 기준 위치 초기화
@@ -137,9 +140,18 @@ public class CityView : MonoBehaviour
     /// <summary>
     /// 도시에서 객체를 제거하고 부모를 null로 설정합니다.
     /// </summary>
-    public void RemoveThreatFromCity()
+    public void RemoveThreatFromCity(ThreatMarkerModel threatModel)
     {
-
+        var presenter = ThreatManager.Instance.GetPresenter(threatModel.InstanceId);
+        if (presenter != null)
+        {
+            presenter.View.transform.SetParent(null);
+            presenter.View.gameObject.SetActive(false); // 비활성화
+        }
+        else
+        {
+            Debug.LogWarning($"ThreatMarker with ID {threatModel.InstanceId} not found in CityView.");
+        }
     }
 
     #endregion
