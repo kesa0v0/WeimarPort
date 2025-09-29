@@ -3,6 +3,7 @@ using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem; 
 
 public class CityPresenter
 {
@@ -150,12 +151,14 @@ public class CityPresenter
     #region Tooltip
     public void OnPointerEnter(PointerEventData eventData)
     {
-        UIManager.Instance.ShowQuickView(Model, Input.mousePosition);
+        Debug.Log($"Pointer entered city: {Model.cityName}");
+        UIManager.Instance.ShowQuickView(Model, Mouse.current.position.ReadValue());
     }
 
     // 마우스가 UI 영역에서 나갔을 때 호출
     public void OnPointerExit(PointerEventData eventData)
     {
+        Debug.Log($"Pointer exited city: {Model.cityName}");
         UIManager.Instance.HideQuickView();
     }
     #endregion

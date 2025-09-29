@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [Serializable]
-public class CityView : MonoBehaviour
+public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private TextMeshProUGUI cityName;
     [SerializeField] private GameObject cityIndicator;
@@ -204,6 +205,19 @@ public class CityView : MonoBehaviour
             summaryUIs[faction].UpdateView(partyUnitCounts[faction], partyHasStrongUnit[faction]);
         }
     }
+
+    #region Tooltip
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        CityManager.Instance.GetPresenter(this.name)?.OnPointerEnter(eventData);
+    }
+
+    // 마우스가 UI 영역에서 나갔을 때 호출
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        CityManager.Instance.GetPresenter(this.name)?.OnPointerExit(eventData);
+    }
+    #endregion
 
     /*
     // 간단한 클릭 전달: collider + raycast 또는 EventSystem 환경에서 동작
