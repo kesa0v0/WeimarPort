@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CityPresenter
 {
@@ -32,7 +33,7 @@ public class CityPresenter
         if (!Model.UnitInstanceIds.Contains(unitPresenter.Model.InstanceId))
         {
             Model.UnitInstanceIds.Add(unitPresenter.Model.InstanceId);
-            View.AddObjectToCity(unitPresenter.View.transform);
+            View.UpdateSummaryView(Model);
         }
     }
 
@@ -44,7 +45,7 @@ public class CityPresenter
         if (Model.UnitInstanceIds.Contains(unitPresenter.Model.InstanceId))
         {
             Model.UnitInstanceIds.Remove(unitPresenter.Model.InstanceId);
-            View.RemoveObjectFromCity(unitPresenter.View.transform);
+            View.UpdateSummaryView(Model);
         }
     }
 
@@ -56,10 +57,10 @@ public class CityPresenter
         if (!Model.ThreatMarkerInstanceIds.Contains(markerPresenter.Model.InstanceId))
         {
             Model.ThreatMarkerInstanceIds.Add(markerPresenter.Model.InstanceId);
-            View.AddObjectToCity(markerPresenter.View.transform);
+            View.UpdateSummaryView(Model);
         }
     }
-    
+
     public void AddPartyBase(FactionType party, int count = 1)
     {
         // 동기적 처리: 한 번에 하나의 선택만 진행되도록 재귀/체이닝
@@ -130,5 +131,18 @@ public class CityPresenter
         (View as CityView)?.ShowAsCandidate(isCandidate);
     }
 
+    #endregion
+
+    #region Tooltip
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        UIManager.Instance.ShowQuickView(Model, Input.mousePosition);
+    }
+
+    // 마우스가 UI 영역에서 나갔을 때 호출
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        UIManager.Instance.HideQuickView();
+    }
     #endregion
 }

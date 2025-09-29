@@ -8,14 +8,35 @@ using UnityEngine;
 public class CityView : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI cityName;
-    [SerializeField] private List<Transform> placementSlots;
     [SerializeField] private GameObject cityIndicator;
     [SerializeField] private GameObject baseGameObject;
     [SerializeField] private Transform baseParent;
-    private readonly List<PartyBaseView> partyBases = new();
-    [SerializeField] List<TextMeshProUGUI> unitPowerTexts;
 
-    private int nextSlotIndex = 0;
+    [Header("Summary View Elements")]
+    public PartySummaryUI kpdSummary; // 각 정당별 요약 UI를 연결할 변수
+    public PartySummaryUI spdSummary;
+    public PartySummaryUI dnvpSummary;
+    public PartySummaryUI governmentSummary;
+    private readonly List<PartyBaseView> partyBases = new();
+
+    public Transform UnrestThreatParent; // Unrest/Threat 마커가 배치될 부모 Transform
+    public Transform PovertyThreatParent; // Poverty/Threat 마커가 배치될 부모 Transform
+    public Transform KPDThreatParent; // KPD Threat 마커가 배치될 부모 Transform
+    public Transform DNVPThreatParent; // DNVP Threat 마커가 배치될 부모 Transform
+
+    private Dictionary<FactionType, PartySummaryUI> summaryUIs;
+
+
+    void Awake()
+    {
+        summaryUIs = new Dictionary<FactionType, PartySummaryUI>()
+        {
+            { FactionType.SPD, spdSummary },
+            { FactionType.KPD, kpdSummary },
+            { FactionType.DNVP, dnvpSummary },
+            { FactionType.Government, governmentSummary }
+        };
+    }
 
     public void SetCityName(string cityName)
     {
@@ -27,7 +48,7 @@ public class CityView : MonoBehaviour
     {
         transform.position = new Vector3(position.x, 0, position.y);
     }
-    
+
     public void SetSeatsByCount(int seatCount)
     {
         // If exists, destroy old seats
@@ -83,36 +104,42 @@ public class CityView : MonoBehaviour
             partyBases[i].SetColor(Color.gray); // Default color for unoccupied seats
         }
     }
-    
+
 
     #region Object Placement
 
-
-    /// <summary>
-    /// 특정 게임 오브젝트(View)를 이 도시의 자식으로 만들고 위치를 지정합니다.
-    /// </summary>
-    public void AddObjectToCity(Transform objectTransform)
+    public void AddThreatToCity(Transform threatTransform, ThreatMarkerModel threatModel)
     {
-        objectTransform.SetParent(this.transform, true);
-
-        if (placementSlots != null && placementSlots.Count > 0)
+        switch (threatModel.Data.Category)
         {
-            objectTransform.position = placementSlots[nextSlotIndex].position;
-            nextSlotIndex = (nextSlotIndex + 1) % placementSlots.Count;
+            case ThreatMarkerData.MarkerCategory.TwoSidedPoverty:
+                threatTransform.SetParent(UnrestThreatParent, false);
+                break;
+            case ThreatMarkerData.MarkerCategory.OneSidedThreat:
+                threatTransform.SetParent(PovertyThreatParent, false);
+                break;
+            case ThreatMarkerData.MarkerCategory.PartySpecificThreat:
+                if (threatModel.Data.AssociatedParty.factionType == FactionType.KPD)
+                    threatTransform.SetParent(KPDThreatParent, false);
+                else if (threatModel.Data.AssociatedParty.factionType == FactionType.DNVP)
+                    threatTransform.SetParent(DNVPThreatParent, false);
+                else
+                    Debug.LogWarning($"Unknown TargetParty for PartySpecificThreat: {threatModel.Data.AssociatedParty}, placing under City root.");
+                break;
+            default:
+                Debug.LogWarning($"Unknown ThreatType: {threatModel.Data.Category}, placing under City root.");
+                threatTransform.SetParent(this.transform, false);
+                break;
         }
-        else
-        {
-            objectTransform.position = this.transform.position + (Vector3)(UnityEngine.Random.insideUnitCircle * 0.5f);
-        }
+        threatTransform.localPosition = Vector3.zero; // 부모 기준 위치 초기화
     }
-    
-    
+
     /// <summary>
     /// 도시에서 객체를 제거하고 부모를 null로 설정합니다.
     /// </summary>
-    public void RemoveObjectFromCity(Transform objectTransform)
+    public void RemoveThreatFromCity()
     {
-        objectTransform.SetParent(null);
+
     }
 
     #endregion
@@ -123,6 +150,47 @@ public class CityView : MonoBehaviour
         if (cityIndicator != null)
             cityIndicator.SetActive(true); // ensure visible
         // 추가로 머터리얼 색을 바꾸는 등의 연출을 여기에 추가 가능
+    }
+    
+
+    // CityPresenter가 이 함수를 호출하여 전체 UI를 갱신
+    public void UpdateSummaryView(CityModel model)
+    {
+        // 모든 요약 UI를 일단 비활성화
+        foreach (var ui in summaryUIs.Values)
+        {
+            ui.gameObject.SetActive(false);
+        }
+
+        // 각 정당별 유닛/기반 수 집계
+        var partyUnitCounts = new Dictionary<FactionType, int>();
+        var partyHasStrongUnit = new Dictionary<FactionType, bool>();
+
+        // 초기화
+        foreach (var faction in summaryUIs.Keys)
+        {
+            partyUnitCounts[faction] = 0;
+            partyHasStrongUnit[faction] = false;
+        }
+
+        // 유닛 집계
+        foreach (var unit in model.GetUnitsInCity())
+        {
+            var faction = unit.ControllerPartyId;
+            if (partyUnitCounts.ContainsKey(faction))
+            {
+                partyUnitCounts[faction]++;
+                if (unit.Data.Strength == 2) // 예시: 강한 유닛 여부
+                    partyHasStrongUnit[faction] = true;
+            }
+        }
+
+        // UI 업데이트
+        foreach (var faction in summaryUIs.Keys)
+        {
+            summaryUIs[faction].gameObject.SetActive(true);
+            summaryUIs[faction].UpdateView(partyUnitCounts[faction], partyHasStrongUnit[faction]);
+        }
     }
 
     /*
@@ -135,4 +203,5 @@ public class CityView : MonoBehaviour
             GameManager.Instance?.OnCityClicked(presenter);
         }
     }
-    */}
+    */
+}

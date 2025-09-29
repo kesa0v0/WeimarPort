@@ -13,7 +13,7 @@ public class CityModel
     public int seatMaxCount;
     public int currentSeats => PartyBasesCounts.Values.Sum();
     public Dictionary<FactionType, int> PartyBasesCounts { get; private set; }
-    
+
     // 도시에 존재하는 유닛 및 마커의 '인스턴스 ID' 목록
     public List<string> UnitInstanceIds { get; private set; } = new List<string>();
     public List<string> ThreatMarkerInstanceIds { get; private set; } = new List<string>();
@@ -56,6 +56,19 @@ public class CityModel
         {
             Debug.LogWarning($"No seats to remove for party {party.HumanName()}.");
         }
+    }
+
+    #endregion
+
+
+    #region Unit Management
+
+    public List<UnitModel> GetUnitsInCity()
+    {
+        return UnitInstanceIds
+            .Select(id => UnitManager.Instance.GetPresenter(id)?.Model)
+            .Where(unit => unit != null)
+            .ToList();
     }
 
     #endregion
