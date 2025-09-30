@@ -74,8 +74,7 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void SetCityIndicatorSize(float size)
     {
-        var currentScale = cityIndicator.transform.localScale;
-        cityIndicator.transform.localScale = new Vector3(size, currentScale.y, currentScale.z);
+        cityIndicator.GetComponent<SpriteRenderer>().size = new Vector2(size, cityIndicator.GetComponent<SpriteRenderer>().size.y);
     }
 
     public void UpdateSeatOccupancy(Dictionary<FactionType, int> occupiedBy)
