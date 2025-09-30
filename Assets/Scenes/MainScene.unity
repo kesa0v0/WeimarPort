@@ -1866,8 +1866,8 @@ MonoBehaviour:
 
     jdk :D'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
+  m_sharedMaterial: {fileID: -1390848037740607903, guid: a40f8f2311706934d9fa3a9d298a6180, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2465,9 +2465,9 @@ MonoBehaviour:
   playerHandPanel: {fileID: 305828122}
   disposedPanel: {fileID: 1672700381}
   governmentPanel: {fileID: 657758466}
-  quickViewPanel: {fileID: 0}
+  quickViewPanel: {fileID: 1472873347295004408, guid: 2037c1a8c8fb2314b90d4eaf8b4fd29b, type: 3}
   quickViewUnitContainer: {fileID: 0}
-  unitIconPrefab: {fileID: 0}
+  unitIconPrefab: {fileID: 2546324145476991781, guid: 5e01cdef87629954297bcd033fd336ee, type: 3}
 --- !u!1001 &2065676918
 PrefabInstance:
   m_ObjectHideFlags: 0
