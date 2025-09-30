@@ -28,25 +28,7 @@ public class PartySummaryUI : MonoBehaviour
         gameObject.SetActive(count > 0);
         if (count > 0)
         {
-            countText.text = count.ToString();
-            SetHighlight(hasStrongUnit);
+            countText.text = hasStrongUnit ? $"<b>{count}★</b>" : count.ToString();
         }
-    }
-
-    /// <summary>
-    /// 텍스트의 빛 효과(Glow)를 켜거나 끕니다.
-    /// </summary>
-    /// <param name="isHighlighted">빛 효과를 켤지 여부</param>
-    private void SetHighlight(bool isHighlighted)
-    {
-        if (textMaterialInstance == null || !textMaterialInstance.HasProperty("_GlowPower"))
-        {
-            Debug.LogWarning("이 텍스트의 머티리얼에는 Glow 속성이 없습니다.");
-            return;
-        }
-
-        // isHighlighted가 true이면 저장해둔 초기 Glow Power 값을, false이면 0을 사용
-        float targetGlow = isHighlighted ? initialGlowPower : 0f;
-        textMaterialInstance.SetFloat("_GlowPower", targetGlow);
     }
 }
