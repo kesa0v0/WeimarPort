@@ -1,15 +1,18 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using IngameDebugConsole;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem; 
+using UnityEngine.InputSystem;
 
 public class CityPresenter
 {
     public CityModel Model { get; private set; }
     private readonly CityView View;
 
+    private Coroutine showQuickViewCoroutine;
+    public float showDelay = 0.3f;
 
     public CityPresenter(CityModel model, CityView view)
     {
@@ -143,7 +146,7 @@ public class CityPresenter
     #region Highlight
     public void ShowAsCandidate(bool isCandidate)
     {
-        (View as CityView)?.ShowAsCandidate(isCandidate);
+        View?.ShowAsCandidate(isCandidate);
     }
 
     #endregion
@@ -151,15 +154,20 @@ public class CityPresenter
     #region Tooltip
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log($"Pointer entered city: {Model.cityName}");
-        UIManager.Instance.ShowQuickView(Model, Mouse.current.position.ReadValue());
+        if (showQuickViewCoroutine != null) View.StopCoroutine(showQuickViewCoroutine);
+        showQuickViewCoroutine = View.StartCoroutine(ShowQuickViewRoutine());
     }
 
-    // 마우스가 UI 영역에서 나갔을 때 호출
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log($"Pointer exited city: {Model.cityName}");
+        if (showQuickViewCoroutine != null) View.StopCoroutine(showQuickViewCoroutine);
         UIManager.Instance.HideQuickView();
+    }
+
+    private IEnumerator ShowQuickViewRoutine()
+    {
+        yield return new WaitForSeconds(showDelay);
+        UIManager.Instance.ShowQuickView(Model, View.transform.position); // 도시 위치를 기준으로 퀵뷰 표시
     }
     #endregion
 }

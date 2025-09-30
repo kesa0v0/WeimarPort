@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
 
 
 
-    public void ShowQuickView(CityModel cityModel, Vector3 position)
+    public void ShowQuickView(CityModel cityModel, Vector3 worldPosition)
     {
         // 퀵뷰가 없다면 프리팹으로부터 새로 생성
         if (_currentQuickView == null)
@@ -33,7 +33,9 @@ public class UIManager : MonoBehaviour
             _currentQuickView = instance.GetComponent<QuickViewPanel>();
         }
 
-        // --- 여기가 핵심 ---
+        // 도시 이름 설정
+        _currentQuickView.cityNameText.text = cityModel.cityName;
+
         // 생성된 인스턴스의 스크립트를 통해 UnitContainer에 접근합니다.
         RectTransform container = _currentQuickView.unitContainer;
 
@@ -47,16 +49,54 @@ public class UIManager : MonoBehaviour
         foreach (UnitModel unit in cityModel.GetUnitsInCity())
         {
             GameObject iconObj = Instantiate(unitIconPrefab, container);
-            // ... 아이콘 데이터 설정 로직 ...
+            // 강도 표시용 텍스트
+            var txt = iconObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            if (txt != null)
+            {
+                txt.text = unit.Data != null ? unit.Data.Strength.ToString() : "?";
+            }
+            // 아이콘 이미지 및 소속 정당별 색상
+            var img = iconObj.GetComponent<UnityEngine.UI.Image>();
+            if (img != null)
+            {
+                // 1. 아이콘 스프라이트
+                if (unit.Data != null && unit.Data.Icon != null)
+                {
+                    img.sprite = unit.Data.Icon;
+                }
+                else
+                {
+                    Debug.LogWarning($"Unit Data or Icon is null for unit in city {cityModel.cityName}");
+                }
+            }
         }
 
-        // 3. 패널 위치 설정 및 활성화
-        _currentQuickView.transform.position = position;
+        // 3. 패널 위치 설정 및 활성화 (월드좌표 → 캔버스 로컬좌표 변환)
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPosition);
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            Vector2 localPoint;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : Camera.main, out localPoint))
+            {
+                _currentQuickView.GetComponent<RectTransform>().anchoredPosition = localPoint;
+            }
+        }
+        else
+        {
+            // fallback: 그냥 월드좌표
+            _currentQuickView.transform.position = worldPosition;
+        }
         _currentQuickView.gameObject.SetActive(true);
     }
 
     public void HideQuickView()
     {
-        quickViewPanel.SetActive(false);
+        Debug.Log("HideQuickView called");
+        if (_currentQuickView != null)
+        {
+            _currentQuickView.gameObject.SetActive(false);
+        }
     }
 }

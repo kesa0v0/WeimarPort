@@ -209,13 +209,15 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     #region Tooltip
     public void OnPointerEnter(PointerEventData eventData)
     {
-        CityManager.Instance.GetPresenter(this.name)?.OnPointerEnter(eventData);
+        Debug.Log($"Pointer entered city: {name}");
+        CityManager.Instance.GetPresenter(name)?.OnPointerEnter(eventData);
     }
 
     // 마우스가 UI 영역에서 나갔을 때 호출
     public void OnPointerExit(PointerEventData eventData)
     {
-        CityManager.Instance.GetPresenter(this.name)?.OnPointerExit(eventData);
+        Debug.Log($"Pointer exited city: {name}");
+        CityManager.Instance.GetPresenter(name)?.OnPointerExit(eventData);
     }
     #endregion
 

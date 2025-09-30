@@ -766,7 +766,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2264052825982886524}
   - component: {fileID: 7160166366506382406}
-  - component: {fileID: 3938793703600536162}
   m_Layer: 0
   m_Name: CityIndicator
   m_TagString: Untagged
@@ -844,27 +843,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!65 &3938793703600536162
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5963194251054673717}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1.0000002, z: 0.20000005}
-  m_Center: {x: 0, y: -0.000000059604645, z: 0}
 --- !u!1 &6013466665521026029
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,6 +853,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4555822008314212257}
   - component: {fileID: 2623472810699598941}
+  - component: {fileID: 6050604632992274642}
   m_Layer: 0
   m_Name: City
   m_TagString: Untagged
@@ -929,6 +908,27 @@ MonoBehaviour:
   PovertyThreatParent: {fileID: 6682603855110705220}
   KPDThreatParent: {fileID: 2157278152035421766}
   DNVPThreatParent: {fileID: 4000074365586729796}
+--- !u!65 &6050604632992274642
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6013466665521026029}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 2, z: 0.3}
+  m_Center: {x: 0, y: -0.6, z: 0}
 --- !u!1 &6085241931652836459
 GameObject:
   m_ObjectHideFlags: 0
