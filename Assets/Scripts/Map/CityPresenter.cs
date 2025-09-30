@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class CityPresenter
+public class CityPresenter: IUnitContainer
 {
     public CityModel Model { get; private set; }
     private readonly CityView View;
@@ -26,17 +26,18 @@ public class CityPresenter
         View.SetCityName(Model.cityName);
         View.SetPosition(Model.position);
         View.SetSeatsByCount(Model.seatMaxCount);
+        View.UpdateSummaryView(Model);
     }
 
     #region 객체 배치 및 제거
     /// <summary>
     /// 이 도시에 유닛을 배치합니다.
     /// </summary>
-    public void AddUnit(UnitPresenter unitPresenter)
+    public void AddUnit(UnitModel unitModel)
     {
-        if (!Model.UnitInstanceIds.Contains(unitPresenter.Model.InstanceId))
+        if (!Model.UnitInstanceIds.Contains(unitModel.InstanceId))
         {
-            Model.UnitInstanceIds.Add(unitPresenter.Model.InstanceId);
+            Model.UnitInstanceIds.Add(unitModel.InstanceId);
             View.UpdateSummaryView(Model);
         }
     }
@@ -44,14 +45,24 @@ public class CityPresenter
     /// <summary>
     /// 이 도시에서 유닛을 제거합니다.
     /// </summary>
-    public void RemoveUnit(UnitPresenter unitPresenter)
+    public void RemoveUnit(UnitModel unitModel)
     {
-        if (Model.UnitInstanceIds.Contains(unitPresenter.Model.InstanceId))
+        if (Model.UnitInstanceIds.Contains(unitModel.InstanceId))
         {
-            Model.UnitInstanceIds.Remove(unitPresenter.Model.InstanceId);
+            Model.UnitInstanceIds.Remove(unitModel.InstanceId);
             View.UpdateSummaryView(Model);
         }
     }
+
+    public List<UnitModel> GetUnits()
+    {
+        return Model.UnitInstanceIds
+            .Select(id => UnitManager.Instance.GetModel(id))
+            .Where(unit => unit != null)
+            .ToList();
+    }
+
+    public string GetContainerName() => Model.cityName;
 
     /// <summary>
     /// 이 도시에 위협 마커를 배치합니다. (룰북 p.24 참고)

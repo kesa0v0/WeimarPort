@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using IngameDebugConsole;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class UnitManager : MonoBehaviour
 {
@@ -160,6 +161,16 @@ public class UnitManager : MonoBehaviour
         return null;
     }
 
+    public UnitModel GetModel(string instanceId)
+    {
+        if (modelIdMap.TryGetValue(instanceId, out UnitModel model))
+        {
+            return model;
+        }
+        Debug.LogWarning($"Model를 찾을 수 없습니다: {instanceId}");
+        return null;
+    }
+
     /// <summary>
     /// 시나리오/세이브 데이터로 모든 유닛의 상태를 설정(Hydrate)합니다.
     /// 이 메서드는 ScenarioExecutor나 SaveStateLoader에 의해 호출됩니다.
@@ -171,10 +182,31 @@ public class UnitManager : MonoBehaviour
         // 해당 Presenter를 찾아 UpdateView()를 호출하는 로직 구현.
     }
 
-
-    public void MoveUnit()
+    public void MoveUnitById(string instanceId, string containerId)
     {
-        
+        var unit = GetModel(instanceId);
+        if (unit == null)
+        {
+            Debug.LogWarning($"이동하려는 유닛을 찾을 수 없습니다: {instanceId}");
+            return;
+        }
+        if (CityManager.Instance.GetPresenter(containerId) is not IUnitContainer container)
+        {
+            Debug.LogWarning($"이동하려는 컨테이너를 찾을 수 없습니다: {containerId}");
+            return;
+        }
+        MoveUnit(unit, container);
+    }
+    public void MoveUnit(UnitModel unit, IUnitContainer newContainer)
+    {
+        if (presenterMap.TryGetValue(unit, out UnitPresenter presenter))
+        {
+            presenter.UpdateLocation(newContainer);
+        }
+        else
+        {
+            Debug.LogWarning($"이동하려는 유닛의 Presenter를 찾을 수 없습니다: {unit.InstanceId}");
+        }
     }
 
     #endregion
@@ -200,6 +232,7 @@ public class UnitManager : MonoBehaviour
     private void AddDebugCommands()
     {
         DebugLogConsole.AddCommandInstance("debug.listUnits", "Lists all spawned units with IDs.", "ListUnits", this);
+        DebugLogConsole.AddCommandInstance("debug.moveUnit", "Moves a unit to a specified container. Usage: debug.moveUnit <unitInstanceId> <containerId>", "MoveUnitById", this);
     }
 
     #endregion

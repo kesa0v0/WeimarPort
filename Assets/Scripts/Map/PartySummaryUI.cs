@@ -28,7 +28,7 @@ public class PartySummaryUI : MonoBehaviour
         gameObject.SetActive(count > 0);
         if (count > 0)
         {
-            countText.text = "x" + count;
+            countText.text = count.ToString();
             SetHighlight(hasStrongUnit);
         }
     }

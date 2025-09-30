@@ -186,14 +186,28 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
         // 유닛 집계
+        var power = new Dictionary<FactionType, int> {
+            { FactionType.SPD, 0 },
+            { FactionType.KPD, 0 },
+            { FactionType.DNVP, 0 },
+            { FactionType.Government, 0 }
+            
+        };
         foreach (var unit in model.GetUnitsInCity())
         {
             var faction = unit.ControllerPartyId;
             if (partyUnitCounts.ContainsKey(faction))
             {
                 partyUnitCounts[faction]++;
-                if (unit.Data.Strength == 2) // 예시: 강한 유닛 여부
+                if (unit.Data.Strength == 2) 
+                {// 예시: 강한 유닛 여부
                     partyHasStrongUnit[faction] = true;
+                    power[faction] += 2; // 강한 유닛은 파워 2로 계산
+                }
+                else
+                {
+                    power[faction] += 1; // 일반 유닛은 파워 1로 계산
+                }
             }
         }
 
@@ -201,7 +215,7 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         foreach (var faction in summaryUIs.Keys)
         {
             summaryUIs[faction].gameObject.SetActive(true);
-            summaryUIs[faction].UpdateView(partyUnitCounts[faction], partyHasStrongUnit[faction]);
+            summaryUIs[faction].UpdateView(power[faction], partyHasStrongUnit[faction]);
         }
     }
 

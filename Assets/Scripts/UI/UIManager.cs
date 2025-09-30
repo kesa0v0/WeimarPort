@@ -93,7 +93,6 @@ public class UIManager : MonoBehaviour
 
     public void HideQuickView()
     {
-        Debug.Log("HideQuickView called");
         if (_currentQuickView != null)
         {
             _currentQuickView.gameObject.SetActive(false);

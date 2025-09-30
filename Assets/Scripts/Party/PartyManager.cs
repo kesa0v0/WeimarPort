@@ -31,7 +31,7 @@ public class PartyManager : MonoBehaviour
             GameManager.Instance.gameState.Parties.Add(party);
         }
     }
-    
+
     public PartyModel GetModel(FactionType type)
     {
         partyModelMap.TryGetValue(type, out PartyModel model);
