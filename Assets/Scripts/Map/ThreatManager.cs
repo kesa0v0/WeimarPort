@@ -248,7 +248,7 @@ public class ThreatManager : MonoBehaviour
         markerPresenter.View.gameObject.SetActive(true);
         markerPresenter.UpdateView(); // 이 메서드가 IsFlipped 상태를 보고 올바른 Material을 적용합니다.
 
-        Debug.Log($"{dataId} 마커가 {(startFlipped ? "(뒤집힌 상태)" : "")} (으)로 {targetCity.Model.cityName}에 배치되었습니다.");
+        Debug.Log($"{dataId} 마커가 {(startFlipped ? "(뒤집힌 상태로)" : "")} {targetCity.Model.cityName}에 배치되었습니다.");
     }
     #endregion
     

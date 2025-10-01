@@ -157,30 +157,6 @@ public class ScenarioExecutor
         }
     }
 
-    private void ExecutePlaceUnit(Arguments args)
-    {
-        Debug.Log($"'{args.partyId}' 유닛을 배치합니다.");
-        int count = args.count > 0 ? args.count : 1; // count가 없으면 1로 간주
-        var party = gameManager.GetParty(Enum.TryParse<FactionType>(args.partyId, out var faction)
-            ? faction : throw new ArgumentException($"Invalid faction type: {args.partyId}"));
-        if (party == null)
-        {
-            Debug.LogWarning($"정당 '{args.partyId}'를 찾을 수 없습니다.");
-            return;
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            if (args.location.type == "RandomCity")
-            {
-                CityPresenter targetCity = cityManager.GetRandomCity(exclude: null);
-                // unitManager.PlaceUnit(party, targetCity);
-                Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
-            }
-            // ... SpecificCity 등 다른 location.type에 대한 처리 ...
-        }
-    }
-
     private void ExecutePlacePartyBases(Arguments args, List<CityPresenter> usedCities)
     {
         int count = args.count > 0 ? args.count : 1;
@@ -215,6 +191,17 @@ public class ScenarioExecutor
                         if (unique) usedCities.Add(randomCity);
                     }
                     break;
+                
+                case "PlayerChoice_City":
+                    GameManager.Instance.RequestCitySelection((chosenCity) =>
+                    {
+                        if (chosenCity != null)
+                        {
+                            // cityManager.PlacePartyBase(party, chosenCity);
+                            Debug.Log($"{chosenCity.Model.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
+                        }
+                    });
+                    break;
 
                 default:
                     Debug.LogWarning($"알 수 없는 위치 타입: '{args.location.type}'");
@@ -223,5 +210,40 @@ public class ScenarioExecutor
         }
     }
 
+    private void ExecutePlaceUnit(Arguments args)
+    {
+        Debug.Log($"'{args.partyId}' 유닛을 배치합니다.");
+        int count = args.count > 0 ? args.count : 1; // count가 없으면 1로 간주
+        var party = gameManager.GetParty(Enum.TryParse<FactionType>(args.partyId, out var faction)
+            ? faction : throw new ArgumentException($"Invalid faction type: {args.partyId}"));
+        if (party == null)
+        {
+            Debug.LogWarning($"정당 '{args.partyId}'를 찾을 수 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            if (args.location.type == "RandomCity")
+            {
+                CityPresenter targetCity = cityManager.GetRandomCity(exclude: null);
+                // unitManager.PlaceUnit(party, targetCity);
+                Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
+            }
+            else if (args.location.type == "SpecificCity")
+            {
+                CityPresenter targetCity = cityManager.GetPresenter(args.location.name);
+                if (targetCity != null)
+                {
+                    // unitManager.PlaceUnit(party, targetCity);
+                    Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"알 수 없는 위치 타입: '{args.location.type}'");
+            }
+        }
+    }
 
 }
