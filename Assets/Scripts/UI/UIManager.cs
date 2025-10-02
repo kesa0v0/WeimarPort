@@ -1,3 +1,4 @@
+using Event.UI;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -20,9 +21,21 @@ public class UIManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        EventBus.Subscribe<RequestSelectionEvent<CityModel>>(OnRequestCitySelection);
     }
 
 
+
+    public void OnRequestCitySelection(RequestSelectionEvent<CityModel> evt)
+    {
+        Debug.Log($"UIManager: 도시 선택 요청 이벤트 수신 - {evt.Instruction}, 아이템 수: {evt.Items.Count}");
+        // 여기서 evt.Items를 사용하여 UI에 도시 목록을 표시하고 선택을 처리합니다.
+        foreach (var city in evt.Items)
+        {
+            Debug.Log($"도시: {city.cityName}");
+        }   
+    }
 
     public void ShowQuickView(CityModel cityModel, Vector3 worldPosition)
     {

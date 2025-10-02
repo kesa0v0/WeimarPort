@@ -8,14 +8,13 @@ public class GovernmentPanel : MonoBehaviour
 
     public void Start()
     {
-        EventBus.Instance.OnGovernmentChanged += Redraw;
+        EventBus.Subscribe<Event.StateChange.Government.GovernmentFormedEvent>(evt => Redraw());
         Redraw();
     }
 
     public void OnDisable()
     {
-        if (EventBus.Instance != null)
-            EventBus.Instance.OnGovernmentChanged -= Redraw;
+        EventBus.Unsubscribe<Event.StateChange.Government.GovernmentFormedEvent>(evt => Redraw());
     }
 
     public void Redraw()

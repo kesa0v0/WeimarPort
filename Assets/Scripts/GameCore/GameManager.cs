@@ -6,6 +6,8 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private ScenarioLoader ScenarioLoader;
+
     public GameState gameState;
     private PlayerActionState currentState = PlayerActionState.IdleState;
 
@@ -31,6 +33,8 @@ public class GameManager : MonoBehaviour
         ThreatManager.Instance.Initialize();
         CityManager.Instance.Initialize();
         UnitManager.Instance.Initialize();
+
+        ScenarioLoader.LoadScenarioFromResources("test");
 
         // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
         gameState.GameInfo.CurrentPlayerPartyId = GetParty(FactionType.SPD).Data.factionType;

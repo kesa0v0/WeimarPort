@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Event.UI;
@@ -11,6 +12,8 @@ public class ScenarioExecutor
     private readonly CityManager cityManager;
     // ... ThreatManager, UnitManager 등 필요한 다른 Manager들 ...
 
+    private CityModel selectedCity = null; // 플레이어가 선택한 도시를 저장할 변수
+
     // 생성자를 통해 필요한 Manager들을 주입받음
     public ScenarioExecutor(GameManager gm, CityManager cm /*, ... */)
     {
@@ -19,7 +22,7 @@ public class ScenarioExecutor
     }
 
     // 스크립트를 실행하는 메인 메서드
-    public void ExecuteScript(List<SetupInstruction> script)
+    public IEnumerator ExecuteScript(List<SetupInstruction> script)
     {
         Debug.Log("시나리오 스크립트 실행을 시작합니다...");
         List<CityPresenter> usedCitiesForUniqueness = new List<CityPresenter>();
@@ -39,7 +42,7 @@ public class ScenarioExecutor
                     // 특정 정당의 CitySeat를 도시에 배치합니다.
                     // partyId, count, location
                     case "PlacePartyBases":
-                        ExecutePlacePartyBases(instruction.args, usedCitiesForUniqueness);
+                        yield return ExecutePlacePartyBases(instruction.args, usedCitiesForUniqueness);
                         break;
 
                     // 특정 정당의 의석을 의회에 추가합니다.
@@ -158,7 +161,7 @@ public class ScenarioExecutor
         }
     }
 
-    private void ExecutePlacePartyBases(Arguments args, List<CityPresenter> usedCities)
+    private IEnumerator ExecutePlacePartyBases(Arguments args, List<CityPresenter> usedCities)
     {
         int count = args.count > 0 ? args.count : 1;
         var party = gameManager.GetParty(Enum.TryParse<FactionType>(args.partyId, out var faction)
@@ -166,7 +169,7 @@ public class ScenarioExecutor
         if (party == null)
         {
             Debug.LogWarning($"정당 '{args.partyId}'를 찾을 수 없습니다.");
-            return;
+            yield break;
         }
 
         for (int i = 0; i < count; i++)
@@ -194,7 +197,22 @@ public class ScenarioExecutor
                     break;
                 
                 case "PlayerChoice_City":
+                    EventBus.Subscribe<SelectionMadeEvent<CityModel>>(OnCitySelected);
                     EventBus.Publish(new RequestSelectionEvent<CityModel>(PlayerSelectionType.Setup_PlaceInitialPartyBase, CityManager.Instance.GetAllCityModels()));
+
+                    // selectedCity 변수가 채워질 때까지 대기
+                    while (selectedCity == null)
+                    {
+                        yield return null; // 다음 프레임까지 대기
+                    }
+
+                    // 선택 완료 후 로직 처리
+                    Debug.Log($"{selectedCity.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
+                    // cityManager.PlacePartyBase(party, cityManager.GetPresenter(selectedCity.cityName));
+
+                    // 다음 선택을 위해 초기화 및 구독 해제
+                    selectedCity = null;
+                    EventBus.Unsubscribe<SelectionMadeEvent<CityModel>>(OnCitySelected);
                     break;
 
                 default:
@@ -202,6 +220,12 @@ public class ScenarioExecutor
                     break;
             }
         }
+    }
+
+    // 선택 완료 이벤트가 발생했을 때 호출될 콜백 메서드
+    private void OnCitySelected(SelectionMadeEvent<CityModel> e)
+    {
+        selectedCity = e.SelectedItem;
     }
 
     private void ExecutePlaceUnit(Arguments args)
