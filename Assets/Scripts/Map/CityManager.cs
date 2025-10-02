@@ -68,6 +68,10 @@ public class CityManager : MonoBehaviour
         Instance.CreateCity("Munchen", new Vector2(1, -4), 3);
     }
 
+    public List<CityModel> GetAllCityModels()
+    {
+        return presenterMap.Values.Select(p => p.Model).ToList();
+    }
 
     public CityPresenter GetPresenter(string cityName)
     {

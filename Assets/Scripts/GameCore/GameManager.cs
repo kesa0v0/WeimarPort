@@ -57,20 +57,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-    #region Callbacks
-
-    public void RequestPartySelection(List<FactionType> candidates, int count, Action<List<FactionType>> onChosen)
-    {
-        EventBus.Instance.RequestPartySelection(candidates, count, onChosen);
-    }
-
-    internal void RequestCitySelection(Action<CityPresenter> onChosen)
-    {
-        
-    }
-
-    #endregion
-
     #region Helper Methods
 
     // Fisher-Yates shuffle for lists

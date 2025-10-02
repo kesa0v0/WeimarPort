@@ -91,3 +91,11 @@ namespace Weimar.CardEffects
         public LocationInfo location;
     }
 }
+
+
+public enum CardPlayOption
+{
+    Event,
+    Debate,
+    Actions
+}

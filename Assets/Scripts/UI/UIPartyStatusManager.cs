@@ -16,13 +16,12 @@ public class UIPartyStatusManager : MonoBehaviour
 
     public void Start()
     {
-        EventBus.Instance.OnPartySelectionRequested += RequestPartySelection;
+        
     }
 
     public void OnDestroy()
     {
         CancelActiveSelection();
-        EventBus.Instance.OnPartySelectionRequested -= RequestPartySelection;
     }
 
     public void Initialize(List<PartyModel> parties)

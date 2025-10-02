@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Event.UI;
 using UnityEngine;
 
 public class ScenarioExecutor
@@ -193,14 +194,7 @@ public class ScenarioExecutor
                     break;
                 
                 case "PlayerChoice_City":
-                    GameManager.Instance.RequestCitySelection((chosenCity) =>
-                    {
-                        if (chosenCity != null)
-                        {
-                            // cityManager.PlacePartyBase(party, chosenCity);
-                            Debug.Log($"{chosenCity.Model.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
-                        }
-                    });
+                    EventBus.Publish(new RequestSelectionEvent<CityModel>(PlayerSelectionType.Setup_PlaceInitialPartyBase, CityManager.Instance.GetAllCityModels()));
                     break;
 
                 default:

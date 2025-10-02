@@ -99,3 +99,153 @@ public class UIManager : MonoBehaviour
         }
     }
 }
+
+/// <summary>
+/// '바이마르' 게임에서 플레이어가 마주하는 모든 선택 상황을 정의하는 열거형입니다.
+/// EventBus를 통해 선택을 요청할 때 이 타입을 사용하여 UI와 로직을 분기합니다.
+/// </summary>
+public enum PlayerSelectionType
+{
+    #region // ========== 게임 준비 (Game Setup) ========== //
+    /// <summary>
+    /// 게임 시작 시 초기 정당 기반(피규어)을 배치할 도시를 선택합니다. [cite: 303]
+    /// </summary>
+    Setup_PlaceInitialPartyBase,
+    #endregion
+
+
+    #region // ========== 아젠다 페이즈 (Agenda Phase) ========== //
+    /// <summary>
+    /// 매 라운드 시작 시, 4개의 아젠다 카드 중 하나를 선택합니다. [cite: 605, 667]
+    /// </summary>
+    Agenda_ChooseAgendaCard,
+    /// <summary>
+    /// 특정 아젠다 카드 효과로 인해, 아직 공급처에 있는 백색 이슈 마커 중 하나를 선택하여 의견 트랙에 놓습니다. [cite: 681]
+    /// </summary>
+    Agenda_ChooseWhiteIssueMarkerToPlace,
+    #endregion
+
+
+    #region // ========== 임펄스 페이즈: 카드 사용 (Impulse Phase: Card Play) ========== //
+    /// <summary>
+    /// 손에 있는 카드를 어떤 용도(이벤트, 토론, 행동)로 사용할지 선택합니다. [cite: 608]
+    /// </summary>
+    Impulse_ChooseCardPlayOption,
+    /// <summary>
+    /// '토론(Debate)' 액션 시, 의견 트랙에서 전진시킬 첫 번째 이슈 마커를 선택합니다. [cite: 731]
+    /// </summary>
+    Impulse_Debate_ChooseFirstIssue,
+    /// <summary>
+    /// '토론(Debate)' 액션 시, 의견 트랙에서 전진시킬 두 번째 이슈 마커를 선택합니다. [cite: 731]
+    /// </summary>
+    Impulse_Debate_ChooseSecondIssue,
+    /// <summary>
+    /// '행동(Actions)'을 수행할 도시 하나를 선택합니다. [cite: 730, 817]
+    /// </summary>
+    Impulse_Actions_ChooseCity,
+    /// <summary>
+    /// 도시에서 수행할 구체적인 행동(시위, 동원 등)을 선택합니다.
+    /// </summary>
+    Impulse_Actions_ChooseActionType,
+    #endregion
+
+
+    #region // ========== 임펄스 페이즈: 도시 행동 (Impulse Phase: City Actions) ========== //
+    /// <summary>
+    /// '동원(Mobilize)' 시, 이동시킬 자신의 유닛을 선택합니다. [cite: 1283]
+    /// </summary>
+    Action_Mobilize_ChooseUnit,
+    /// <summary>
+    /// 도시가 가득 찼을 때 '시위(Demonstration)'를 통해 제거할 상대방의 정당 기반을 선택합니다. [cite: 1170]
+    /// </summary>
+    Action_Demonstration_ChooseOpponentBaseToRemove,
+    /// <summary>
+    /// '장악(Take Control)' 시, 통제권을 뺏거나 되찾을 국가방위군(Reichswehr) 유닛을 선택합니다. [cite: 1270]
+    /// </summary>
+    Action_TakeControl_ChooseReichswehrUnit,
+    /// <summary>
+    /// '전투(Fight)' 시, 공격할 상대 야당을 선택합니다. [cite: 1300]
+    /// </summary>
+    Action_Fight_ChooseOpposingParty,
+    /// <summary>
+    /// (DNVP 전용) 정부의 '전투(Fight)' 액션을 도울지 여부를 결정합니다. [cite: 1304]
+    /// </summary>
+    Action_Fight_DNVP_ConfirmSupport,
+    /// <summary>
+    /// (급진 정당 외) 상대의 쿠데타(Coup) 시도에 자신의 유닛으로 저항할지 여부를 선택합니다. [cite: 1406]
+    /// </summary>
+    Action_Coup_ConfirmOpposition,
+    #endregion
+
+
+    #region // ========== 임펄스 페이즈: 대응 (Impulse Phase: Reaction) ========== //
+    /// <summary>
+    /// 상대방의 행동(시위, 쿠데타 등)에 '대응(Reaction)'할지 여부를 선택합니다. [cite: 850]
+    /// </summary>
+    Reaction_ConfirmReaction,
+    #endregion
+
+
+    #region // ========== 정치 페이즈 (Politics Phase) ========== //
+    /// <summary>
+    /// 분할된 공간의 이슈를 획득했을 때, 두 정당이 합의하여 효과를 결정해야 합니다. (옵션 선택) [cite: 941]
+    /// </summary>
+    Politics_Issue_ChooseEffectOnDividedSpace,
+    /// <summary>
+    /// 황색 이슈 마커 획득 시, 해당 라운드 카드의 녹색 또는 황색 효과 중 하나를 선택합니다. [cite: 627, 943]
+    /// </summary>
+    Politics_Issue_ChooseYellowIssueEffect,
+    /// <summary>
+    /// 특정 사회 마커("기갑순양함", "노동복지") 효과로, 제거할 상대방의 의석을 선택합니다. [cite: 1653]
+    /// </summary>
+    Politics_Society_ChooseSeatToRemove,
+    /// <summary>
+    /// 소수 정당(DDP, DVP, USPD) 이슈 획득 시, 해당 소수 정당의 통제권을 넘겨줄 정당을 선택합니다. [cite: 1448, 1661]
+    /// </summary>
+    Politics_MinorParty_ChooseControllingPlayer,
+    /// <summary>
+    /// 정부 구성 시, 연정 제안을 수락할지 거절할지 선택합니다. [cite: 1036]
+    /// </summary>
+    Politics_Government_ConfirmCoalition,
+    #endregion
+
+
+    #region // ========== 카드 효과 (Card Effects) ========== //
+    /// <summary>
+    /// 카드 효과로 인해 특정 도시, 유닛, 마커, 플레이어 등을 선택해야 하는 일반적인 경우입니다.
+    /// </summary>
+    CardEffect_ChooseCity,
+    CardEffect_ChooseUnit,
+    CardEffect_ChooseMarker,
+    CardEffect_ChoosePlayer,
+    CardEffect_ChoosePartyBase,
+    /// <summary>
+    /// 'OR' 키워드가 있는 카드 효과에서, 두 가지 옵션 중 하나를 선택합니다. [cite: 758]
+    /// </summary>
+    CardEffect_ChooseBetweenTwoOptions,
+    /// <summary>
+    /// (Friedrich Ebert Dies 카드) 1차 투표 후, 결선에 진출한 두 후보 중 누구에게 투표할지 선택합니다. [cite: 1521]
+    /// </summary>
+    CardEffect_Election_ChooseCandidate,
+    /// <summary>
+    /// (The Strike on Prussia 카드) NSDAP 트랙에 피규어를 놓고 효과를 받을지, 아니면 포기할지 선택합니다. [cite: 1503, 1504]
+    /// </summary>
+    CardEffect_StrikeOnPrussia_ConfirmNSDAPPlacement,
+    /// <summary>
+    /// (Petition against Young Plan 카드) 영 플랜 반대 청원에 찬성(YES)할지 반대(NO)할지 투표합니다. [cite: 1538]
+    /// </summary>
+    CardEffect_YoungPlan_VoteYesOrNo,
+    #endregion
+
+
+    #region // ========== 특수 카드 (Special Cards) ========== //
+    /// <summary>
+    /// (Gustav Stresemann 카드) 자신 또는 타인의 주사위 굴림을 다시 굴리게 할지 여부를 선택합니다. [cite: 1453]
+    /// </summary>
+    Special_Stresemann_ConfirmReroll,
+    /// <summary>
+    /// (Reichspräsident 카드) 정당 카드 사용 후, 추가 '토론' 액션을 수행할지 여부를 선택합니다. [cite: 1472]
+    /// </summary>
+    Special_Reichsprasident_ConfirmExtraDebate,
+    #endregion
+}
