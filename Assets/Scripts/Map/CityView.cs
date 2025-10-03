@@ -6,12 +6,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [Serializable]
-public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private TextMeshProUGUI cityName;
     [SerializeField] private GameObject cityIndicator;
     [SerializeField] private GameObject baseGameObject;
     [SerializeField] private Transform baseParent;
+
 
     [Header("Summary View Elements")]
     public PartySummaryUI kpdSummary; // 각 정당별 요약 UI를 연결할 변수
@@ -158,10 +159,7 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void ShowAsCandidate(bool isCandidate)
     {
-        // 간단 구현: 인디케이터 활성/비활성 토글 또는 색 변경 가능
-        if (cityIndicator != null)
-            cityIndicator.SetActive(true); // ensure visible
-        // 추가로 머터리얼 색을 바꾸는 등의 연출을 여기에 추가 가능
+        cityIndicator.GetComponent<SpriteRenderer>().color = isCandidate ? Color.yellow : Color.white;
     }
     
 
@@ -222,27 +220,22 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     #region Tooltip
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log($"Pointer entered city: {name}");
         CityManager.Instance.GetPresenter(name)?.OnPointerEnter(eventData);
     }
 
     // 마우스가 UI 영역에서 나갔을 때 호출
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log($"Pointer exited city: {name}");
         CityManager.Instance.GetPresenter(name)?.OnPointerExit(eventData);
     }
     #endregion
 
-    /*
-    // 간단한 클릭 전달: collider + raycast 또는 EventSystem 환경에서 동작
-    private void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
-        var presenter = CityManager.Instance.GetCity(this.name);
+        var presenter = CityManager.Instance.GetPresenter(name);
         if (presenter != null)
         {
-            GameManager.Instance?.OnCityClicked(presenter);
+            presenter.OnPointerClick();
         }
     }
-    */
 }

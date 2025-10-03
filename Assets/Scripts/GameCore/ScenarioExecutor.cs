@@ -29,6 +29,7 @@ public class ScenarioExecutor
 
         foreach (var instruction in script)
             {
+                usedCitiesForUniqueness.Clear(); // 매 명령어마다 초기화
                 // Zentrum을 Z로 자동 변환
                 if (instruction.args.partyId == "Zentrum") instruction.args.partyId = "Z";
                 switch (instruction.command)
@@ -197,8 +198,17 @@ public class ScenarioExecutor
                     break;
                 
                 case "PlayerChoice_City":
+                    Debug.Log($"플레이어에게 '{party.Data.factionType}' CitySeat 배치할 도시 선택 요청");
+                    bool uniqueForPlayerChoice = args.location.@params?.unique ?? false;
+                    List<CityModel> availableCities = CityManager.Instance.GetAllCityModels();
+                    if (uniqueForPlayerChoice)
+                    {
+                        // usedCities에 이미 선택된 도시가 있다면 제외
+                        var usedCityModels = usedCities.Select(p => p.Model).ToHashSet();
+                        availableCities = availableCities.Where(city => !usedCityModels.Contains(city)).ToList();
+                    }
                     EventBus.Subscribe<SelectionMadeEvent<CityModel>>(OnCitySelected);
-                    EventBus.Publish(new RequestSelectionEvent<CityModel>(PlayerSelectionType.Setup_PlaceInitialPartyBase, CityManager.Instance.GetAllCityModels()));
+                    EventBus.Publish(new RequestSelectionEvent<CityModel>(PlayerSelectionType.Setup_PlaceInitialPartyBase, availableCities));
 
                     // selectedCity 변수가 채워질 때까지 대기
                     while (selectedCity == null)
@@ -229,7 +239,7 @@ public class ScenarioExecutor
     }
 
     private void ExecutePlaceUnit(Arguments args)
-    {
+    {   
         Debug.Log($"'{args.partyId}' 유닛을 배치합니다.");
         int count = args.count > 0 ? args.count : 1; // count가 없으면 1로 간주
         var party = gameManager.GetParty(Enum.TryParse<FactionType>(args.partyId, out var faction)

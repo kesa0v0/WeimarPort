@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Event.UI;
 using IngameDebugConsole;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,6 +15,9 @@ public class CityPresenter: IUnitContainer
 
     private Coroutine showQuickViewCoroutine;
     public float showDelay = 0.3f;
+
+    public Guid requestId;
+    public bool isCandidate = false;
 
     public CityPresenter(CityModel model, CityView view)
     {
@@ -90,10 +95,73 @@ public class CityPresenter: IUnitContainer
         }
     }
 
-    public void AddPartyBase(FactionType party, int count = 1)
+    private List<FactionType> _chosenPartiesForRemoval;
+    public IEnumerator AddPartyBase(FactionType party, int count = 1)
     {
-        // 동기적 처리: 한 번에 하나의 선택만 진행되도록 재귀/체이닝
-        ProcessAddSeatSequentially(party, count); // Commented out as the method is removed.
+        for (int i = 0; i < count; i++)
+        {
+            // 1. 자리가 비어있는 경우: 즉시 좌석 추가
+            if (Model.currentSeats < Model.seatMaxCount)
+            {
+                Model.AddSeat(party);
+                View.UpdateSeatOccupancy(Model.PartyBasesCounts);
+                // 한 프레임 대기하여 UI 업데이트 등을 확인 (선택사항)
+                yield return null; 
+                continue; // 다음 루프 실행
+            }
+
+            // 2. 자리가 꽉 찬 경우: 다른 정당 좌석 제거 필요
+            var removableParties = new List<FactionType>();
+            foreach (var kv in Model.PartyBasesCounts)
+            {
+                if (kv.Key != party && kv.Value > 0)
+                {
+                    removableParties.Add(kv.Key);
+                }
+            }
+
+            // 제거할 정당이 없으면 더 이상 진행 불가
+            if (removableParties.Count == 0)
+            {
+                Debug.LogWarning("제거할 다른 정당의 좌석이 없습니다.");
+                yield break; // 코루틴 종료
+            }
+
+            // 3. 플레이어에게 제거할 정당 선택 요청
+            _chosenPartiesForRemoval = null; // 대기 전 변수 초기화
+            
+            // 선택 완료 이벤트 구독
+            EventBus.Subscribe<SelectionMadeEvent<FactionType>>(OnPartyForRemovalSelected);
+            
+            // EventBus를 통해 선택 요청 이벤트 발행
+            EventBus.Publish(new RequestSelectionEvent<FactionType>(
+                PlayerSelectionType.CardEffect_ChoosePartyBase,
+                removableParties
+                // 필요하다면 선택 개수(1개) 등의 정보도 이벤트에 포함
+            ));
+
+            // 선택이 완료될 때(_chosenPartiesForRemoval이 채워질 때)까지 대기
+            yield return new WaitUntil(() => _chosenPartiesForRemoval != null);
+            
+            // 구독 해제
+            EventBus.Unsubscribe<SelectionMadeEvent<FactionType>>(OnPartyForRemovalSelected);
+
+            // 4. 선택된 정당의 좌석 제거
+            foreach (var toRemove in _chosenPartiesForRemoval)
+            {
+                Model.RemoveSeat(toRemove);
+            }
+
+            // 5. 빈 자리가 생겼으므로 목표 정당의 좌석 추가
+            Model.AddSeat(party);
+            View.UpdateSeatOccupancy(Model.PartyBasesCounts);
+        }
+    }
+
+    // 선택 완료 이벤트 콜백 메서드
+    private void OnPartyForRemovalSelected(SelectionMadeEvent<FactionType> e)
+    {
+        _chosenPartiesForRemoval = new List<FactionType> { e.SelectedItem };
     }
 
     public void RemoveSeatFromParty(FactionType party, int count = 1)
@@ -105,59 +173,24 @@ public class CityPresenter: IUnitContainer
         View.UpdateSeatOccupancy(Model.PartyBasesCounts);
     }
 
-    /// <summary>
-    /// 좌석 추가를 순차적으로 처리하여, 동시 다중 선택 프롬프트가 발생하지 않도록 함.
-    /// 또한 제거만 발생한 경우(실제 빈 자리가 생기지 않은 경우)에는 추가를 시도하지 않도록 가드.
-    /// </summary>
-    private void ProcessAddSeatSequentially(FactionType targetParty, int remaining)
-    {
-        if (remaining <= 0)
-            return;
-
-        // 자리 여유가 있으면 바로 추가
-        if (Model.currentSeats < Model.seatMaxCount)
-        {
-            Model.AddSeat(targetParty);
-            View.UpdateSeatOccupancy(Model.PartyBasesCounts);
-            ProcessAddSeatSequentially(targetParty, remaining - 1);
-            return;
-        }
-
-        // 가득 찼으면 제거 후보 수집(본인 정당 제외, 1석 이상 보유)
-        var removableParties = new List<FactionType>();
-        foreach (var kv in Model.PartyBasesCounts)
-        {
-            if (kv.Key != targetParty && kv.Value > 0)
-                removableParties.Add(kv.Key);
-        }
-
-        if (removableParties.Count == 0)
-        {
-            Debug.LogWarning("No seats available to remove from other parties.");
-            return;
-        }
-
-        // 사용자에게 제거 대상을 한 번만 묻고, 완료되면 다음 스텝으로 진행
-        GameManager.Instance.RequestPartySelection(removableParties, 1, (chosenParties) =>
-        {
-            // 현재가 꽉 찬 상태이므로, 이번 스텝에서는 '제거만' 수행
-            foreach (var toRemove in chosenParties)
-            {
-                Model.RemoveSeat(toRemove);
-            }
-
-            View.UpdateSeatOccupancy(Model.PartyBasesCounts);
-            ProcessAddSeatSequentially(targetParty, remaining - 1);
-        });
-    }
-
     #endregion
 
 
     #region Highlight
-    public void ShowAsCandidate(bool isCandidate)
+    public void ShowAsCandidate(bool isCandidate, Guid requestId)
     {
+        this.isCandidate = isCandidate;
+        this.requestId = requestId;
         View?.ShowAsCandidate(isCandidate);
+    }
+    
+    public void OnPointerClick()
+    {
+        if (isCandidate)
+        {
+            // 선택 이벤트 발행 (RequestId 등 필요시 포함)
+            EventBus.Publish(new SelectionMadeEvent<CityModel>(Model, requestId));
+        }
     }
 
     #endregion

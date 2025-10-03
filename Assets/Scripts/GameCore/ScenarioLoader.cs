@@ -41,6 +41,6 @@ public class ScenarioLoader : MonoBehaviour
         }
 
         // 3. 실행기에게 스크립트 실행을 위임
-        executor.ExecuteScript(scenarioData.setupScript);
+        StartCoroutine(executor.ExecuteScript(scenarioData.setupScript));
     }
 }

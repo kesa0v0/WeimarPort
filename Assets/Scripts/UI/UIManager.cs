@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Event.UI;
 using UnityEngine;
 
@@ -16,6 +18,8 @@ public class UIManager : MonoBehaviour
 
     private QuickViewPanel _currentQuickView; // 현재 씬에 생성된 퀵뷰 인스턴스를 저장할 변수
 
+    private Guid RequestIdForCitySelection; // 도시 선택 요청 ID 추적용
+
 
     private void Awake()
     {
@@ -23,18 +27,43 @@ public class UIManager : MonoBehaviour
         else Destroy(gameObject);
 
         EventBus.Subscribe<RequestSelectionEvent<CityModel>>(OnRequestCitySelection);
+        EventBus.Subscribe<SelectionMadeEvent<CityModel>>(ClearCitySelectionCandidates);
     }
 
 
 
     public void OnRequestCitySelection(RequestSelectionEvent<CityModel> evt)
     {
-        Debug.Log($"UIManager: 도시 선택 요청 이벤트 수신 - {evt.Instruction}, 아이템 수: {evt.Items.Count}");
-        // 여기서 evt.Items를 사용하여 UI에 도시 목록을 표시하고 선택을 처리합니다.
-        foreach (var city in evt.Items)
+        RequestIdForCitySelection = evt.RequestId;
+        // 모든 리스트 로그
+        Debug.Log($"도시 후보 목록: {string.Join(", ", evt.Items.Select(c => c.cityName))}");
+        // 모든 CityView를 순회하며 후보 여부에 따라 표시
+        foreach (var candidate in evt.Items)
         {
-            Debug.Log($"도시: {city.cityName}");
-        }   
+            var presenter = CityManager.Instance.GetPresenter(candidate.cityName);
+            if (presenter != null)
+            {
+                presenter.ShowAsCandidate(true, evt.RequestId);
+            }
+            else
+            {
+                Debug.LogWarning($"CityPresenter not found for city: {candidate.cityName}");
+            }
+        }
+    }
+
+    public void ClearCitySelectionCandidates(SelectionMadeEvent<CityModel> evt)
+    {
+        if (evt.RequestId != RequestIdForCitySelection) return;
+        foreach (var model in CityManager.Instance.GetAllCityModels())
+        {
+            var presenter = CityManager.Instance.GetPresenter(model.cityName);
+            if (presenter != null)
+            {
+                presenter.ShowAsCandidate(false, Guid.Empty);
+            }
+        }
+        RequestIdForCitySelection = Guid.Empty;
     }
 
     public void ShowQuickView(CityModel cityModel, Vector3 worldPosition)

@@ -31,7 +31,6 @@ public class ThreatMarkerView : MonoBehaviour
     /// </summary>
     public void SetMaterial(Material newMaterial)
     {
-        Debug.Log($"SetMaterial 호출됨: {gameObject.name}, newMaterial: {(newMaterial != null ? newMaterial.name : "null")}");
         if (newMaterial != null && objectRenderer != null)
         {
             objectRenderer.sharedMaterial = newMaterial;

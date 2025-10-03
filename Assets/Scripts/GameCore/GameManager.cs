@@ -34,20 +34,18 @@ public class GameManager : MonoBehaviour
         CityManager.Instance.Initialize();
         UnitManager.Instance.Initialize();
 
-        ScenarioLoader.LoadScenarioFromResources("test");
-
-        // 랜덤하게 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
-        gameState.GameInfo.CurrentPlayerPartyId = GetParty(FactionType.SPD).Data.factionType;
+        gameState.GameInfo.CurrentPlayerPartyId = FactionType.SPD;
 
         // 랜덤하게 첫 플레이어 정당 설정 (나중에 UI로 선택 가능하게 변경 예정)
-        gameState.GameInfo.RoundStartPlayerPartyId = GetParty(FactionType.SPD).Data.factionType;
+        gameState.GameInfo.RoundStartPlayerPartyId = FactionType.SPD;
 
         // 최초 집권연정은 SPD와 Zentrum으로 설정 < 나중에 불러오기나 UI로 선택 가능하게 변경 예정
         gameState.government.FormNewGovernment(GetParty(FactionType.SPD), GetParty(FactionType.Z));
 
-        
         AddDebugCommands();
         TestScript();
+        
+        ScenarioLoader.LoadScenarioFromResources("test");
     }
 
     private void Initialize()
