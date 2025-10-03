@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using IngameDebugConsole;
@@ -98,7 +99,7 @@ public class CityManager : MonoBehaviour
 
     #region Seat Management
 
-    public void AddSeatToCity(string cityName, string partyName, int count)
+    public void AddSeatToCityByString(string cityName, string partyName, int count)
     {
         if (!presenterMap.TryGetValue(cityName, out var presenter))
         {
@@ -114,7 +115,13 @@ public class CityManager : MonoBehaviour
         presenter.AddPartyBase(faction, count);
     }
 
-    public void RemoveSeatFromCity(string cityName, string partyName, int count)
+    public IEnumerator AddSeatToCity(PartyModel party, CityPresenter presenter)
+    {
+        if (party == null || presenter == null) yield break;
+        yield return presenter.AddPartyBase(party.Data.factionType, 1);
+    }
+
+    public void RemoveSeatFromCityByString(string cityName, string partyName, int count)
     {
         if (!presenterMap.TryGetValue(cityName, out var presenter))
         {
@@ -130,12 +137,19 @@ public class CityManager : MonoBehaviour
         presenter.RemoveSeatFromParty(faction, count);
     }
 
+    public void RemoveSeatFromCity(PartyModel party, CityPresenter presenter)
+    {
+        if (party == null || presenter == null) return;
+        presenter.RemoveSeatFromParty(party.Data.factionType, 1);
+    }
+    
+
     #endregion
 
     private void RegisterDebugCommands()
     {
-        DebugLogConsole.AddCommandInstance("addCitySeat", "Add seats to a city. Usage: addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCity", this);
-        DebugLogConsole.AddCommandInstance("removeCitySeat", "Remove seats from a city. Usage: removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCity", this);
+        DebugLogConsole.AddCommandInstance("addCitySeat", "Add seats to a city. Usage: addCitySeat [CityName] [PartyName] [Count]", "AddSeatToCityByString", this);
+        DebugLogConsole.AddCommandInstance("removeCitySeat", "Remove seats from a city. Usage: removeCitySeat [CityName] [PartyName] [Count]", "RemoveSeatFromCityByString", this);
     }
 
 }

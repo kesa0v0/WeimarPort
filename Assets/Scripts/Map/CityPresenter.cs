@@ -98,6 +98,7 @@ public class CityPresenter: IUnitContainer
     private List<FactionType> _chosenPartiesForRemoval;
     public IEnumerator AddPartyBase(FactionType party, int count = 1)
     {
+        Debug.Log($"도시 '{Model.cityName}'에 '{party}' 정당 기반 추가 시도 (현재 좌석: {Model.currentSeats}/{Model.seatMaxCount})");
         for (int i = 0; i < count; i++)
         {
             // 1. 자리가 비어있는 경우: 즉시 좌석 추가
@@ -106,7 +107,7 @@ public class CityPresenter: IUnitContainer
                 Model.AddSeat(party);
                 View.UpdateSeatOccupancy(Model.PartyBasesCounts);
                 // 한 프레임 대기하여 UI 업데이트 등을 확인 (선택사항)
-                yield return null; 
+                yield return null;
                 continue; // 다음 루프 실행
             }
 
@@ -129,20 +130,20 @@ public class CityPresenter: IUnitContainer
 
             // 3. 플레이어에게 제거할 정당 선택 요청
             _chosenPartiesForRemoval = null; // 대기 전 변수 초기화
-            
+
             // 선택 완료 이벤트 구독
             EventBus.Subscribe<SelectionMadeEvent<FactionType>>(OnPartyForRemovalSelected);
-            
+
             // EventBus를 통해 선택 요청 이벤트 발행
             EventBus.Publish(new RequestSelectionEvent<FactionType>(
                 PlayerSelectionType.CardEffect_ChoosePartyBase,
                 removableParties
-                // 필요하다면 선택 개수(1개) 등의 정보도 이벤트에 포함
+            // 필요하다면 선택 개수(1개) 등의 정보도 이벤트에 포함
             ));
 
             // 선택이 완료될 때(_chosenPartiesForRemoval이 채워질 때)까지 대기
             yield return new WaitUntil(() => _chosenPartiesForRemoval != null);
-            
+
             // 구독 해제
             EventBus.Unsubscribe<SelectionMadeEvent<FactionType>>(OnPartyForRemovalSelected);
 

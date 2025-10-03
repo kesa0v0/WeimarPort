@@ -35,8 +35,6 @@ public class UIManager : MonoBehaviour
     public void OnRequestCitySelection(RequestSelectionEvent<CityModel> evt)
     {
         RequestIdForCitySelection = evt.RequestId;
-        // 모든 리스트 로그
-        Debug.Log($"도시 후보 목록: {string.Join(", ", evt.Items.Select(c => c.cityName))}");
         // 모든 CityView를 순회하며 후보 여부에 따라 표시
         foreach (var candidate in evt.Items)
         {

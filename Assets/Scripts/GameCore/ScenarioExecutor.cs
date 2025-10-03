@@ -218,7 +218,7 @@ public class ScenarioExecutor
 
                     // 선택 완료 후 로직 처리
                     Debug.Log($"{selectedCity.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
-                    // cityManager.PlacePartyBase(party, cityManager.GetPresenter(selectedCity.cityName));
+                    yield return cityManager.AddSeatToCity(party, cityManager.GetPresenter(selectedCity.cityName));
 
                     // 다음 선택을 위해 초기화 및 구독 해제
                     selectedCity = null;
