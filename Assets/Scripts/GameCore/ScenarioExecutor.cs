@@ -220,6 +220,14 @@ public class ScenarioExecutor
                     Debug.Log($"{selectedCity.cityName}에 '{party.Data.factionType}' CitySeat 배치 (실제 로직 호출 필요)");
                     yield return cityManager.AddSeatToCity(party, cityManager.GetPresenter(selectedCity.cityName));
 
+                    // unique 옵션이 true라면, 사용한 도시를 usedCities에 추가
+                    if (uniqueForPlayerChoice)
+                    {
+                        var selectedPresenter = cityManager.GetPresenter(selectedCity.cityName);
+                        if (selectedPresenter != null && !usedCities.Contains(selectedPresenter))
+                            usedCities.Add(selectedPresenter);
+                    }
+
                     // 다음 선택을 위해 초기화 및 구독 해제
                     selectedCity = null;
                     EventBus.Unsubscribe<SelectionMadeEvent<CityModel>>(OnCitySelected);
