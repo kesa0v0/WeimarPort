@@ -65,6 +65,13 @@ public class ScenarioExecutor
                     case "PlaceUnit":
                         ExecutePlaceUnit(instruction.args);
                         break;
+                        
+                    // 특정 유닛을 해산된 유닛 공간으로 보냅니다.
+                    // instanceId
+                    case "DissolveUnit":
+                        // TODO: ExecuteDissolveUnit 메서드 구현
+                        Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
+                        break;
 
                     // 특정 정당의 승점(VP)을 value만큼 변경합니다. (음수 가능)
                     // partyId, value
@@ -101,12 +108,6 @@ public class ScenarioExecutor
                         Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
                         break;
 
-                    // 특정 유닛을 해산된 유닛 공간으로 보냅니다.
-                    // instanceId
-                    case "DissolveUnit":
-                        // TODO: ExecuteDissolveUnit 메서드 구현
-                        Debug.Log($"명령어 '{instruction.command}' 실행 (구현 필요)");
-                        break;
 
                     // 특정 외교 관계 깃발을 보드에 배치합니다.	
                     // flagType, count
@@ -200,13 +201,25 @@ public class ScenarioExecutor
                 case "PlayerChoice_City":
                     Debug.Log($"플레이어에게 '{party.Data.factionType}' CitySeat 배치할 도시 선택 요청");
                     bool uniqueForPlayerChoice = args.location.@params?.unique ?? false;
-                    List<CityModel> availableCities = CityManager.Instance.GetAllCityModels();
+                    // Exclude cities that are already full (currentSeats >= seatMaxCount)
+                    List<CityModel> availableCities = CityManager.Instance.GetAllCityModels()
+                        .Where(city => city.currentSeats < city.seatMaxCount)
+                        .ToList();
+
                     if (uniqueForPlayerChoice)
                     {
                         // usedCities에 이미 선택된 도시가 있다면 제외
                         var usedCityModels = usedCities.Select(p => p.Model).ToHashSet();
                         availableCities = availableCities.Where(city => !usedCityModels.Contains(city)).ToList();
                     }
+
+                    // If there are no available cities after filtering, abort this command
+                    if (availableCities == null || availableCities.Count == 0)
+                    {
+                        Debug.LogWarning($"'{party.Data.factionType}' CitySeat 배치를 위한 선택 가능한 도시가 없습니다.");
+                        yield break;
+                    }
+
                     EventBus.Subscribe<SelectionMadeEvent<CityModel>>(OnCitySelected);
                     EventBus.Publish(new RequestSelectionEvent<CityModel>(PlayerSelectionType.Setup_PlaceInitialPartyBase, availableCities));
 
@@ -246,8 +259,16 @@ public class ScenarioExecutor
         selectedCity = e.SelectedItem;
     }
 
+    private void ReinforceUnit(Arguments args)
+    {
+        int count = args.count > 0 ? args.count : 1;
+        
+    }
+
     private void ExecutePlaceUnit(Arguments args)
-    {   
+    {
+        Debug.LogWarning($"시나리오 상에서는 ExecutePlaceUnit이 존재하지 않음. 일단 임시로 막음.");
+        return;
         Debug.Log($"'{args.partyId}' 유닛을 배치합니다.");
         int count = args.count > 0 ? args.count : 1; // count가 없으면 1로 간주
         var party = gameManager.GetParty(Enum.TryParse<FactionType>(args.partyId, out var faction)
@@ -269,9 +290,10 @@ public class ScenarioExecutor
             else if (args.location.type == "SpecificCity")
             {
                 CityPresenter targetCity = cityManager.GetPresenter(args.location.name);
+                UnitPresenter unitPresenter = UnitManager.Instance.GetPresenter(args.instanceId);
                 if (targetCity != null)
                 {
-                    // unitManager.PlaceUnit(party, targetCity);
+                    UnitManager.Instance.MoveUnit(unitPresenter.Model, targetCity);
                     Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
                 }
             }
