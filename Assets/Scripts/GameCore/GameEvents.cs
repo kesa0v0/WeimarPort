@@ -288,10 +288,10 @@ namespace Event.StateChange.Units
 {
     public class UnitMobilizedEvent : GameEvent
     {
-        UnitData Unit { get; }
-        LocationData From { get; }
-        CityModel To { get; }
-        public UnitMobilizedEvent(UnitData unit, LocationData from, CityModel to)
+        public UnitModel Unit { get; }
+        public LocationData From { get; }
+        public CityModel To { get; }
+        public UnitMobilizedEvent(UnitModel unit, LocationData from, CityModel to)
         {
             Unit = unit;
             From = from;
@@ -301,9 +301,9 @@ namespace Event.StateChange.Units
 
     public class UnitDissolvedEvent : GameEvent
     {
-        UnitData Unit { get; }
-        CityModel Location { get; } // 해산된 도시
-        public UnitDissolvedEvent(UnitData unit, CityModel location)
+        public UnitModel Unit { get; }
+        public CityModel Location { get; } // 해산된 도시
+        public UnitDissolvedEvent(UnitModel unit, CityModel location)
         {
             Unit = unit;
             Location = location;
@@ -312,9 +312,9 @@ namespace Event.StateChange.Units
 
     public class ReichswehrControlChangedEvent : GameEvent
     {
-        public UnitData Unit { get; }
+        public UnitModel Unit { get; }
         public FactionType NewControllingParty { get; }
-        public ReichswehrControlChangedEvent(UnitData unit, FactionType newControllingParty)
+        public ReichswehrControlChangedEvent(UnitModel unit, FactionType newControllingParty)
         {
             Unit = unit;
             NewControllingParty = newControllingParty;

@@ -4,9 +4,6 @@ using UnityEngine;
 // 간단한 폐기 보관소 컨테이너. 뷰는 생성하지 않음.
 public class DisposedBin : IUnitContainer
 {
-    private static DisposedBin _instance;
-    public static DisposedBin Instance => _instance ??= new DisposedBin();
-
     public IList<UnitModel> DisposedUnits = new List<UnitModel>();
     
 
@@ -15,9 +12,13 @@ public class DisposedBin : IUnitContainer
         DisposedUnits.Add(unit);
     }
 
-    public string GetContainerName()
+    public LocationData GetContainerData()
     {
-        return "Disposed Bin";
+        return new LocationData
+        {
+            Type = LocationType.DissolvedArea,
+            Name = "DisposedBin"
+        };
     }
 
     public List<UnitModel> GetUnits()

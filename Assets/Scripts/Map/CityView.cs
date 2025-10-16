@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using Event.StateChange.Units;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -191,7 +192,7 @@ public class CityView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             { FactionType.Government, 0 }
             
         };
-        foreach (var unit in model.GetUnitsInCity())
+        foreach (var unit in model.GetUnits())
         {
             var faction = unit.ControllerPartyId;
             if (partyUnitCounts.ContainsKey(faction))

@@ -86,7 +86,7 @@ public class UIManager : MonoBehaviour
         }
 
         // 2. CityModel 데이터로 새로운 유닛 아이콘 생성 및 부모 지정
-        foreach (UnitModel unit in cityModel.GetUnitsInCity())
+        foreach (UnitModel unit in cityModel.GetUnits())
         {
             GameObject iconObj = Instantiate(unitIconPrefab, container);
             // 강도 표시용 텍스트

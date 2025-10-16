@@ -56,9 +56,13 @@ public class Government : IUnitContainer
         return new List<UnitModel>(supplyUnits);
     }
 
-    public string GetContainerName()
+    public LocationData GetContainerData()
     {
-        return Name;
+        return new LocationData
+        {
+            Type = LocationType.Supply,
+            Name = "Government"
+        };
     }
 
     #endregion

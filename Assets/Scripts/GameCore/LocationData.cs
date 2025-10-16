@@ -2,6 +2,7 @@ using System.Numerics;
 
 public enum LocationType
 {
+    Unavailable,
     Supply,
     City,
     Parliament,

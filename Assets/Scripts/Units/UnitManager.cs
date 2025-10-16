@@ -122,7 +122,7 @@ public class UnitManager : MonoBehaviour
                     InstanceId = instanceId,
                     DataId = data.DataId,
                     Data = data,
-                    CurrentState = UnitLocationState.Unavailable, // 모든 유닛은 비활성 상태로 시작
+                    CurrentState = LocationType.Unavailable, // 모든 유닛은 비활성 상태로 시작
                     ControllerPartyId = data.Affiliation
                 };
 
@@ -195,18 +195,7 @@ public class UnitManager : MonoBehaviour
             Debug.LogWarning($"이동하려는 컨테이너를 찾을 수 없습니다: {containerId}");
             return;
         }
-        MoveUnit(unit, container);
-    }
-    public void MoveUnit(UnitModel unit, IUnitContainer newContainer)
-    {
-        if (presenterMap.TryGetValue(unit, out UnitPresenter presenter))
-        {
-            presenter.UpdateLocation(newContainer);
-        }
-        else
-        {
-            Debug.LogWarning($"이동하려는 유닛의 Presenter를 찾을 수 없습니다: {unit.InstanceId}");
-        }
+        presenterMap[unit].MoveUnit(container);
     }
 
     #endregion
@@ -244,5 +233,5 @@ public interface IUnitContainer
     void AddUnit(UnitModel unit);
     void RemoveUnit(UnitModel unit);
     List<UnitModel> GetUnits();
-    string GetContainerName();
+    LocationData GetContainerData();
 }

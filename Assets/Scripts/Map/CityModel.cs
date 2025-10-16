@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
-public class CityModel
+public class CityModel: IUnitContainer
 {
     public string cityName;
     public Vector2 position;
@@ -63,13 +63,40 @@ public class CityModel
 
     #region Unit Management
 
-    public List<UnitModel> GetUnitsInCity()
+    
+    /// <summary>
+    /// 이 도시에 유닛을 배치합니다.
+    /// </summary>
+    public void AddUnit(UnitModel unitModel)
+    {
+        UnitInstanceIds.Add(unitModel.InstanceId);
+    }
+
+    /// <summary>
+    /// 이 도시에서 유닛을 제거합니다.
+    /// </summary>
+    public void RemoveUnit(UnitModel unitModel)
+    {
+        if (UnitInstanceIds.Contains(unitModel.InstanceId))
+        {
+            UnitInstanceIds.Remove(unitModel.InstanceId);
+        }
+    }
+
+    public List<UnitModel> GetUnits()
     {
         return UnitInstanceIds
             .Select(id => UnitManager.Instance.GetPresenter(id)?.Model)
             .Where(unit => unit != null)
             .ToList();
     }
+
+    public LocationData GetContainerData() => new LocationData
+    {
+        Type = LocationType.City,
+        Name = cityName
+    };
+
 
     #endregion
 }

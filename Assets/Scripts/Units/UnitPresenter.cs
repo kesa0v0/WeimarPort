@@ -1,3 +1,5 @@
+using Event.StateChange.Units;
+
 public class UnitPresenter
 {
     public UnitModel Model { get; private set; }
@@ -18,14 +20,17 @@ public class UnitPresenter
         view.Initialize(model.InstanceId, model.Data, model.ControllerPartyId);
     }
 
-    // UnitManager 등이 유닛을 이동시킬 때 이 메소드를 호출해준다.
-    public void UpdateLocation(IUnitContainer newContainer)
+    public void MoveUnit(IUnitContainer newContainer)
     {
         // 이전 컨테이너에서 유닛 제거
         currentContainerCache?.RemoveUnit(Model);
 
         // 새 컨테이너에 유닛 추가
         newContainer?.AddUnit(Model);
+
+        Model.CurrentLocation = newContainer?.GetContainerData();
+        Model.CurrentState = newContainer.GetContainerData().Type;
+        EventBus.Publish(new UnitMobilizedEvent(Model, Model.CurrentLocation, newContainer as CityModel));
 
         // 캐시 업데이트
         currentContainerCache = newContainer;

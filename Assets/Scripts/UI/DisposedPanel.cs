@@ -15,7 +15,7 @@ public class DisposedPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void Redraw()
     {
-        var bin = DisposedBin.Instance;
+        var bin = GameManager.Instance.gameState.DisposedBin;
         if (bin == null) return;
 
         // aggregate by UnitData

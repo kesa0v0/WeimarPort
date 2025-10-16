@@ -32,6 +32,8 @@ public class GameState
 
     public Government government = new();
     
+    // 폐기된 유닛 보관소
+    public DisposedBin DisposedBin = new DisposedBin();
     
     public List<string> DRBoxMarkerInstanceIds = new List<string>();
 }

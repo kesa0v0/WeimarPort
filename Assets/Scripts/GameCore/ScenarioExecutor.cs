@@ -293,7 +293,7 @@ public class ScenarioExecutor
                 UnitPresenter unitPresenter = UnitManager.Instance.GetPresenter(args.instanceId);
                 if (targetCity != null)
                 {
-                    UnitManager.Instance.MoveUnit(unitPresenter.Model, targetCity);
+                    unitPresenter.MoveUnit(targetCity.Model);
                     Debug.Log($"{targetCity.Model.cityName}에 '{args.instanceId}({args.dataId})' 유닛 배치 (실제 로직 호출 필요)");
                 }
             }
